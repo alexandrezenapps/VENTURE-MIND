@@ -1,0 +1,6 @@
+{
+  "name": "Venture Mind",
+  "description": "Executive venture capital and fundraising academy with real-time cap table, SAFE, exit waterfall simulations, term sheet analyzer, and AI investor negotiations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
