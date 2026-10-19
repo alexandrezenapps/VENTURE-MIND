@@ -48,7 +48,7 @@ export const TermDetailModal: React.FC<{
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm overflow-hidden animate-in fade-in duration-200">
       <div
-        className="w-full max-w-4xl bg-surface-main dark:bg-stone-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-white/10 dark:border-white/5 overflow-hidden flex flex-col h-[94vh] sm:h-auto sm:max-h-[90vh] my-0 sm:my-auto"
+        className="w-full max-w-4xl bg-surface-main/95 dark:bg-stone-900/95 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-amber-500/25 dark:border-amber-400/20 overflow-hidden flex flex-col h-[94vh] sm:h-auto sm:max-h-[90vh] my-0 sm:my-auto backdrop-blur-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}

@@ -87,7 +87,7 @@ export const PsychologyView: React.FC = () => {
       </div>
 
       {/* Psychology Radar Interactive Diagnostic Tool */}
-      <div className="p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs">
+      <div className="p-6 sm:p-7 rounded-3xl glass-panel border-sophisticated shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-base font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
@@ -270,10 +270,10 @@ export const PsychologyView: React.FC = () => {
               <div
                 key={principle.id}
                 onClick={() => setSelectedPrinciple(principle)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl glass-panel glass-panel-hover border-sophisticated transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-500/50 shadow-xs'
-                    : 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800 hover:border-purple-500/30'
+                    ? 'border-purple-500/60 dark:border-purple-400/60 bg-gradient-to-r from-purple-500/15 via-purple-500/5 to-transparent shadow-xs'
+                    : 'hover:border-purple-400/40'
                 }`}
               >
                 <div className="flex items-center justify-between text-[11px] font-mono text-text-secondary dark:text-stone-400 mb-1">
@@ -294,7 +294,7 @@ export const PsychologyView: React.FC = () => {
         </div>
 
         {/* Right Column: Deep Principle Breakdown (7 cols) */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs space-y-6">
+        <div className="lg:col-span-7 p-6 sm:p-8 rounded-3xl glass-panel border-sophisticated shadow-xl space-y-6">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>

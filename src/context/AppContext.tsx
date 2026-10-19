@@ -40,6 +40,10 @@ interface AppContextType {
   setSearchQuery: (q: string) => void;
   isSearchModalOpen: boolean;
   setIsSearchModalOpen: (open: boolean) => void;
+  isOpeningPortalOpen: boolean;
+  setIsOpeningPortalOpen: (open: boolean) => void;
+  isCardStackModalOpen: boolean;
+  setIsCardStackModalOpen: (open: boolean) => void;
   
   // Audio
   isAudioMuted: boolean;
@@ -119,6 +123,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedTermId, setSelectedTermId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isOpeningPortalOpen, setIsOpeningPortalOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('venture_mind_opening_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.alwaysShowOnLaunch === false) {
+          return false;
+        }
+      }
+    } catch {
+      // default to true
+    }
+    return true;
+  });
+  const [isCardStackModalOpen, setIsCardStackModalOpen] = useState(false);
 
   // Audio state
   const [isAudioMuted, setIsAudioMuted] = useState(false);
@@ -338,6 +357,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSearchQuery,
         isSearchModalOpen,
         setIsSearchModalOpen,
+        isOpeningPortalOpen,
+        setIsOpeningPortalOpen,
+        isCardStackModalOpen,
+        setIsCardStackModalOpen,
         isAudioMuted,
         toggleAudioMute,
         isSpeaking,

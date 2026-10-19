@@ -14,7 +14,7 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const MindfulPauseWidget: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
-  const { language, speak } = useApp();
+  const { language, speak, setActiveTab } = useApp();
   const [isActive, setIsActive] = useState(false);
   const [phaseIndex, setPhaseIndex] = useState(0); // 0: Inhale, 1: Hold, 2: Exhale, 3: Peace
   const [secondsLeft, setSecondsLeft] = useState(4);
@@ -87,10 +87,11 @@ export const MindfulPauseWidget: React.FC<{ compact?: boolean }> = ({ compact = 
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl p-5 md:p-7 bg-gradient-to-br from-stone-900 via-stone-900 to-indigo-950 border border-white/10 dark:border-white/5 text-white shadow-xl">
-      {/* Radiant Background Blur */}
-      <div className="absolute -top-12 -right-12 w-64 h-64 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative overflow-hidden rounded-3xl p-5 md:p-7 bg-gradient-to-br from-[#18152c] via-[#1f1d3a] to-[#12242c] dark:from-[#131224] dark:via-[#1c1a33] dark:to-[#102028] border border-amber-400/30 dark:border-amber-400/25 text-white shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6),0_0_30px_rgba(229,184,66,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+      {/* Radiant High-Luminance Atmospheric Orbs */}
+      <div className="absolute -top-14 -right-14 w-80 h-80 bg-purple-500/26 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-14 -left-14 w-80 h-80 bg-amber-400/24 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-teal-400/18 rounded-full blur-[70px] pointer-events-none" />
 
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left: Philosophy & Guidance */}
@@ -177,6 +178,14 @@ export const MindfulPauseWidget: React.FC<{ compact?: boolean }> = ({ compact = 
               </span>
             </button>
 
+            <button
+              onClick={() => setActiveTab('mindfulness')}
+              className="p-2 rounded-2xl bg-white/10 hover:bg-white/15 text-amber-300 text-xs transition-all cursor-pointer active:scale-95"
+              title={language === 'fr' ? 'Ouvrir le Sanctuaire Zen Complet' : language === 'zh' ? '进入完整正念殿堂' : 'Open Full Zen Sanctuary'}
+            >
+              <Compass className="w-4 h-4" />
+            </button>
+
             {cyclesCompleted > 0 && (
               <button
                 onClick={() => {
@@ -185,7 +194,7 @@ export const MindfulPauseWidget: React.FC<{ compact?: boolean }> = ({ compact = 
                   setSecondsLeft(4);
                   setPhaseIndex(0);
                 }}
-                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-400 text-xs"
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-400 text-xs cursor-pointer"
                 title="Reset"
               >
                 <RotateCcw className="w-3.5 h-3.5" />

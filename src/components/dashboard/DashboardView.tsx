@@ -17,11 +17,14 @@ import {
   Scale,
   Sparkles,
   Compass,
+  Aperture,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { termsData } from '../../data/termsData';
 import { psychologyPrinciples } from '../../data/psychologyData';
 import { MindfulPauseWidget } from '../mindfulness/MindfulPauseWidget';
+import { OverlappingCardStack } from '../common/OverlappingCardStack';
+import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
 
 export const DashboardView: React.FC = () => {
   const {
@@ -30,6 +33,8 @@ export const DashboardView: React.FC = () => {
     setActiveTab,
     setSelectedTermId,
     setSelectedSimulator,
+    setIsOpeningPortalOpen,
+    setIsCardStackModalOpen,
     speak,
     formatMoney,
   } = useApp();
@@ -76,11 +81,12 @@ export const DashboardView: React.FC = () => {
 
   return (
     <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-mobile-nav">
-      {/* Luxurious Executive Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-950 via-stone-900 to-indigo-950 text-white p-5 sm:p-7 md:p-9 border border-white/10 dark:border-white/5 shadow-2xl">
-        {/* Artistic Luminous Ambient Orbs */}
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-80 h-80 bg-gradient-to-br from-amber-500/15 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 bg-gradient-to-tr from-purple-600/15 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+      {/* Luxurious Executive Hero Banner with High-Exposure Chromatic Lighting */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#161a2c] via-[#1d223c] to-[#271f3b] dark:from-[#111425] dark:via-[#191d35] dark:to-[#221c34] text-white p-5 sm:p-7 md:p-9 border border-amber-400/35 dark:border-amber-400/25 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.65),0_0_36px_rgba(229,184,66,0.12),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+        {/* Artistic Luminous Ambient Orbs & Photographic Exposure Meshes */}
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-gradient-to-br from-amber-400/30 via-rose-500/24 to-purple-600/15 rounded-full blur-[95px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 -mb-24 w-96 h-96 bg-gradient-to-tr from-purple-600/26 via-indigo-500/24 to-cyan-400/20 rounded-full blur-[95px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-radial from-amber-300/15 via-transparent to-transparent rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2.5">
@@ -124,6 +130,32 @@ export const DashboardView: React.FC = () => {
               </span>
             </button>
             <button
+              onClick={() => setIsOpeningPortalOpen(true)}
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-500/15 to-amber-500/20 hover:from-amber-500/30 hover:to-purple-500/25 border border-amber-500/40 text-amber-300 font-medium text-xs sm:text-sm shadow-md transition-all flex items-center space-x-2 active:scale-95 cursor-pointer"
+            >
+              <Aperture className="w-4 h-4 text-amber-400 animate-spin-slow" />
+              <span>
+                {language === 'fr'
+                  ? 'Portail d’Art'
+                  : language === 'zh'
+                  ? '艺术封面 · 镂空开场'
+                  : 'Art Portal'}
+              </span>
+            </button>
+            <button
+              onClick={() => setIsCardStackModalOpen(true)}
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-indigo-500/20 hover:from-indigo-500/30 hover:to-purple-500/30 border border-indigo-400/40 text-indigo-300 font-medium text-xs sm:text-sm shadow-md transition-all flex items-center space-x-2 active:scale-95 cursor-pointer"
+            >
+              <Layers className="w-4 h-4 text-indigo-400" />
+              <span>
+                {language === 'fr'
+                  ? 'Paquet de Cartes'
+                  : language === 'zh'
+                  ? '重叠式卡组舱'
+                  : 'Stacked Decks'}
+              </span>
+            </button>
+            <button
               onClick={() => {
                 setSelectedSimulator('captable');
                 setActiveTab('simulators');
@@ -155,39 +187,39 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        {/* Hero Micro KPI Stats */}
-        <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/5">
-            <div className="fluid-stat-label text-stone-400 truncate">
+        {/* Hero Micro KPI Stats with Luminous Glass Finishes */}
+        <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-amber-400/20 dark:border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+          <div className="p-3 rounded-2xl bg-white/[0.08] dark:bg-white/[0.06] border border-amber-400/20 dark:border-white/10 backdrop-blur-md shadow-inner transition-transform hover:scale-[1.02]">
+            <div className="fluid-stat-label text-stone-300 dark:text-stone-300 truncate font-semibold">
               Venture IQ
             </div>
-            <div className="fluid-stat font-bold text-emerald-400 mt-0.5">
+            <div className="fluid-stat font-bold text-emerald-300 dark:text-emerald-400 mt-0.5 drop-shadow-[0_0_12px_rgba(52,211,153,0.35)]">
               {progress.ventureIQ}{' '}
-              <span className="text-[11px] sm:text-xs text-stone-400 font-normal">/ 180</span>
+              <span className="text-[11px] sm:text-xs text-stone-300 font-normal">/ 180</span>
             </div>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/5">
-            <div className="fluid-stat-label text-stone-400 truncate">
+          <div className="p-3 rounded-2xl bg-white/[0.08] dark:bg-white/[0.06] border border-amber-400/20 dark:border-white/10 backdrop-blur-md shadow-inner transition-transform hover:scale-[1.02]">
+            <div className="fluid-stat-label text-stone-300 dark:text-stone-300 truncate font-semibold">
               {language === 'fr' ? 'Leçons Validées' : language === 'zh' ? '已通透核心课' : 'Mastered Lessons'}
             </div>
-            <div className="fluid-stat font-bold text-stone-100 mt-0.5">
+            <div className="fluid-stat font-bold text-amber-200 dark:text-amber-100 mt-0.5 drop-shadow-[0_0_12px_rgba(251,191,36,0.3)]">
               {progress.completedLessons.length}{' '}
-              <span className="text-[11px] sm:text-xs text-stone-400 font-normal">/ 100</span>
+              <span className="text-[11px] sm:text-xs text-stone-300 font-normal">/ 100</span>
             </div>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/5">
-            <div className="fluid-stat-label text-stone-400 truncate">
+          <div className="p-3 rounded-2xl bg-white/[0.08] dark:bg-white/[0.06] border border-amber-400/20 dark:border-white/10 backdrop-blur-md shadow-inner transition-transform hover:scale-[1.02]">
+            <div className="fluid-stat-label text-stone-300 dark:text-stone-300 truncate font-semibold">
               {language === 'fr' ? 'Score Jeux & Énigmes' : language === 'zh' ? '博弈实战得分' : 'Arena Points'}
             </div>
-            <div className="fluid-stat font-bold text-amber-400 mt-0.5">
-              {Object.values(progress.gameScores).reduce((a, b) => a + b, 0)} <span className="text-[11px] font-normal text-stone-400">pts</span>
+            <div className="fluid-stat font-bold text-amber-300 dark:text-amber-400 mt-0.5 drop-shadow-[0_0_12px_rgba(245,158,11,0.35)]">
+              {Object.values(progress.gameScores).reduce((a, b) => a + b, 0)} <span className="text-[11px] font-normal text-stone-300">pts</span>
             </div>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/5">
-            <div className="fluid-stat-label text-stone-400 truncate">
+          <div className="p-3 rounded-2xl bg-white/[0.08] dark:bg-white/[0.06] border border-amber-400/20 dark:border-white/10 backdrop-blur-md shadow-inner transition-transform hover:scale-[1.02]">
+            <div className="fluid-stat-label text-stone-300 dark:text-stone-300 truncate font-semibold">
               {language === 'fr' ? 'Sérénité Mentale' : language === 'zh' ? '正念抗压定力' : 'Mindful Composure'}
             </div>
-            <div className="fluid-stat font-bold text-purple-400 mt-0.5">
+            <div className="fluid-stat font-bold text-purple-300 dark:text-purple-400 mt-0.5 drop-shadow-[0_0_12px_rgba(192,132,252,0.35)]">
               {progress.radarCompetencies.psychology}%
             </div>
           </div>
@@ -345,15 +377,15 @@ export const DashboardView: React.FC = () => {
               setSelectedSimulator('captable');
               setActiveTab('simulators');
             }}
-            className="p-5 rounded-2xl glass-panel glass-panel-hover cursor-pointer transition-all group"
+            className="p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer transition-all duration-300 group relative overflow-hidden hover:border-emerald-500/50"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-inner">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3.5 group-hover:scale-105 transition-transform shadow-inner border border-emerald-500/20">
               <PieChart className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-text-primary dark:text-stone-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+            <h3 className="font-bold text-sm sm:text-base text-text-primary dark:text-stone-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               {language === 'fr' ? 'Table de Capitalisation' : language === 'zh' ? '动态股权结构表' : 'Cap Table Simulator'}
             </h3>
-            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1 leading-relaxed">
+            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1.5 leading-relaxed">
               {language === 'fr' ? 'Simulez Seed, Série A et dilution BSPCE' : language === 'zh' ? '模拟种子轮、A轮期权池洗牌与股权稀释' : 'Interactive Seed, Series A & option pool dilution'}
             </p>
           </div>
@@ -364,15 +396,15 @@ export const DashboardView: React.FC = () => {
               setSelectedSimulator('safe');
               setActiveTab('simulators');
             }}
-            className="p-5 rounded-2xl glass-panel glass-panel-hover cursor-pointer transition-all group"
+            className="p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer transition-all duration-300 group relative overflow-hidden hover:border-cyan-500/50"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-inner">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-3.5 group-hover:scale-105 transition-transform shadow-inner border border-cyan-500/20">
               <Scale className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-text-primary dark:text-stone-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 className="font-bold text-sm sm:text-base text-text-primary dark:text-stone-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
               {language === 'fr' ? 'Simulateur SAFE & Notes' : language === 'zh' ? 'SAFE / 可转债换算' : 'SAFE & Note Simulator'}
             </h3>
-            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1 leading-relaxed">
+            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1.5 leading-relaxed">
               {language === 'fr' ? 'Post-Money vs Pre-Money et décotes' : language === 'zh' ? '对比Post-Money与Pre-Money上限及折扣' : 'Post vs Pre-Money SAFE, valuation caps & discounts'}
             </p>
           </div>
@@ -383,15 +415,15 @@ export const DashboardView: React.FC = () => {
               setSelectedSimulator('waterfall');
               setActiveTab('simulators');
             }}
-            className="p-5 rounded-2xl glass-panel glass-panel-hover cursor-pointer transition-all group"
+            className="p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer transition-all duration-300 group relative overflow-hidden hover:border-amber-500/50"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-inner">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3.5 group-hover:scale-105 transition-transform shadow-inner border border-amber-500/20">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-text-primary dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+            <h3 className="font-bold text-sm sm:text-base text-text-primary dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
               {language === 'fr' ? 'Cascade de Sortie' : language === 'zh' ? '清算优先权瀑布' : 'Exit Waterfall Lab'}
             </h3>
-            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1 leading-relaxed">
+            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1.5 leading-relaxed">
               {language === 'fr' ? 'Calculez les montants à 10 M$, 50 M$ et 200 M$' : language === 'zh' ? '测算不同估值下1x非参与与2x参与收益' : '1x vs 2x Participating liquidation preferences'}
             </p>
           </div>
@@ -399,20 +431,34 @@ export const DashboardView: React.FC = () => {
           {/* AI Investor Showdown */}
           <div
             onClick={() => setActiveTab('negotiation')}
-            className="p-5 rounded-2xl glass-panel glass-panel-hover cursor-pointer transition-all group"
+            className="p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer transition-all duration-300 group relative overflow-hidden hover:border-rose-500/50"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500/20 to-pink-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-inner">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-500/20 to-pink-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-3.5 group-hover:scale-105 transition-transform shadow-inner border border-rose-500/20">
               <Flame className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-text-primary dark:text-stone-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+            <h3 className="font-bold text-sm sm:text-base text-text-primary dark:text-stone-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
               {language === 'fr' ? 'Négociateur VC IA' : language === 'zh' ? 'AI投资人实战博弈' : 'AI Investor Showdown'}
             </h3>
-            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1 leading-relaxed">
+            <p className="text-xs text-text-secondary dark:text-stone-400 mt-1.5 leading-relaxed">
               {language === 'fr' ? 'Affrontez un associé impitoyable en direct' : language === 'zh' ? '直面严苛机构合伙人，实时交锋意向书条款' : 'Real-time term sheet counter-offers and live scoring'}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Featured Executive Course Categories Stack (重叠式卡片组件 · 课程分类) */}
+      <OverlappingCardStack
+        cards={DOMAIN_STACKS_DATA.courses.cards}
+        title={DOMAIN_STACKS_DATA.courses.title}
+        subtitle={DOMAIN_STACKS_DATA.courses.subtitle}
+        domainLabel={{ en: 'Course Categories Stack', fr: 'Filières de Cours Empilées', zh: '课程分类 · 重叠式卡组' }}
+        accentColor="emerald"
+        direction="horizontal"
+        overlapPercent={33}
+        onCardAction={(card) => {
+          setActiveTab('learn');
+        }}
+      />
 
       {/* Recommended Curriculum */}
       <div>
@@ -431,7 +477,7 @@ export const DashboardView: React.FC = () => {
           </div>
           <button
             onClick={() => setActiveTab('learn')}
-            className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center space-x-1"
+            className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center space-x-1 cursor-pointer"
           >
             <span>{language === 'fr' ? 'Tout le catalogue (100)' : language === 'zh' ? '全部100条目' : 'View All 100'}</span>
             <ChevronRight className="w-4 h-4" />
@@ -446,29 +492,29 @@ export const DashboardView: React.FC = () => {
                 setSelectedTermId(term.id);
                 setActiveTab('learn');
               }}
-              className="p-5 rounded-2xl glass-panel glass-panel-hover cursor-pointer transition-all flex flex-col justify-between"
+              className="p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer transition-all duration-300 flex flex-col justify-between group hover:border-amber-400/50"
             >
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-surface-muted/90 dark:bg-stone-800/90 text-stone-600 dark:text-stone-400 border border-border-main/50 dark:border-stone-700/50">
                     {term.category}
                   </span>
-                  <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
                     +75 XP
                   </span>
                 </div>
-                <h3 className="font-bold text-sm text-text-primary dark:text-stone-100">
+                <h3 className="font-heading font-bold text-sm sm:text-base text-text-primary dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">
                   {term.canonical}
                 </h3>
-                <p className="text-[11px] text-text-secondary dark:text-stone-400 mb-2">
+                <p className="text-[11px] text-text-secondary dark:text-stone-400 mb-2 font-mono">
                   {language === 'fr' ? term.fr : term.zh}
                 </p>
-                <p className="text-xs text-stone-600 dark:text-stone-300 line-clamp-2">
+                <p className="text-xs text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
                   {term.shortDef[language]}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-border-main dark:border-stone-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              <div className="mt-4 pt-3.5 border-t border-border-main/60 dark:border-stone-800/80 flex items-center justify-between text-xs font-semibold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
                 <span>{language === 'fr' ? 'Démarrer la leçon' : language === 'zh' ? '开始攻坚' : 'Start Lesson'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>

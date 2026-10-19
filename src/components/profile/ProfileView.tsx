@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Badge } from '../../types';
+import { OverlappingCardStack } from '../common/OverlappingCardStack';
+import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -194,53 +196,16 @@ export const ProfileView: React.FC = () => {
         </div>
       </div>
 
-      {/* Earned Badges & Fellowships */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
-          <Award className="w-4 h-4 text-amber-500" />
-          <span>
-            {language === 'fr' ? 'Badges & Distinctions Fiduciaires' : language === 'zh' ? '荣誉勋章与实战成就' : 'Badges & Fiduciary Distinctions'}
-          </span>
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {badges.map((b) => (
-            <div
-              key={b.id}
-              className={`p-5 rounded-2xl border transition-all flex items-start space-x-3.5 ${
-                b.unlocked
-                  ? 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800'
-                  : 'bg-surface-muted/40 dark:bg-stone-900/40 border-dashed border-stone-300 dark:border-stone-800 opacity-60'
-              }`}
-            >
-              <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  b.unlocked
-                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                    : 'bg-stone-200 dark:bg-stone-800 text-stone-400'
-                }`}
-              >
-                <Award className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <h4 className="font-bold text-xs text-text-primary dark:text-stone-100">
-                    {b.title[language]}
-                  </h4>
-                  {b.unlocked && (
-                    <span className="text-[10px] font-mono text-emerald-600 font-bold">
-                      ✓ UNLOCKED
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-text-secondary dark:text-stone-400 leading-relaxed">
-                  {b.description[language]}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Personal Profile Credentials & Badges Stack (重叠式卡片组件 · 个人资料) */}
+      <OverlappingCardStack
+        cards={DOMAIN_STACKS_DATA.profile.cards}
+        title={DOMAIN_STACKS_DATA.profile.title}
+        subtitle={DOMAIN_STACKS_DATA.profile.subtitle}
+        domainLabel={{ en: 'Profile Credentials Stack', fr: 'Titres & Badges Profil', zh: '个人资料 · 荣誉资质叠放卡组' }}
+        accentColor="purple"
+        direction="horizontal"
+        overlapPercent={33}
+      />
 
       {/* Global Application Settings */}
       <div className="p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs space-y-4 text-xs">

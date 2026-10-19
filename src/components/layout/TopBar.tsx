@@ -13,6 +13,7 @@ import {
   Moon,
   Sun,
   Layers,
+  Aperture,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -24,9 +25,14 @@ export const TopBar: React.FC<{ onOpenSidebar: () => void }> = ({ onOpenSidebar 
     setCurrency,
     progress,
     setIsSearchModalOpen,
+    activeTab,
     setActiveTab,
     darkMode,
     toggleDarkMode,
+    isOpeningPortalOpen,
+    setIsOpeningPortalOpen,
+    isCardStackModalOpen,
+    setIsCardStackModalOpen,
     isAudioMuted,
     toggleAudioMute,
     isSpeaking,
@@ -34,7 +40,7 @@ export const TopBar: React.FC<{ onOpenSidebar: () => void }> = ({ onOpenSidebar 
   } = useApp();
 
   return (
-    <header className="h-16 px-3 sm:px-6 md:px-8 border-b border-border-main/70 dark:border-stone-800/80 bg-surface-main/80 dark:bg-stone-900/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between">
+    <header className="h-16 px-3 sm:px-6 md:px-8 border-b border-border-main/70 dark:border-amber-400/15 bg-surface-main/85 dark:bg-[#111425]/85 backdrop-blur-2xl sticky top-0 z-30 flex items-center justify-between shadow-[0_4px_24px_-2px_rgba(0,0,0,0.1),0_1px_2px_rgba(229,184,66,0.06)]">
       {/* Left side: Mobile Brand & Hamburger & Search */}
       <div className="flex items-center space-x-2.5">
         <button
@@ -92,6 +98,30 @@ export const TopBar: React.FC<{ onOpenSidebar: () => void }> = ({ onOpenSidebar 
           <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
           <span className="hidden sm:inline font-medium text-[11px]">
             {language === 'fr' ? 'Sanctuaire Zen' : language === 'zh' ? '正念静心' : 'Mindful Zen'}
+          </span>
+        </button>
+
+        {/* Artistic Opening Portal Button */}
+        <button
+          onClick={() => setIsOpeningPortalOpen(true)}
+          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs transition-all active:scale-95 cursor-pointer shadow-xs"
+          title="Open Immersive Opening Art Portal (VENTURE MIND Knockout Cover)"
+        >
+          <Aperture className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
+          <span className="hidden sm:inline font-medium text-[11px]">
+            {language === 'fr' ? 'Portail d’Art' : language === 'zh' ? '艺术主页' : 'Art Portal'}
+          </span>
+        </button>
+
+        {/* Overlapping Stacks Deck Showcase Button */}
+        <button
+          onClick={() => setIsCardStackModalOpen(true)}
+          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 text-xs transition-all active:scale-95 cursor-pointer shadow-xs"
+          title="Open Overlapping Stacks Deck Showcase (Courses, Bookmarks, Vocabulary, Profile)"
+        >
+          <Layers className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="hidden sm:inline font-medium text-[11px]">
+            {language === 'fr' ? 'Cartes 1/3' : language === 'zh' ? '叠放卡组' : 'Stacks'}
           </span>
         </button>
 

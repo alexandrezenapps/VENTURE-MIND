@@ -7,13 +7,16 @@ import {
   Volume2,
   ArrowRight,
   BookOpen,
-  Sparkles,
   SlidersHorizontal,
+  Layers,
+  GraduationCap,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { termsData } from '../../data/termsData';
 import { Term, Category, Difficulty } from '../../types';
 import { TermDetailModal } from './TermDetailModal';
+import { OverlappingCardStack } from '../common/OverlappingCardStack';
+import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
 
 const CATEGORIES: { id: Category; label: { en: string; fr: string; zh: string } }[] = [
   { id: 'all', label: { en: 'All 100 Terms', fr: 'Tous les 100 termes', zh: '全部100条目' } },
@@ -43,6 +46,7 @@ export const LearnView: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | 'all'>('all');
   const [filterSavedOnly, setFilterSavedOnly] = useState(false);
   const [filterCompletedOnly, setFilterCompletedOnly] = useState(false);
+  const [activeLearnStack, setActiveLearnStack] = useState<'courses' | 'bookmarks' | 'vocabulary'>('courses');
 
   // Filtered terms
   const filteredTerms = useMemo(() => {
@@ -138,12 +142,78 @@ export const LearnView: React.FC = () => {
         </div>
       </div>
 
+      {/* Interactive Overlapping Stacks: 课程分类 / 学习收藏 / 词汇集 */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-1.5 p-1 rounded-2xl bg-surface-muted/90 dark:bg-stone-900 border border-border-main/70 dark:border-stone-800 text-xs">
+            <button
+              onClick={() => setActiveLearnStack('courses')}
+              className={`px-3 py-1.5 rounded-xl font-medium transition-all flex items-center space-x-1.5 cursor-pointer ${
+                activeLearnStack === 'courses'
+                  ? 'bg-emerald-600 text-white font-bold shadow-md'
+                  : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>
+                {language === 'fr' ? 'Filières de Cours' : language === 'zh' ? '课程分类叠放' : 'Course Tracks'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveLearnStack('bookmarks')}
+              className={`px-3 py-1.5 rounded-xl font-medium transition-all flex items-center space-x-1.5 cursor-pointer ${
+                activeLearnStack === 'bookmarks'
+                  ? 'bg-amber-500 text-stone-950 font-bold shadow-md'
+                  : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+              }`}
+            >
+              <Bookmark className="w-3.5 h-3.5" />
+              <span>
+                {language === 'fr' ? 'Favoris & Clauses' : language === 'zh' ? '学习收藏精选' : 'Bookmarks'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveLearnStack('vocabulary')}
+              className={`px-3 py-1.5 rounded-xl font-medium transition-all flex items-center space-x-1.5 cursor-pointer ${
+                activeLearnStack === 'vocabulary'
+                  ? 'bg-indigo-600 text-white font-bold shadow-md'
+                  : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>
+                {language === 'fr' ? 'Packs Vocabulaire' : language === 'zh' ? '词汇集叠放' : 'Vocab Sets'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <OverlappingCardStack
+          key={activeLearnStack}
+          cards={DOMAIN_STACKS_DATA[activeLearnStack].cards}
+          title={DOMAIN_STACKS_DATA[activeLearnStack].title}
+          subtitle={DOMAIN_STACKS_DATA[activeLearnStack].subtitle}
+          domainLabel={DOMAIN_STACKS_DATA[activeLearnStack].title}
+          accentColor={DOMAIN_STACKS_DATA[activeLearnStack].accent}
+          direction="horizontal"
+          overlapPercent={33}
+          onCardAction={(card) => {
+            // If user clicks a bookmarked clause, can also search for it
+            if (activeLearnStack === 'bookmarks' && card.title) {
+              setSearch(card.title.en);
+            }
+          }}
+        />
+      </div>
+
       {/* Filter and Search Bar */}
-      <div className="glass-panel p-4 sm:p-5 rounded-3xl space-y-3">
+      <div className="glass-panel border-sophisticated p-4 sm:p-5 rounded-3xl space-y-3.5 shadow-xl">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-text-secondary dark:text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-text-secondary dark:text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
@@ -155,7 +225,7 @@ export const LearnView: React.FC = () => {
                   ? '按英文术语、中文名称、ID或关键词检索...'
                   : 'Search by canonical term, translation, ID or keyword...'
               }
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-surface-muted dark:bg-stone-800 border border-border-main dark:border-stone-700 text-xs text-text-primary dark:text-stone-100 placeholder-text-secondary dark:placeholder-stone-500 focus:outline-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-surface-muted/90 dark:bg-stone-900/90 border border-border-main/80 dark:border-stone-700/80 text-xs text-text-primary dark:text-stone-100 placeholder-text-secondary dark:placeholder-stone-500 focus:outline-none focus:border-amber-400/80 transition-colors shadow-inner"
             />
           </div>
 
@@ -163,13 +233,13 @@ export const LearnView: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setFilterSavedOnly((prev) => !prev)}
-              className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95 ${
                 filterSavedOnly
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-surface-muted dark:bg-stone-800 text-text-secondary dark:text-stone-400 border-border-main dark:border-stone-700 hover:text-text-primary'
+                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-stone-950 font-bold border-amber-400 shadow-md shadow-amber-950/20'
+                  : 'glass-panel border-sophisticated text-text-secondary dark:text-stone-300 hover:text-amber-500 hover:border-amber-400/50'
               }`}
             >
-              <Bookmark className={`w-3.5 h-3.5 ${filterSavedOnly ? 'fill-white' : ''}`} />
+              <Bookmark className={`w-3.5 h-3.5 ${filterSavedOnly ? 'fill-stone-950' : ''}`} />
               <span>
                 {language === 'fr' ? 'Favoris' : language === 'zh' ? '收藏夹' : 'Saved'} ({progress.savedTermIds.length})
               </span>
@@ -177,10 +247,10 @@ export const LearnView: React.FC = () => {
 
             <button
               onClick={() => setFilterCompletedOnly((prev) => !prev)}
-              className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95 ${
                 filterCompletedOnly
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-surface-muted dark:bg-stone-800 text-text-secondary dark:text-stone-400 border-border-main dark:border-stone-700 hover:text-text-primary'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold border-emerald-400 shadow-md shadow-emerald-950/20'
+                  : 'glass-panel border-sophisticated text-text-secondary dark:text-stone-300 hover:text-emerald-500 hover:border-emerald-400/50'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -197,10 +267,10 @@ export const LearnView: React.FC = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-xl whitespace-nowrap font-medium transition-all cursor-pointer ${
                 selectedCategory === cat.id
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-surface-muted dark:bg-stone-800/80 text-text-secondary dark:text-stone-400 hover:text-text-primary hover:bg-stone-200 dark:hover:bg-stone-700'
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold shadow-xs'
+                  : 'bg-surface-muted/60 dark:bg-stone-800/60 border border-border-main/50 dark:border-stone-700/50 text-text-secondary dark:text-stone-400 hover:text-text-primary hover:border-amber-400/30'
               }`}
             >
               {cat.label[language]}
@@ -227,20 +297,25 @@ export const LearnView: React.FC = () => {
             <div
               key={term.id}
               onClick={() => setSelectedTermId(term.id)}
-              className={`p-5 rounded-3xl glass-panel glass-panel-hover cursor-pointer flex flex-col justify-between group ${
+              className={`p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer flex flex-col justify-between group transition-all duration-300 relative overflow-hidden ${
                 isCompleted
-                  ? 'border-emerald-500/40 dark:border-emerald-800/50'
+                  ? 'border-emerald-500/50 dark:border-emerald-400/40 bg-gradient-to-br from-emerald-500/10 via-surface-main/60 to-transparent'
+                  : isSaved
+                  ? 'border-amber-400/50 dark:border-amber-400/40 bg-gradient-to-br from-amber-500/10 via-surface-main/60 to-transparent'
                   : ''
               }`}
             >
+              {/* Subtle top-right golden accent light */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-400/10 to-transparent rounded-bl-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+
               <div>
                 {/* Micro Header */}
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-mono text-text-secondary dark:text-stone-400">
                       #{term.id}
                     </span>
-                    <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300">
+                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-surface-muted/90 dark:bg-stone-800/90 text-stone-600 dark:text-stone-300 border border-border-main/50 dark:border-stone-700/50">
                       {term.category}
                     </span>
                   </div>
@@ -248,26 +323,26 @@ export const LearnView: React.FC = () => {
                   <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => speak(`${term.canonical}. ${term.shortDef[language]}`, language)}
-                      className="p-1 rounded-md text-text-secondary hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                      className="p-1.5 rounded-xl text-text-secondary hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
                       title="Pronounce"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => toggleSaveTerm(term.id)}
-                      className="p-1 rounded-md text-text-secondary hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                      className="p-1.5 rounded-xl text-text-secondary hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
                       title="Bookmark"
                     >
-                      <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-emerald-600 text-emerald-600' : ''}`} />
+                      <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}`} />
                     </button>
                   </div>
                 </div>
 
                 {/* Canonical & Translation */}
-                <h3 className="font-bold text-base text-text-primary dark:text-stone-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="font-heading font-bold text-base sm:text-lg text-text-primary dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">
                   {term.canonical}
                 </h3>
-                <p className="text-xs text-text-secondary dark:text-stone-400 font-mono mt-0.5 mb-2">
+                <p className="text-xs text-text-secondary dark:text-stone-400 font-mono mt-0.5 mb-2.5">
                   {language === 'fr' ? term.fr : term.zh}
                 </p>
 
@@ -278,11 +353,11 @@ export const LearnView: React.FC = () => {
               </div>
 
               {/* Card Footer */}
-              <div className="mt-4 pt-3 border-t border-border-main dark:border-stone-800 flex items-center justify-between text-xs">
+              <div className="mt-5 pt-3.5 border-t border-border-main/60 dark:border-stone-800/80 flex items-center justify-between text-xs">
                 {isCompleted ? (
                   <span className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-medium">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{language === 'fr' ? 'Validé' : language === 'zh' ? '已研习' : 'Mastered'}</span>
+                    <span>{language === 'fr' ? 'Validé' : language === 'zh' ? '已掌握' : 'Mastered'}</span>
                   </span>
                 ) : (
                   <span className="text-[11px] font-mono text-text-secondary dark:text-stone-400">
@@ -290,7 +365,7 @@ export const LearnView: React.FC = () => {
                   </span>
                 )}
 
-                <div className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-semibold group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center space-x-1 text-amber-600 dark:text-amber-400 font-semibold group-hover:translate-x-1 transition-transform">
                   <span>{language === 'fr' ? 'Leçon' : language === 'zh' ? '精讲' : 'Deep Lesson'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>

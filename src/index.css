@@ -25,26 +25,26 @@
   }
 
   .dark {
-    --bg-main: #0B0C10;
-    --surface-main: #13141B;
-    --surface-muted: #1B1D26;
-    --surface-low: #0F1015;
-    --surface-high: #242735;
-    --text-primary: #F8F9FC;
-    --text-secondary: #9499AA;
-    --border-main: #232636;
+    --bg-main: #0C0E17;
+    --surface-main: #131726;
+    --surface-muted: #1B2033;
+    --surface-low: #0F121C;
+    --surface-high: #242B44;
+    --text-primary: #F9FAFD;
+    --text-secondary: #9DA3B8;
+    --border-main: #252B42;
     
-    /* Luxury Dark Glows */
-    --gold: #D4AF37;
-    --gold-light: #F3E5AB;
-    --gold-dark: #AA820A;
+    /* Luxury Luminous & Haute Horlogerie Accents */
+    --gold: #E5B842;
+    --gold-light: #FCE8A6;
+    --gold-dark: #BA8A1E;
     --emerald-gem: #10B981;
     --emerald-glow: #34D399;
-    --amethyst: #8B5CF6;
+    --amethyst: #9061F9;
     --amethyst-glow: #C4B5FD;
     --sapphire: #3B82F6;
-    --ruby: #F43F5E;
-    --amber-sunset: #F59E0B;
+    --ruby: #FB7185;
+    --amber-sunset: #FBBF24;
   }
 
   body {
@@ -160,21 +160,38 @@
   animation: aurora-shift 12s ease infinite;
 }
 
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
 /* Glassmorphism Luxury Utilities & Sophisticated Borders */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.76);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(225, 222, 212, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.05), 0 2px 6px 0 rgba(212, 175, 55, 0.06);
 }
 
 .dark .glass-panel {
-  background: rgba(19, 20, 27, 0.72);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: linear-gradient(145deg, rgba(23, 27, 42, 0.88) 0%, rgba(16, 19, 30, 0.92) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(229, 184, 66, 0.22);
+  box-shadow: 0 12px 38px -6px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 0 24px rgba(229, 184, 66, 0.08);
+}
+
+.border-sophisticated {
+  border: 1px solid rgba(212, 175, 55, 0.28);
+}
+.dark .border-sophisticated {
+  border: 1px solid rgba(229, 184, 66, 0.26);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 16px rgba(229, 184, 66, 0.06);
 }
 
 .glass-panel-hover {
@@ -182,12 +199,12 @@
 }
 .glass-panel-hover:hover {
   transform: translateY(-2px);
-  border-color: rgba(212, 175, 55, 0.45);
-  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.07), 0 0 16px rgba(212, 175, 55, 0.12);
+  border-color: rgba(229, 184, 66, 0.6);
+  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.1), 0 0 26px rgba(229, 184, 66, 0.22);
 }
 .dark .glass-panel-hover:hover {
-  border-color: rgba(212, 175, 55, 0.38);
-  box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.55), 0 0 22px rgba(212, 175, 55, 0.14);
+  border-color: rgba(229, 184, 66, 0.52);
+  box-shadow: 0 18px 44px -4px rgba(0, 0, 0, 0.65), 0 0 30px rgba(229, 184, 66, 0.26);
 }
 
 /* Touch friendly mobile scrollbar */

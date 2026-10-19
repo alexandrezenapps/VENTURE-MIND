@@ -12,11 +12,21 @@ import {
   X,
   Sparkles,
   ChevronUp,
+  Aperture,
+  Layers,
 } from 'lucide-react';
 import { useApp, NavTab, SimulatorType } from '../../context/AppContext';
 
 export const BottomNav: React.FC = () => {
-  const { activeTab, setActiveTab, setSelectedSimulator, language, progress } = useApp();
+  const {
+    activeTab,
+    setActiveTab,
+    setSelectedSimulator,
+    language,
+    progress,
+    setIsOpeningPortalOpen,
+    setIsCardStackModalOpen,
+  } = useApp();
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   const mainTabs = [
@@ -124,6 +134,64 @@ export const BottomNav: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-2.5">
+              {/* Art Portal Opening Cover Button */}
+              <button
+                onClick={() => {
+                  setIsOpeningPortalOpen(true);
+                  setIsMoreMenuOpen(false);
+                }}
+                className="w-full p-3.5 rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/20 via-purple-500/15 to-amber-500/10 text-left flex items-center space-x-3.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-500/25 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-400">
+                  <Aperture className="w-5 h-5 animate-spin-slow" />
+                </div>
+                <div className="flex-1 truncate">
+                  <div className="font-bold text-xs text-amber-300 flex items-center space-x-1.5">
+                    <span>
+                      {language === 'fr'
+                        ? 'Portail d’Art & Ouverture'
+                        : language === 'zh'
+                        ? '镂空大标题 · 艺术主页'
+                        : 'Knockout Title Art Portal'}
+                    </span>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  </div>
+                  <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
+                    {language === 'zh'
+                      ? 'VENTURE MIND 全屏手势缩放'
+                      : 'VENTURE MIND gesture zoom & presets'}
+                  </div>
+                </div>
+              </button>
+
+              {/* Overlapping Stacks Deck Button */}
+              <button
+                onClick={() => {
+                  setIsCardStackModalOpen(true);
+                  setIsMoreMenuOpen(false);
+                }}
+                className="w-full p-3.5 rounded-2xl border border-indigo-500/40 bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-indigo-500/10 text-left flex items-center space-x-3.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/25 border border-indigo-500/40 flex items-center justify-center shrink-0 text-indigo-400">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div className="flex-1 truncate">
+                  <div className="font-bold text-xs text-indigo-300 flex items-center space-x-1.5">
+                    <span>
+                      {language === 'fr'
+                        ? 'Composant de Cartes Empilées'
+                        : language === 'zh'
+                        ? '重叠式卡组 · 四大场景'
+                        : 'Overlapping Card Stacks'}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
+                    {language === 'zh'
+                      ? '三分之一覆盖 · 课程/收藏/词汇/资料'
+                      : '1/3 Stack • Courses, Bookmarks, Vocab, Profile'}
+                  </div>
+                </div>
+              </button>
               {moreItems.map((item) => {
                 const Icon = item.icon;
                 const isSelected = activeTab === item.id;
@@ -164,7 +232,7 @@ export const BottomNav: React.FC = () => {
 
       {/* Floating Glass Bottom Nav */}
       <nav className="lg:hidden fixed bottom-3 left-3 right-3 z-40">
-        <div className="mx-auto max-w-md bg-stone-900/90 dark:bg-stone-950/90 backdrop-blur-2xl border border-amber-500/20 dark:border-amber-400/20 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.55)] p-1.5 flex items-center justify-around">
+        <div className="mx-auto max-w-md bg-[#131626]/90 dark:bg-[#0D101C]/92 backdrop-blur-2xl border border-amber-400/35 dark:border-amber-400/25 rounded-2xl shadow-[0_12px_44px_rgba(0,0,0,0.65),0_0_20px_rgba(229,184,66,0.12)] p-1.5 flex items-center justify-around">
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

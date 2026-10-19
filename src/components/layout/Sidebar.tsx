@@ -17,6 +17,7 @@ import {
   Layers,
   ChevronRight,
   Sparkles,
+  Aperture,
 } from 'lucide-react';
 import { useApp, NavTab } from '../../context/AppContext';
 
@@ -38,6 +39,10 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     progress,
     darkMode,
     toggleDarkMode,
+    isOpeningPortalOpen,
+    setIsOpeningPortalOpen,
+    isCardStackModalOpen,
+    setIsCardStackModalOpen,
     isAudioMuted,
     toggleAudioMute,
     isSpeaking,
@@ -112,12 +117,12 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-surface-main dark:bg-stone-900 border-r border-border-main dark:border-stone-800 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-surface-main dark:bg-[#101323] border-r border-border-main dark:border-amber-400/15 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-[4px_0_24px_rgba(0,0,0,0.2)] ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 px-5 border-b border-border-main dark:border-stone-800 flex items-center justify-between">
+        <div className="h-16 px-5 border-b border-border-main dark:border-amber-400/15 flex items-center justify-between">
           <div
             className="flex items-center space-x-2.5 cursor-pointer"
             onClick={() => {
@@ -218,6 +223,64 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             );
           })}
         </nav>
+
+        {/* Artistic Knockout Portal Quick Launcher */}
+        <div className="px-3 py-2">
+          <button
+            onClick={() => {
+              setIsOpeningPortalOpen(true);
+              onClose();
+            }}
+            className="w-full flex items-center justify-between p-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-purple-500/10 to-amber-500/10 border border-amber-500/30 text-amber-400 hover:border-amber-400 text-xs font-semibold transition-all active:scale-95 group shadow-xs cursor-pointer"
+          >
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 group-hover:scale-110 transition-transform">
+                <Aperture className="w-4 h-4 animate-spin-slow" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-stone-100 group-hover:text-amber-300">
+                  {language === 'fr'
+                    ? 'Portail d’Art'
+                    : language === 'zh'
+                    ? '艺术主页 · 镂空开场'
+                    : 'Art Portal Opening'}
+                </div>
+                <div className="text-[10px] text-stone-400 font-mono">
+                  {language === 'zh' ? '全屏缩放 · 城市艺术' : 'Knockout Zoom Cover'}
+                </div>
+              </div>
+            </div>
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:animate-ping" />
+          </button>
+
+          {/* Overlapping Stacks Deck Showcase Quick Launcher */}
+          <button
+            onClick={() => {
+              setIsCardStackModalOpen(true);
+              onClose();
+            }}
+            className="w-full mt-2 flex items-center justify-between p-2.5 rounded-2xl bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:border-indigo-400 text-xs font-semibold transition-all active:scale-95 group shadow-xs cursor-pointer"
+          >
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 group-hover:scale-110 transition-transform">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-stone-100 group-hover:text-indigo-300">
+                  {language === 'fr'
+                    ? 'Cartes Empilées 1/3'
+                    : language === 'zh'
+                    ? '重叠式卡组 · 四大场景'
+                    : 'Overlapping Card Stacks'}
+                </div>
+                <div className="text-[10px] text-stone-400 font-mono">
+                  {language === 'zh' ? '三分之一覆盖 · 依次展开' : '1/3 Stack • +N Remainder'}
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </div>
 
         {/* Global Controls & Guardrails Disclaimer */}
         <div className="p-3 border-t border-border-main dark:border-stone-800 space-y-2">

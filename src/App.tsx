@@ -19,16 +19,26 @@ import { TermSheetAnalyzerView } from './components/termsheet/TermSheetAnalyzerV
 import { FinalExamView } from './components/exam/FinalExamView';
 import { ProfileView } from './components/profile/ProfileView';
 import { MindfulnessSanctuaryView } from './components/mindfulness/MindfulnessSanctuaryView';
+import { ArtisticOpeningPortal } from './components/opening/ArtisticOpeningPortal';
+import { OverlappingStackShowcase } from './components/common/OverlappingStackShowcase';
 
 const MainLayout: React.FC = () => {
-  const { activeTab } = useApp();
+  const {
+    activeTab,
+    isOpeningPortalOpen,
+    setIsOpeningPortalOpen,
+    isCardStackModalOpen,
+    setIsCardStackModalOpen,
+    language,
+  } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen bg-bg-main dark:bg-stone-950 text-text-primary dark:text-stone-100 flex font-sans antialiased selection:bg-amber-500/20 selection:text-amber-800 overflow-x-hidden">
-      {/* Artistic Ambient Background Glows */}
-      <div className="fixed top-0 right-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-purple-600/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10 animate-aurora" />
-      <div className="fixed bottom-0 left-1/3 w-[35rem] h-[35rem] bg-gradient-to-tr from-emerald-600/10 via-teal-500/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+    <div className="relative min-h-screen bg-bg-main dark:bg-[#0C0E17] text-text-primary dark:text-stone-100 flex font-sans antialiased selection:bg-amber-500/25 selection:text-amber-300 overflow-x-hidden">
+      {/* High-Luminance Artistic Ambient Glows & Chromatic Light Meshes */}
+      <div className="fixed top-0 right-1/4 w-[45rem] h-[45rem] bg-gradient-to-br from-amber-400/20 via-purple-600/18 to-transparent rounded-full blur-[110px] pointer-events-none -z-10 animate-aurora" />
+      <div className="fixed bottom-0 left-1/4 w-[42rem] h-[42rem] bg-gradient-to-tr from-emerald-500/18 via-teal-500/16 to-indigo-600/18 rounded-full blur-[110px] pointer-events-none -z-10" />
+      <div className="fixed top-1/3 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-radial from-amber-500/10 via-purple-500/5 to-transparent rounded-full blur-[90px] pointer-events-none -z-10" />
 
       {/* Desktop Sidebar (hidden on mobile) */}
       <Sidebar
@@ -61,6 +71,21 @@ const MainLayout: React.FC = () => {
 
       {/* Global Trilingual Search Modal */}
       <SearchModal />
+
+      {/* Multi-Domain Overlapping Stack Modal */}
+      {isCardStackModalOpen && (
+        <OverlappingStackShowcase
+          isModal={true}
+          onClose={() => setIsCardStackModalOpen(false)}
+        />
+      )}
+
+      {/* Immersive Knockout Opening Cover Portal */}
+      <ArtisticOpeningPortal
+        isOpen={isOpeningPortalOpen}
+        onEnterApp={() => setIsOpeningPortalOpen(false)}
+        language={language}
+      />
     </div>
   );
 };
