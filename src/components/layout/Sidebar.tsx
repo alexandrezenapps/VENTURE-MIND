@@ -69,9 +69,9 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     },
     {
       id: 'psychology',
-      label: { en: 'Psychology Radar', fr: 'Radar Psychologique', zh: '心理学与博弈' },
+      label: { en: 'Psychology & 12 Games', fr: 'Psychologie & 12 Jeux', zh: '心理学与12项心智游戏' },
       icon: Brain,
-      badge: '100',
+      badge: '12 Games',
     },
     {
       id: 'games',

@@ -50,7 +50,7 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'psychology' as NavTab,
-      label: { en: 'Mind', fr: 'Radar', zh: '心法' },
+      label: { en: 'Mind Games', fr: 'Jeux Psy', zh: '心智' },
       icon: Brain,
     },
     {

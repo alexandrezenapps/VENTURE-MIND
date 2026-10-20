@@ -138,3 +138,20 @@ export interface UserProgress {
     decisionQuality: number;
   };
 }
+
+export type PsychologyGameDomain = 'attention' | 'brain' | 'resilience';
+
+export interface PsychologyGameMeta {
+  id: string;
+  number: number;
+  title: LocalizedString;
+  subtitle: LocalizedString;
+  domain: PsychologyGameDomain;
+  difficulty: Difficulty;
+  scientificOrigin: LocalizedString;
+  targetBrainArea: LocalizedString;
+  cognitiveBenefit: LocalizedString;
+  instructions: LocalizedString;
+  bestScoreKey: string;
+  iconName: string;
+}

@@ -1,0 +1,505 @@
+import { PsychologyGameMeta } from '../types';
+
+export const psychologyDomainsMeta = {
+  attention: {
+    name: {
+      en: 'Executive Attention & Focus',
+      fr: 'Attention Exécutive & Concentration',
+      zh: '高阶注意力与专注定力',
+    },
+    description: {
+      en: 'Train selective filtering, peripheral span, and impulse braking mechanisms.',
+      fr: 'Entraînez le filtrage sélectif, le champ périphérique et le freinage d’impulsion.',
+      zh: '针对注意力涣散与杂念干扰，重塑前额叶专注聚光灯、抑制冲动反应与动作刹车。',
+    },
+    color: 'from-amber-500/20 to-orange-500/10 border-amber-500/30 text-amber-500',
+    accentColor: '#F59E0B',
+  },
+  brain: {
+    name: {
+      en: 'Neuro-Agility & Cognitive Fluidity',
+      fr: 'Neuro-Agilité & Fluidité Cognitive',
+      zh: '极速动脑与工作记忆',
+    },
+    description: {
+      en: 'Expand working memory buffer, mental schema switching, and rational attribution.',
+      fr: 'Développez la mémoire de travail, le changement de schéma mental et l’attribution rationnelle.',
+      zh: '突破短期工作记忆瓶颈，激活背外侧前额叶，训练多线并行的思维柔韧性与规则演绎。',
+    },
+    color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/30 text-purple-400',
+    accentColor: '#A855F7',
+  },
+  resilience: {
+    name: {
+      en: 'Psychological Resilience & Composure',
+      fr: 'Résilience Psychologique & Sang-Froid',
+      zh: '心理素质与高压定力',
+    },
+    description: {
+      en: 'Regulate autonomic arousal, overcome loss aversion, and master intuitive risk markers.',
+      fr: 'Régulez l’excitation autonome, surmontez l’aversion à la perte et maîtrisez les marqueurs de risque.',
+      zh: '面对突发变故、沉没成本与欲望诱惑，调谐副交感迷走神经，铸就临危不乱的心理护城河。',
+    },
+    color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-400',
+    accentColor: '#10B981',
+  },
+};
+
+export const psychologyGamesList: PsychologyGameMeta[] = [
+  {
+    id: 'psy_stroop',
+    number: 1,
+    title: {
+      en: 'Stroop Inhibitory Control',
+      fr: 'Inhibition Stroop Cérébrale',
+      zh: '斯特鲁普抗干扰抑制',
+    },
+    subtitle: {
+      en: 'Ink color vs semantic word interference suppression under time pressure.',
+      fr: 'Suppression de l’interférence sémantique mot-couleur sous pression de temps.',
+      zh: '字义与墨水色彩剧烈冲突下的执行抑制与抗干扰专注测验。',
+    },
+    domain: 'attention',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Stroop Effect (J. Ridley Stroop, 1935)',
+      fr: 'Effet Stroop (J. Ridley Stroop, 1935)',
+      zh: '斯特鲁普效应实验 (J. Ridley Stroop, 1935)',
+    },
+    targetBrainArea: {
+      en: 'Anterior Cingulate Cortex (ACC) & Dorsolateral PFC',
+      fr: 'Cortex Cingulaire Antérieur (CCA) & CPF Dorsolatéral',
+      zh: '前扣带回皮层 (ACC) 与背外侧前额叶',
+    },
+    cognitiveBenefit: {
+      en: 'Suppresses subconscious impulsive reactions, elevates focus discipline by 38%, and sharpens selective attention.',
+      fr: 'Supprime les réactions impulsives, augmente la discipline d’attention de 38 % et affine la sélectivité.',
+      zh: '压制下意识冲动误判，提升抗干扰专注力38%，强化高压下的认知筛选精确度。',
+    },
+    instructions: {
+      en: 'Tap the button matching the INK COLOR of the word, NOT what the word spells! Race against the 30-second clock.',
+      fr: 'Touchez le bouton correspondant à la COULEUR DE L’ENCRE, et non au mot écrit ! Défi de 30 secondes.',
+      zh: '在30秒内，点击代表【文字墨水颜色】的按键，绝对不要被文字本身含义所误导！',
+    },
+    bestScoreKey: 'psy_stroop_score',
+    iconName: 'Eye',
+  },
+  {
+    id: 'psy_dual_nback',
+    number: 2,
+    title: {
+      en: 'Dual N-Back Working Memory',
+      fr: 'Double N-Back Neuro-Mémoire',
+      zh: '双重 N-Back 智力跃迁',
+    },
+    subtitle: {
+      en: 'Simultaneous spatial coordinate & acoustic-symbol matching from N turns ago.',
+      fr: 'Coordination spatiale et auditive simultanée à N étapes en arrière.',
+      zh: '空间网格坐标与声学符文双流记忆，神经科学公认流体智力训练金标准。',
+    },
+    domain: 'brain',
+    difficulty: 'advanced',
+    scientificOrigin: {
+      en: 'Dual N-Back Paradigm (Jaeggi, Buschkuehl et al., PNAS 2008)',
+      fr: 'Paradigme Dual N-Back (Jaeggi, Buschkuehl et al., PNAS 2008)',
+      zh: '双重 N-Back 流体智力范式 (Jaeggi et al., PNAS 2008)',
+    },
+    targetBrainArea: {
+      en: 'Parieto-Frontal Integration Theory (P-FIT) Network',
+      fr: 'Réseau d’Intégration Pariéto-Frontale (P-FIT)',
+      zh: '顶额网络 (P-FIT) 与神经元突触重塑',
+    },
+    cognitiveBenefit: {
+      en: 'Proven to expand working memory buffer capacity and enhance fluid reasoning in complex multi-tasking.',
+      fr: 'Prouvé pour étendre la mémoire de travail et améliorer le raisonnement fluide multitâche.',
+      zh: '科学验证可扩展短期工作记忆容量，显著提升高维多任务并行的流体推理速度。',
+    },
+    instructions: {
+      en: 'Watch the obsidian grid and rune letter. Signal if current position or rune matches the one from N steps back!',
+      fr: 'Observez la grille et la rune. Indiquez si la position ou la lettre correspond à celle d’il y a N étapes !',
+      zh: '观察3x3网格位置与符文音频。当当前位置或字母与前 N 步完全一致时迅速按下匹配！',
+    },
+    bestScoreKey: 'psy_dual_nback_score',
+    iconName: 'Brain',
+  },
+  {
+    id: 'psy_schulte',
+    number: 3,
+    title: {
+      en: 'Schulte Attention Matrix',
+      fr: 'Matrice d’Attention de Schulte',
+      zh: '舒尔特方格注意力聚光灯',
+    },
+    subtitle: {
+      en: 'Rapid peripheral visual tracking and sustained unbroken attentional lock.',
+      fr: 'Balayage visuel périphérique rapide et verrouillage d’attention continue.',
+      zh: '周边视野极限展开与视觉专注点无缝锁定的神经速度挑战。',
+    },
+    domain: 'attention',
+    difficulty: 'beginner',
+    scientificOrigin: {
+      en: 'Walter Schulte Diagnostic Matrix (Psychiatry & Aviation Training, 1962)',
+      fr: 'Matrice Diagnostique de Walter Schulte (Psychiatrie & Aviation, 1962)',
+      zh: '舒尔特方格注意力测量表 (Walter Schulte, 1962)',
+    },
+    targetBrainArea: {
+      en: 'Frontal Eye Fields (FEF) & Superior Colliculus',
+      fr: 'Champs Oculaires Frontaux (FEF) & Colliculus Supérieur',
+      zh: '额叶眼动区 (FEF) 与上丘脑视觉中枢',
+    },
+    cognitiveBenefit: {
+      en: 'Eliminates attention flicker, widens angle of clear vision, and cuts visual search latency.',
+      fr: 'Élimine le scintillement attentionnel, élargit le champ visuel et réduit la latence de recherche.',
+      zh: '消除注意力漂移与思维走神，拓宽视神经余光捕捉角，大幅降低信息搜寻耗时。',
+    },
+    instructions: {
+      en: 'Fixate near the center and locate numbers from 1 to 16 in strict ascending order as fast as possible.',
+      fr: 'Fixez le centre et touchez les nombres de 1 à 16 dans l’ordre croissant le plus vite possible.',
+      zh: '视线聚焦于网格核心，用余光快速搜寻并依序点击数字 1 至 16，挑战极致反应秒数。',
+    },
+    bestScoreKey: 'psy_schulte_score',
+    iconName: 'Target',
+  },
+  {
+    id: 'psy_micro_expression',
+    number: 4,
+    title: {
+      en: 'Micro-Expression Empathy',
+      fr: 'Détection de Micro-Expressions',
+      zh: '微表情共情与潜意识洞察',
+    },
+    subtitle: {
+      en: 'Sub-second involuntary muscle cue identification in high-stakes human encounters.',
+      fr: 'Identification en fraction de seconde des indices musculaires involontaires.',
+      zh: '捕捉0.2秒内转瞬即逝的面部潜意识微动作，洞悉谈判桌隐秘心理动向。',
+    },
+    domain: 'brain',
+    difficulty: 'advanced',
+    scientificOrigin: {
+      en: 'Facial Action Coding System (Paul Ekman & Wallace Friesen, 1978)',
+      fr: 'Système de Codage des Actions Faciales (FACS - Paul Ekman, 1978)',
+      zh: '面部动作编码系统 (FACS - Paul Ekman, 1978)',
+    },
+    targetBrainArea: {
+      en: 'Fusiform Face Area (FFA), Amygdala & Mirror Neuron System',
+      fr: 'Aire Fusiforme des Visages (FFA), Amygdale & Neurones Miroirs',
+      zh: '梭状回面孔区 (FFA)、杏仁核与镜像神经元系统',
+    },
+    cognitiveBenefit: {
+      en: 'Enables instant detection of hidden anxiety, false poker faces, and suppressed contempt during deal talks.',
+      fr: 'Permet la détection instantanée de l’anxiété masquée, des bluffs et du mépris refoulé.',
+      zh: '秒级破译掩饰性假笑、微秒级冷眼、隐性焦虑与算计企图，极大强化社交共情雷达。',
+    },
+    instructions: {
+      en: 'Examine the face before and after the 300ms flash. Select the genuine subconscious emotion behind the mask.',
+      fr: 'Observez le visage avant/après l’éclair de 300 ms. Identifiez l’émotion réelle sous le masque.',
+      zh: '在300毫秒微闪后，观察眼角、眉心与嘴角微肌肉特征，准确找出其隐藏的真实心理状态。',
+    },
+    bestScoreKey: 'psy_micro_expression_score',
+    iconName: 'Smile',
+  },
+  {
+    id: 'psy_heartbeat',
+    number: 5,
+    title: {
+      en: 'Vagus Nerve Bio-Coherence',
+      fr: 'Cohérence Vagale Sous Pression',
+      zh: '极压心跳迷走神经调谐',
+    },
+    subtitle: {
+      en: 'Autonomic regulation and heart rate variability (HRV) stabilization during shock.',
+      fr: 'Régulation autonome et stabilisation de la variabilité cardiaque lors de chocs.',
+      zh: '突发黑天鹅高压冲击下的副交感神经自主调谐与呼吸心率同频训练。',
+    },
+    domain: 'resilience',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Polyvagal Theory (Stephen Porges, 1994) & Resonance Frequency Biofeedback',
+      fr: 'Théorie Polyvagale (Stephen Porges, 1994) & Biofeedback de Fréquence',
+      zh: '多重迷走神经理论 (Stephen Porges, 1994) 与心率变异性生物反馈',
+    },
+    targetBrainArea: {
+      en: 'Vagus Nerve (Cranial Nerve X) & Ventromedial Prefrontal Cortex',
+      fr: 'Nerf Vague (Paire X) & Cortex Préfrontal Ventromédian',
+      zh: '迷走神经通路 (第X对脑神经) 与腹内侧前额叶',
+    },
+    cognitiveBenefit: {
+      en: 'Lowers fight-or-flight cortisol release in seconds, returning executive control from amygdala panic to calm logic.',
+      fr: 'Abaisse le pic de cortisol en quelques secondes, rétablissant le contrôle logique préfrontal.',
+      zh: '在数秒内切断杏仁核应激恐慌，压低皮质醇激增，恢复大脑高阶战略理性。',
+    },
+    instructions: {
+      en: 'Sudden crisis shocks will spike your heart rate. Follow the breathing orb and tap on harmonic crests to drop BPM back to 65.',
+      fr: 'Les chocs feront monter le pouls. Suivez l’orbe et touchez les crêtes pour ramener le rythme à 65 BPM.',
+      zh: '突发变故将触发心率骤升（130+ BPM）。跟随金色呼吸引导球平稳吐纳，在脉冲峰值敲击以恢复绿区心流。',
+    },
+    bestScoreKey: 'psy_heartbeat_score',
+    iconName: 'HeartPulse',
+  },
+  {
+    id: 'psy_marshmallow',
+    number: 6,
+    title: {
+      en: 'Marshmallow Delay Discounting',
+      fr: 'Contrôle de l’Impulsion Temporelle',
+      zh: '棉花糖延迟满足意志力',
+    },
+    subtitle: {
+      en: 'Long-term strategic compounding vs high-temptation premature cash-out.',
+      fr: 'Capitalisation stratégique à long terme contre encaissement hâtif tentant.',
+      zh: '对抗即时蝇头小利的躁动，守候指数级超额复利的意志力抗诱惑试炼。',
+    },
+    domain: 'resilience',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Stanford Marshmallow Experiment (Walter Mischel, 1972) & Hyperbolic Discounting',
+      fr: 'Expérience du Marshmallow (Walter Mischel, 1972) & Actualisation Hyperbolique',
+      zh: '斯坦福棉花糖实验 (Walter Mischel, 1972) 与双曲贴现理论',
+    },
+    targetBrainArea: {
+      en: 'Ventromedial Striatum vs Lateral Prefrontal Cortex',
+      fr: 'Striatum Ventral vs Cortex Préfrontal Latéral',
+      zh: '腹侧纹状体多巴胺奖赏回路与外侧前额叶意志中枢',
+    },
+    cognitiveBenefit: {
+      en: 'Trains cognitive self-mastery against short-term greed, elevating patient capital compounding discipline.',
+      fr: 'Entraîne la maîtrise face à l’appât du gain immédiat, renforçant la patience stratégique.',
+      zh: '重塑多巴胺奖赏耐心，克制早期草率落袋与恐慌离场心理，建立长期主义意志护城河。',
+    },
+    instructions: {
+      en: 'Hold the vault as the multiplier climbs (up to 25x). Tempting baits will try to lure you out. Time the optimal harvest!',
+      fr: 'Conservez le coffre pendant la montée du multiplicateur. Résistez aux appâts et choisissez le moment idéal !',
+      zh: '蓄力仓乘数每秒指数倍增（最高25倍）。抵御中途弹出的诱惑诱饵，在风险与极致回报平衡点从容收割！',
+    },
+    bestScoreKey: 'psy_marshmallow_score',
+    iconName: 'Hourglass',
+  },
+  {
+    id: 'psy_cognitive_reframe',
+    number: 7,
+    title: {
+      en: 'Cognitive Reframing Alchemy',
+      fr: 'Alchimie de Recadrage Cognitif',
+      zh: '认知重构消极破壁术',
+    },
+    subtitle: {
+      en: 'Deconstruct automatic catastrophic distortions into actionable stoic sovereignty.',
+      fr: 'Déconstruisez les distorsions catastrophiques en clarté stoïcienne actionnable.',
+      zh: '破除灾难化与以偏概全的自动负性思维，重构高掌控度的斯多葛认知护盾。',
+    },
+    domain: 'brain',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Cognitive Behavioral Therapy (Aaron Beck, 1967) & REBT (Albert Ellis)',
+      fr: 'Thérapie Cognitivo-Comportementale (Aaron Beck, 1967) & TCC Émotionnelle',
+      zh: '认知行为疗法 (Aaron Beck, 1967) 与理性情绪行为疗法 (Albert Ellis)',
+    },
+    targetBrainArea: {
+      en: 'Medial Prefrontal Cortex & Amygdala Down-Regulation',
+      fr: 'Cortex Préfrontal Médian & Désactivation de l’Amygdale',
+      zh: '内侧前额叶对杏仁核负面情绪回路的自上而下抑制',
+    },
+    cognitiveBenefit: {
+      en: 'Instantly neutralizes victimhood, converts negotiation deadlocks into leverage, and strengthens mental fortitude.',
+      fr: 'Neutralise l’impuissance apprise, transforme les échecs en leviers et fortifie la lucidité.',
+      zh: '击破“习得性无助”与焦虑内耗，将谈判碰壁与挫折转化为高维策略进攻支点。',
+    },
+    instructions: {
+      en: 'Diagnose the cognitive trap (Catastrophizing, All-or-Nothing, Personalization), then select the optimal sovereign frame.',
+      fr: 'Diagnostiquez le piège cognitif, puis sélectionnez le recadrage stoïque optimal.',
+      zh: '审查突发挫折中的认知偏差陷阱（灾难化、全或无、过度归因），在倒计时内挑选最具掌控力的重构方案。',
+    },
+    bestScoreKey: 'psy_cognitive_reframe_score',
+    iconName: 'ShieldAlert',
+  },
+  {
+    id: 'psy_iowa_gambling',
+    number: 8,
+    title: {
+      en: 'Iowa Somatic Risk Intuition',
+      fr: 'Intuition du Risque Somatique d’Iowa',
+      zh: '爱荷华决策与风险直觉',
+    },
+    subtitle: {
+      en: 'Unconscious gut intuition calibration against hidden predatory traps.',
+      fr: 'Calibration de l’intuition viscérale inconsciente face aux pièges cachés.',
+      zh: '在大脑意识尚未算清概率前，通过直觉躯体标记敏锐甄别隐蔽陷阱。',
+    },
+    domain: 'resilience',
+    difficulty: 'advanced',
+    scientificOrigin: {
+      en: 'Iowa Gambling Task & Somatic Marker Hypothesis (Antoine Bechara & Antonio Damasio, 1994)',
+      fr: 'Tâche de Jeu de l’Iowa & Marqueurs Somatiques (Bechara & Damasio, 1994)',
+      zh: '爱荷华赌博任务与躯体标记假说 (Bechara & Damasio, 1994)',
+    },
+    targetBrainArea: {
+      en: 'Ventromedial Prefrontal Cortex (vmPFC) & Insular Cortex',
+      fr: 'Cortex Préfrontal Ventromédian (vmPFC) & Cortex Insulaire',
+      zh: '腹内侧前额叶皮层 (vmPFC) 与脑岛感觉内感受系统',
+    },
+    cognitiveBenefit: {
+      en: 'Calibrates somatic risk perception to reject alluring deals that harbor catastrophic deferred liabilities.',
+      fr: 'Calibre l’intuition corporelle pour rejeter les offres alléchantes aux passifs cachés destructeurs.',
+      zh: '训练“内感受直觉天线”，本能避开表面光鲜但暗藏灭顶违约毒丸的高风险诱饵。',
+    },
+    instructions: {
+      en: 'Draw 15 cards across 4 decks. Some offer huge short wins with hidden bankruptcy penalties; others yield steady compounded fortune.',
+      fr: 'Tirez 15 cartes parmi 4 paquets. Identifiez intuitivement les paquets sains versus les paquets pièges.',
+      zh: '从4组黑曜石牌组中抽取15张牌。部分牌组高收益暗藏巨额毁灭性罚扣，部分牌组细水长流，测试潜意识避险直觉。',
+    },
+    bestScoreKey: 'psy_iowa_gambling_score',
+    iconName: 'Coins',
+  },
+  {
+    id: 'psy_gonogo',
+    number: 9,
+    title: {
+      en: 'Go / No-Go Flanker Inhibitor',
+      fr: 'Inhibiteur d’Action Go / No-Go',
+      zh: '心流反应抑制测验',
+    },
+    subtitle: {
+      en: 'Millisecond action-trigger vs motor freeze control amidst conflicting flankers.',
+      fr: 'Déclenchement d’action vs blocage moteur face à des distracteurs contradictoires.',
+      zh: '毫秒级信号突击下的肌肉预启动制动与抗侧翼冲突高精定力。',
+    },
+    domain: 'attention',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Donders Reaction Inhibition (1868) & Eriksen Flanker Conflict (1974)',
+      fr: 'Inhibition de Réaction de Donders (1868) & Conflit de Flanker d’Eriksen (1974)',
+      zh: '唐德斯反应抑制实验 (1868) 与埃里克森侧翼冲突任务 (1974)',
+    },
+    targetBrainArea: {
+      en: 'Right Inferior Frontal Gyrus (rIFG) & Subthalamic Nucleus (STN)',
+      fr: 'Gyrus Frontal Inférieur Droit (rIFG) & Noyau Sous-Thalamique',
+      zh: '右侧额下回 (rIFG) 与丘脑下核运动刹车网路',
+    },
+    cognitiveBenefit: {
+      en: 'Builds a bulletproof motor brake, stopping unforced errors, premature signatures, and slips of the tongue.',
+      fr: 'Construit un frein moteur infaillible, empêchant les bévues hâtives et lapsus verbaux.',
+      zh: '打造坚不可摧的神经动作刹车系统，杜绝谈判桌上冲动表态、口误承诺与签字前失守。',
+    },
+    instructions: {
+      en: 'Fast symbols will flash! Green Solar Sigil -> TAP IMMEDIATELY (GO!). Red Skull or Warning Rune -> FREEZE (NO-GO!).',
+      fr: 'Les runes défilent ! Sigil Solaire Vert -> TOUCHEZ ! Crâne Rouge -> IMMOBILISATION ABSOLUE !',
+      zh: '高速滚动符文流！金色太阳徽章：立即点击（GO!）；深红骷髅或禁锢法阵：绝对不要触碰（NO-GO!）。',
+    },
+    bestScoreKey: 'psy_gonogo_score',
+    iconName: 'Zap',
+  },
+  {
+    id: 'psy_wisconsin',
+    number: 10,
+    title: {
+      en: 'Wisconsin Cognitive Flexibility',
+      fr: 'Flexibilité Cognitive de Wisconsin',
+      zh: '威斯康星认知灵活性跃迁',
+    },
+    subtitle: {
+      en: 'Rapid hidden rule deduction, set-shifting, and perseveration avoidance under ambiguity.',
+      fr: 'Déduction de règles cachées, changement de configuration et adaptation à l’ambiguïté.',
+      zh: '规则毫无预警突变时的顿悟转换力与破除思维定势的柔韧测试。',
+    },
+    domain: 'brain',
+    difficulty: 'advanced',
+    scientificOrigin: {
+      en: 'Wisconsin Card Sorting Test - WCST (Grant & Berg, 1948)',
+      fr: 'Test de Tri de Cartes du Wisconsin (WCST - Grant & Berg, 1948)',
+      zh: '威斯康星卡片分类测验 - WCST (Grant & Berg, 1948)',
+    },
+    targetBrainArea: {
+      en: 'Orbitofrontal Cortex & Striatal Dopaminergic Set-Shifting',
+      fr: 'Cortex Orbitofrontal & Ajustement Dopaminergique Striatal',
+      zh: '眶额叶皮层 (OFC) 与纹状体多巴胺策略切换通路',
+    },
+    cognitiveBenefit: {
+      en: 'Eradicates stubborn cognitive inertia; allows founders to pivot strategies without emotional resistance.',
+      fr: 'Éradique l’inertie mentale ; permet de pivoter de stratégie sans résistance émotionnelle.',
+      zh: '拔除“执念定势”与路径依赖，在规则发生暗变时秒级顿悟并灵活重构应对方案。',
+    },
+    instructions: {
+      en: 'Sort each card into 1 of 4 piles by Color, Shape, or Count. The secret rule shifts unexpectedly! Learn solely from feedback.',
+      fr: 'Triez chaque carte selon Couleur, Forme ou Nombre. La règle secrète change sans préavis !',
+      zh: '按颜色、形状或数量将手牌归入4大基准堆。评判规则会隐秘突变，仅根据“匹配/不匹配”实时推演当前新规则！',
+    },
+    bestScoreKey: 'psy_wisconsin_score',
+    iconName: 'Sparkles',
+  },
+  {
+    id: 'psy_sunk_cost',
+    number: 11,
+    title: {
+      en: 'Sunk Cost Severance Sovereignty',
+      fr: 'Sevrage des Coûts Irrécupérables',
+      zh: '沉没成本果断止损力',
+    },
+    subtitle: {
+      en: 'Ruthless emotional decoupling from past investments to salvage future upside.',
+      fr: 'Découplage émotionnel sans compromis des pertes passées pour sauver l’avenir.',
+      zh: '克服强烈的损失厌恶与虚荣不舍，在数据逆风时展现外科手术般的断臂止损魄力。',
+    },
+    domain: 'resilience',
+    difficulty: 'intermediate',
+    scientificOrigin: {
+      en: 'Prospect Theory (Kahneman & Tversky, 1979) & Sunk Cost Fallacy (Arkes & Blumer, 1985)',
+      fr: 'Théorie des Perspectives (Kahneman & Tversky) & Erreur des Coûts Irrécupérables',
+      zh: '前景理论 (Kahneman & Tversky, 1979) 与沉没成本谬误 (Arkes & Blumer, 1985)',
+    },
+    targetBrainArea: {
+      en: 'Anterior Insula (Loss Pain) vs Ventrolateral Prefrontal Cortex',
+      fr: 'Insula Antérieure (Douleur de la Perte) vs CPF Ventrolatéral',
+      zh: '前脑岛 (损失剧痛中枢) 与腹外侧前额叶理性切割网络',
+    },
+    cognitiveBenefit: {
+      en: 'Overcomes the psychological pain of abandoning failed projects, preserving remaining capital and runway.',
+      fr: 'Surmonte la douleur d’abandonner des projets défaillants, préservant ainsi le capital restant.',
+      zh: '彻底脱敏“不舍已投入心血”的心理创伤，避免因面子和侥幸心理将公司拖入万劫不复。',
+    },
+    instructions: {
+      en: 'Review failing ventures with millions sunk. Decide within 8 seconds: SEVER / PIVOT ruthlessly or DOUBLE DOWN recklessly!',
+      fr: 'Examinez des projets en péril aux millions investis. Tranchez en 8s : COUPER NET ou S’ENTÊTER !',
+      zh: '面对已砸入数百万与数年心血的濒死业务，在8秒内做出决断：冷酷断舍离止损，还是非理性继续死扛！',
+    },
+    bestScoreKey: 'psy_sunk_cost_score',
+    iconName: 'Flame',
+  },
+  {
+    id: 'psy_spatial_matrix',
+    number: 12,
+    title: {
+      en: 'Spatial Working Memory Matrix',
+      fr: 'Mémoire Spatiale Matricielle',
+      zh: '瞬态空间工作记忆宽带',
+    },
+    subtitle: {
+      en: 'Sub-second flash sequence encoding and multi-dimensional mental blueprint reconstruction.',
+      fr: 'Encodage éclair de séquences et reconstruction de plans mentaux multidimensionnels.',
+      zh: '闪电瞬时视觉印记编码与多维空间心理蓝图原样复原。',
+    },
+    domain: 'brain',
+    difficulty: 'advanced',
+    scientificOrigin: {
+      en: 'Corsi Block-Tapping Test & Visual-Spatial Sketchpad (Baddeley & Hitch, 1974)',
+      fr: 'Test des Blocs de Corsi & Calepin Visuo-Spatial (Baddeley & Hitch, 1974)',
+      zh: '科尔西积木敲击测验与视空间草稿板模型 (Baddeley & Hitch, 1974)',
+    },
+    targetBrainArea: {
+      en: 'Hippocampus, Posterior Parietal Cortex & Occipital Visual Buffer',
+      fr: 'Hippocampe, Cortex Pariétal Postérieur & Mémoire Tampon Visuelle',
+      zh: '海马体空间位置细胞、后顶叶皮层与枕叶视觉暂存区',
+    },
+    cognitiveBenefit: {
+      en: 'Dramatically improves mental blueprint retention, complex cap table visualization, and spatial strategic awareness.',
+      fr: 'Améliore la rétention de schémas complexes et la modélisation mentale spatiale.',
+      zh: '大幅提升心智模型留存度、复杂资本架构的脑内可视化推演力与高维战略洞察。',
+    },
+    instructions: {
+      en: 'A sequence of luxury rune crystals will illuminate for 1.5 seconds. Replicate the exact pattern after they go dark.',
+      fr: 'Une séquence de cristaux runiques s’allume pendant 1,5 s. Reproduisez le motif exact après extinction.',
+      zh: '黑曜石金字塔阵列将短暂点亮1.5秒。阵列熄灭后，凭瞬时空间视网膜记忆精确复原点击被点亮的晶格。',
+    },
+    bestScoreKey: 'psy_spatial_matrix_score',
+    iconName: 'Grid',
+  },
+];

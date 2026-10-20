@@ -13,6 +13,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useApp, SimulatorType } from '../../context/AppContext';
+import { CapTableDilutionCalculator } from './CapTableDilutionCalculator';
 
 export const SimulatorsHubView: React.FC = () => {
   const {
@@ -204,11 +205,14 @@ export const SimulatorsHubView: React.FC = () => {
         })}
       </div>
 
-      {/* SIMULATOR 1: CAP TABLE SIMULATOR */}
+      {/* SIMULATOR 1: MULTI-ROUND CAP TABLE DILUTION CALCULATOR */}
       {selectedSimulator === 'captable' && (
+        <CapTableDilutionCalculator />
+      )}
+
+      {false && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Controls (5 cols) */}
-          <div className="lg:col-span-5 p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs space-y-5 text-xs">
+          <div className="lg:col-span-5">
             <h3 className="font-bold text-sm text-text-primary dark:text-stone-100 flex items-center space-x-2">
               <PieChart className="w-4 h-4 text-emerald-600" />
               <span>Round Parameters</span>

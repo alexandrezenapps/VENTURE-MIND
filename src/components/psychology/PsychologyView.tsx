@@ -24,10 +24,12 @@ import {
   psychologyCategoriesMeta,
 } from '../../data/psychologyData';
 import { PsychologyCategory, PsychologyPrinciple } from '../../types';
+import { PsychologyGamesHub } from './PsychologyGamesHub';
 
 export const PsychologyView: React.FC = () => {
   const { language, speak, progress } = useApp();
 
+  const [viewMode, setViewMode] = useState<'games' | 'radar' | 'principles'>('games');
   const [selectedCategory, setSelectedCategory] = useState<PsychologyCategory | 'all'>('all');
   const [selectedPrinciple, setSelectedPrinciple] = useState<PsychologyPrinciple>(psychologyPrinciples[0]);
   const [search, setSearch] = useState('');
@@ -58,41 +60,79 @@ export const PsychologyView: React.FC = () => {
 
   return (
     <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto pb-mobile-nav">
-      {/* Header */}
-      <div>
-        <div className="flex items-center space-x-2 text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-wider font-semibold">
-          <Brain className="w-4 h-4" />
-          <span>
+      {/* Top Segmented Navigation: 12 Games / Radar / 100 Principles */}
+      <div className="flex items-center justify-between flex-wrap gap-4 border-b border-border-main dark:border-white/10 pb-4">
+        <div>
+          <div className="flex items-center space-x-2 text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-wider font-semibold">
+            <Brain className="w-4 h-4" />
+            <span>
+              {language === 'fr'
+                ? 'Science Comportementale & Neuro-Psychologie'
+                : language === 'zh'
+                ? '行为心理学与神经认知实验室'
+                : 'Behavioral Science & Neuro-Cognitive Lab'}
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-serif-luxury font-medium text-text-primary dark:text-stone-100 mt-1">
             {language === 'fr'
-              ? 'Science Comportementale & Négociation Éthique'
+              ? 'Laboratoire Psychologique & Défis Cérébraux'
               : language === 'zh'
-              ? '行为心理学与伦理谈判战术'
-              : 'Behavioral Science & Ethical Deal Negotiation'}
-          </span>
+              ? '心理学心智实验室与认知博弈'
+              : 'Psychology Lab & Cognitive Mind Games'}
+          </h1>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-serif-luxury font-medium text-text-primary dark:text-stone-100 mt-1">
-          {language === 'fr'
-            ? 'Radar Psychologique & 100 Principes de Négociation'
-            : language === 'zh'
-            ? '心理雷达与100项博弈心法'
-            : 'Psychology Radar & 100 Negotiation Principles'}
-        </h1>
-        <p className="text-xs text-text-secondary dark:text-stone-400 mt-1 max-w-3xl leading-relaxed">
-          {language === 'fr'
-            ? 'Les décisions d’investissement se négocient entre êtres humains soumis aux biais, à la rareté et au mimétisme. Maîtrisez le calme, le cadrage et l’éthique.'
-            : language === 'zh'
-            ? '风投交易从本质上是充满信息不对称、认知偏差与从众效应的人性较量。掌握情绪自控、价值重构与商业信誉护城河。'
-            : 'Venture investments are closed between human actors driven by heuristics, scarcity, and social proof. Master self-regulation, objective framing, and ethical sovereignty.'}
-        </p>
+
+        {/* View Mode Segmented Controls */}
+        <div className="flex items-center p-1 rounded-2xl bg-surface-muted dark:bg-[#121629] border border-border-main dark:border-white/10 text-xs font-semibold">
+          <button
+            onClick={() => setViewMode('games')}
+            className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition-all ${
+              viewMode === 'games'
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold shadow-md'
+                : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{language === 'fr' ? '12 Neuro-Jeux' : language === 'zh' ? '12款心智游戏' : '12 Mind Games'}</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('radar')}
+            className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition-all ${
+              viewMode === 'radar'
+                ? 'bg-purple-600 text-white font-bold shadow-md'
+                : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>{language === 'fr' ? 'Radar Diagnostic' : language === 'zh' ? '抗压雷达诊断' : 'Radar Diagnostic'}</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('principles')}
+            className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition-all ${
+              viewMode === 'principles'
+                ? 'bg-emerald-600 text-white font-bold shadow-md'
+                : 'text-text-secondary dark:text-stone-400 hover:text-text-primary'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{language === 'fr' ? '100 Principes' : language === 'zh' ? '100项博弈心法' : '100 Principles'}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Psychology Radar Interactive Diagnostic Tool */}
-      <div className="p-6 sm:p-7 rounded-3xl glass-panel border-sophisticated shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-base font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-purple-600" />
-              <span>
+      {/* VIEW MODE 1: 12 PSYCHOLOGY MIND GAMES */}
+      {viewMode === 'games' && <PsychologyGamesHub />}
+
+      {/* VIEW MODE 2: RADAR DIAGNOSTIC */}
+      {viewMode === 'radar' && (
+        <div className="p-6 sm:p-7 rounded-3xl glass-panel border-sophisticated shadow-xl animate-fadeIn">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-base font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
+                <Activity className="w-4 h-4 text-purple-600" />
+                <span>
                 {language === 'fr'
                   ? 'Audit Diagnostic du Radar Psychologique'
                   : language === 'zh'
@@ -229,9 +269,13 @@ export const PsychologyView: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
-      {/* 10 Domains Category Tabs */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-2 text-xs no-scrollbar">
+      {/* VIEW MODE 3: 100 NEGOTIATION PRINCIPLES */}
+      {viewMode === 'principles' && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* 10 Domains Category Tabs */}
+          <div className="flex items-center space-x-2 overflow-x-auto pb-2 text-xs no-scrollbar">
         <button
           onClick={() => setSelectedCategory('all')}
           className={`px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${
@@ -393,6 +437,8 @@ export const PsychologyView: React.FC = () => {
           </div>
         </div>
       </div>
+      </div>
+      )}
     </div>
   );
 };

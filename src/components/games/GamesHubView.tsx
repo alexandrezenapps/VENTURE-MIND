@@ -12,13 +12,14 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
+  Brain,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { gamesData } from '../../data/gamesData';
 import { GameInfo } from '../../types';
 
 export const GamesHubView: React.FC = () => {
-  const { language, progress, recordGameScore, formatMoney } = useApp();
+  const { language, progress, recordGameScore, formatMoney, setActiveTab } = useApp();
 
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -186,6 +187,49 @@ export const GamesHubView: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Featured Banner: 12 Psychology Mind Games */}
+      <div className="relative overflow-hidden rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-purple-950/70 via-[#181d38] to-stone-900 border border-purple-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5 max-w-2xl">
+          <div className="flex items-center space-x-2 text-purple-400 font-mono text-xs uppercase tracking-wider font-semibold">
+            <Brain className="w-4 h-4 text-purple-400" />
+            <span>
+              {language === 'fr'
+                ? 'Nouveau : 12 Jeux de Psychologie Cognitive'
+                : language === 'zh'
+                ? '全新上线 · 12款心理学心智博弈游戏'
+                : 'Featured: 12 Psychology Cognitive Mind Games'}
+            </span>
+          </div>
+          <h3 className="text-lg sm:text-xl font-serif-luxury font-bold text-white">
+            {language === 'fr'
+              ? 'Entraînez Attention, Vitesse Mentale & Sang-Froid'
+              : language === 'zh'
+              ? '训练超强专注力、动脑敏捷度与高压心理素质'
+              : 'Attention, Neuro-Agility & High-Pressure Composure'}
+          </h3>
+          <p className="text-xs text-stone-300 leading-relaxed">
+            {language === 'fr'
+              ? 'Stroop, Double N-Back, Grille de Schulte, Micro-Expressions FACS, Cohérence Cardiaque et Tâche d’Iowa.'
+              : language === 'zh'
+              ? '包含斯特鲁普抑制控制、双重N-Back、舒尔特方格、FACS微表情识别、迷走神经心率调谐与爱荷华决策等12项科学训练。'
+              : 'Empirically grounded in Stroop, Dual N-Back, Schulte Matrix, FACS Micro-Expressions, Vagus Coherence, and Iowa Somatic Risk.'}
+          </p>
+        </div>
+        <button
+          onClick={() => setActiveTab('psychology')}
+          className="shrink-0 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold text-xs shadow-lg flex items-center justify-center space-x-2 active:scale-95 transition-all"
+        >
+          <span>
+            {language === 'fr'
+              ? 'Accéder au Lab Psychologique'
+              : language === 'zh'
+              ? '立即进入心理学实验室'
+              : 'Launch Psychology Lab'}
+          </span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Active Game Modal / Sandbox Overlay */}
