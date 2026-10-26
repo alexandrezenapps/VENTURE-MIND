@@ -316,6 +316,10 @@ export const ArtisticOpeningPortal: React.FC<ArtisticOpeningPortalProps> = ({
       ? 'font-serif-luxury'
       : 'font-sans font-black';
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <div
       ref={containerRef}

@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Download,
   Check,
+  Zap,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -27,6 +28,7 @@ import {
   StakeholderRoundSnapshot,
   StakeholderCategory,
 } from '../../types/capTable';
+import { CapTableWhatIfScenarioGenerator } from './CapTableWhatIfScenarioGenerator';
 
 const STAKEHOLDER_COLORS: Record<StakeholderCategory, string> = {
   founders: '#F59E0B', // Amber
@@ -98,6 +100,7 @@ export const CapTableDilutionCalculator: React.FC<{ compact?: boolean }> = ({ co
   const [selectedRoundIdx, setSelectedRoundIdx] = useState<number>(INITIAL_ROUNDS_PRESET.length - 1);
   const [isAddingRound, setIsAddingRound] = useState(false);
   const [copiedSummary, setCopiedSummary] = useState(false);
+  const [calculatorTab, setCalculatorTab] = useState<'timeline' | 'whatif'>('timeline');
 
   // New Round Draft Form
   const [newRoundType, setNewRoundType] = useState<RoundType>('priced_equity');
@@ -459,6 +462,76 @@ Generated on Venture Mind Executive Academy.`;
         </div>
       </div>
 
+      {/* View Mode Navigation Tabs: Timeline vs What-If Sensitivity Lab */}
+      <div className="flex items-center justify-between border-b border-border-main/50 dark:border-stone-800 pb-2">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setCalculatorTab('timeline')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 cursor-pointer ${
+              calculatorTab === 'timeline'
+                ? 'bg-amber-500 text-stone-950 shadow-md ring-1 ring-amber-400'
+                : 'bg-surface-muted/60 dark:bg-stone-900 text-text-secondary dark:text-stone-400 hover:text-text-primary border border-border-main dark:border-stone-800'
+            }`}
+          >
+            <PieChart className="w-3.5 h-3.5" />
+            <span>
+              {language === 'fr'
+                ? 'Modélisation des Tours (Timeline)'
+                : language === 'zh'
+                ? '多轮融资稀释主干道'
+                : 'Multi-Round Cap Table'}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setCalculatorTab('whatif')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 cursor-pointer ${
+              calculatorTab === 'whatif'
+                ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-stone-950 shadow-md ring-1 ring-amber-400'
+                : 'bg-surface-muted/60 dark:bg-stone-900 text-text-secondary dark:text-stone-400 hover:text-amber-400 border border-border-main dark:border-stone-800'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>
+              {language === 'fr'
+                ? 'Générateur de Scénarios « What-If »'
+                : language === 'zh'
+                ? '⚡ 动态「What-If」情景推演'
+                : '⚡ What-If Scenario Lab'}
+            </span>
+            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">
+              {language === 'zh' ? '实时模拟' : 'Live'}
+            </span>
+          </button>
+        </div>
+
+        {calculatorTab === 'timeline' ? (
+          <button
+            onClick={() => setCalculatorTab('whatif')}
+            className="hidden sm:flex items-center space-x-1.5 text-xs text-amber-400 hover:text-amber-300 font-medium transition-colors cursor-pointer"
+          >
+            <span>
+              {language === 'zh'
+                ? '测试本轮行权与离职回购影响 →'
+                : 'Test Vesting & Clawback Sensitivity →'}
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setCalculatorTab('timeline')}
+            className="hidden sm:flex items-center space-x-1.5 text-xs text-stone-400 hover:text-stone-200 font-medium transition-colors cursor-pointer"
+          >
+            <span>
+              {language === 'zh' ? '← 返回轮次时间线' : '← Back to Round Milestones'}
+            </span>
+          </button>
+        )}
+      </div>
+
+      {calculatorTab === 'whatif' ? (
+        <CapTableWhatIfScenarioGenerator currentRoundResult={currentResult} />
+      ) : (
+        <>
       {/* Round Timeline Stepper */}
       <div className="p-4 rounded-2xl glass-panel border-sophisticated overflow-x-auto no-scrollbar">
         <div className="flex items-center space-x-3 min-w-max">
@@ -913,8 +986,23 @@ Generated on Venture Mind Executive Academy.`;
               ? '当投资人要求在投前设立或扩充 10% 期权池（Pre-Money Pool）时，实际是将这部分期权的稀释代价100%转嫁给创始人团队；若采用投后共同扩充（Post-Money Pool），投资人与创始人将同比例共同稀释，创始人持股可多保住 1.5%~3.2% 的珍贵股权！'
               : 'When VCs insist on creating an unallocated option pool pre-money, 100% of the dilution falls on common founders before new cash enters. Pushing for post-money shared expansion preserves 1.5%–3.2% of valuable founding ownership.'}
           </p>
+          <div className="pt-2">
+            <button
+              onClick={() => setCalculatorTab('whatif')}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 text-[11px] font-bold flex items-center space-x-1.5 transition-all cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>
+                {language === 'zh'
+                  ? '立即打开「What-If」情景推演实验室 →'
+                  : 'Launch What-If Scenario Lab on this Round →'}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };

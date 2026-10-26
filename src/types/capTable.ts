@@ -63,3 +63,32 @@ export interface RoundSimulationResult {
   optionPoolShares: number;
   optionPoolPercent: number;
 }
+
+export interface WhatIfScenarioConfig {
+  founderVestingPercent: number; // 25 (1-yr cliff), 50, 75, 100 (fully vested)
+  earlyEmployeeOptionsExercisedPercent: number; // 0, 25, 50, 100
+  coFounderDepartsUnvestedClawback: boolean; // if true, cofounder departed at month 12 with 50% shares repurchased
+  optionPoolTiming: 'pre_money' | 'post_money'; // pre-money shuffle vs fair post-money
+  isAntiDilutionTriggered: boolean; // down-round broad-based weighted average vs full ratchet
+  exitValuation: number; // e.g. 20000000
+  liquidationMultiple: 1 | 2; // 1x vs 2x
+  isParticipating: boolean; // true = participating preferred
+}
+
+export interface WhatIfComparison {
+  baseFounderPct: number;
+  whatIfFounderPct: number;
+  deltaFounderPct: number;
+  baseFounderValue: number;
+  whatIfFounderValue: number;
+  deltaFounderValue: number;
+  vestedFounderShares: number;
+  unvestedFounderShares: number;
+  activeEmployeeOptionsShares: number;
+  unallocatedPoolShares: number;
+  investorPreferredShares: number;
+  totalDilutedShares: number;
+  founderVotingControlStatus: 'majority' | 'effective_veto' | 'minority';
+  exitProceedsFounders: number;
+  exitProceedsInvestors: number;
+}

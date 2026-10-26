@@ -102,19 +102,41 @@ const DEFAULT_PROGRESS: UserProgress = {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem(key);
+      }
+    } catch {
+      // Ignore security or access errors
+    }
+    return null;
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch {
+      // Ignore storage errors or quota issues
+    }
+  },
+};
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('vm_language') as Language;
+    const saved = safeStorage.getItem('vm_language') as Language;
     return saved && ['en', 'fr', 'zh'].includes(saved) ? saved : 'en';
   });
 
   const [currency, setCurrencyState] = useState<Currency>(() => {
-    const saved = localStorage.getItem('vm_currency') as Currency;
+    const saved = safeStorage.getItem('vm_currency') as Currency;
     return saved && ['USD', 'EUR'].includes(saved) ? saved : 'USD';
   });
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('vm_dark_mode');
+    const saved = safeStorage.getItem('vm_dark_mode');
     return saved !== null ? saved === 'true' : false;
   });
 
@@ -125,7 +147,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isOpeningPortalOpen, setIsOpeningPortalOpen] = useState(() => {
     try {
-      const saved = localStorage.getItem('venture_mind_opening_config');
+      const saved = safeStorage.getItem('venture_mind_opening_config');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.alwaysShowOnLaunch === false) {
@@ -146,7 +168,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // User progress
   const [progress, setProgress] = useState<UserProgress>(() => {
     try {
-      const saved = localStorage.getItem('vm_progress');
+      const saved = safeStorage.getItem('vm_progress');
       if (saved) {
         return JSON.parse(saved);
       }
@@ -157,25 +179,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   useEffect(() => {
-    localStorage.setItem('vm_language', language);
+    safeStorage.setItem('vm_language', language);
   }, [language]);
 
   useEffect(() => {
-    localStorage.setItem('vm_currency', currency);
+    safeStorage.setItem('vm_currency', currency);
   }, [currency]);
 
   useEffect(() => {
-    localStorage.setItem('vm_dark_mode', String(darkMode));
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    safeStorage.setItem('vm_dark_mode', String(darkMode));
+    if (typeof document !== 'undefined') {
+      if (darkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, [darkMode]);
 
   useEffect(() => {
     try {
-      localStorage.setItem('vm_progress', JSON.stringify(progress));
+      safeStorage.setItem('vm_progress', JSON.stringify(progress));
     } catch {
       // Ignore quota errors
     }

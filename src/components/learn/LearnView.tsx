@@ -17,6 +17,7 @@ import { Term, Category, Difficulty } from '../../types';
 import { TermDetailModal } from './TermDetailModal';
 import { OverlappingCardStack } from '../common/OverlappingCardStack';
 import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
+import { CurriculumAchievementDashboard } from './CurriculumAchievementDashboard';
 
 const CATEGORIES: { id: Category; label: { en: string; fr: string; zh: string } }[] = [
   { id: 'all', label: { en: 'All 100 Terms', fr: 'Tous les 100 termes', zh: '全部100条目' } },
@@ -141,6 +142,12 @@ export const LearnView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Visual Progress Bar & Executive Achievement Dashboard */}
+      <CurriculumAchievementDashboard
+        onSelectCategory={(cat) => setSelectedCategory(cat)}
+        onLaunchTerm={(termId) => setSelectedTermId(termId)}
+      />
 
       {/* Interactive Overlapping Stacks: 课程分类 / 学习收藏 / 词汇集 */}
       <div className="space-y-3">
