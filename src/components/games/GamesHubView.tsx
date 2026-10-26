@@ -17,80 +17,23 @@ import {
 import { useApp } from '../../context/AppContext';
 import { gamesData } from '../../data/gamesData';
 import { GameInfo } from '../../types';
+import { FacingTheGame } from './FacingTheGame';
+import { SpeedValuationGame } from './SpeedValuationGame';
+import { LeaderboardModal } from '../common/LeaderboardModal';
 
 export const GamesHubView: React.FC = () => {
   const { language, progress, recordGameScore, formatMoney, setActiveTab } = useApp();
 
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
-  // Mini-Game 1 State: Speed Valuation (Game 2)
-  const [valRound, setValRound] = useState(1);
-  const [valPre, setValPre] = useState(8000000);
-  const [valInvest, setValInvest] = useState(2000000);
-  const [valTimer, setValTimer] = useState(25);
-  const [valScore, setValScore] = useState(0);
-  const [valFeedback, setValFeedback] = useState<string | null>(null);
-  const [valIsActive, setValIsActive] = useState(false);
-
-  // Mini-Game 2 State: Term Sheet Detective (Game 5)
+  // Mini-Game: Term Sheet Detective (Game 5)
   const [trapsFound, setTrapsFound] = useState<string[]>([]);
   const [detectiveScore, setDetectiveScore] = useState(0);
   const [detectiveFinished, setDetectiveFinished] = useState(false);
 
   const activeGame = gamesData.find((g) => g.id === activeGameId);
-
-  // Speed valuation game timer
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeGameId === 'game_02' && valIsActive && valTimer > 0) {
-      interval = setInterval(() => {
-        setValTimer((t) => {
-          if (t <= 1) {
-            setValIsActive(false);
-            recordGameScore('game_02', valScore);
-            return 0;
-          }
-          return t - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeGameId, valIsActive, valTimer, valScore, recordGameScore]);
-
-  const startSpeedValuation = () => {
-    setValRound(1);
-    setValPre(8000000);
-    setValInvest(2000000);
-    setValTimer(30);
-    setValScore(0);
-    setValFeedback(null);
-    setValIsActive(true);
-  };
-
-  const handleValAnswer = (selectedPost: number) => {
-    const correctPost = valPre + valInvest;
-    if (selectedPost === correctPost) {
-      const added = 20 + valTimer;
-      const nextScore = valScore + added;
-      setValScore(nextScore);
-      setValFeedback('Correct! + ' + added + ' pts');
-
-      if (valRound < 5) {
-        setValRound((r) => r + 1);
-        const newPre = (valRound + 2) * 4000000;
-        const newInvest = (valRound + 1) * 1500000;
-        setValPre(newPre);
-        setValInvest(newInvest);
-        setValTimer(25);
-      } else {
-        setValIsActive(false);
-        recordGameScore('game_02', nextScore);
-      }
-    } else {
-      setValFeedback('Incorrect valuation calculation. Try again!');
-    }
-  };
 
   // Detective game trap clauses
   const detectiveClauses = [
@@ -172,18 +115,37 @@ export const GamesHubView: React.FC = () => {
           </p>
         </div>
 
-        {/* Global Game Mastery Score */}
-        <div className="flex items-center space-x-3 p-3 rounded-xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-            <Trophy className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="text-[10px] font-mono uppercase text-text-secondary dark:text-stone-400">
-              {language === 'fr' ? 'Points Cumulés' : language === 'zh' ? '实战总积分' : 'Total Game Points'}
+        {/* Top Actions: Leaderboard & Global Points */}
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => setIsLeaderboardOpen(true)}
+            className="flex items-center space-x-2.5 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-500/15 to-amber-500/10 hover:from-amber-500/30 hover:to-purple-500/25 border border-amber-400/40 text-amber-300 transition-all cursor-pointer shadow-md active:scale-95"
+            title="Open Grandmaster Leaderboard"
+          >
+            <Trophy className="w-5 h-5 text-amber-300" />
+            <div className="text-left">
+              <div className="text-[10px] font-mono uppercase text-stone-400 dark:text-stone-300">
+                {language === 'fr' ? 'Classement Mondial' : language === 'zh' ? '全景天梯榜' : 'Leaderboard'}
+              </div>
+              <div className="text-xs font-bold text-white">
+                {language === 'fr' ? 'Voir les Records' : language === 'zh' ? '查看巅峰高分' : 'View High Scores'}
+              </div>
             </div>
-            <div className="text-lg font-bold font-mono text-amber-600 dark:text-amber-400">
-              {Object.values(progress.gameScores).reduce((a, b) => a + b, 0)}{' '}
-              <span className="text-xs text-text-secondary dark:text-stone-400 font-normal">/ 2,000</span>
+          </button>
+
+          {/* Global Game Mastery Score */}
+          <div className="flex items-center space-x-3 p-2.5 sm:p-3 rounded-2xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xs">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+              <Flame className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-[10px] font-mono uppercase text-text-secondary dark:text-stone-400">
+                {language === 'fr' ? 'Points Cumulés' : language === 'zh' ? '实战总积分' : 'Total Game Points'}
+              </div>
+              <div className="text-base sm:text-lg font-bold font-mono text-amber-600 dark:text-amber-400">
+                {Object.values(progress.gameScores).reduce((a, b) => a + b, 0)}{' '}
+                <span className="text-xs text-text-secondary dark:text-stone-400 font-normal">/ 2,000</span>
+              </div>
             </div>
           </div>
         </div>
@@ -232,8 +194,146 @@ export const GamesHubView: React.FC = () => {
         </button>
       </div>
 
-      {/* Active Game Modal / Sandbox Overlay */}
-      {activeGameId && activeGame && (
+      {/* Premier Dual Flagship Showcases: Game #1 & Game #2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Flagship Game #1: 面对博弈 · 定力与破局 */}
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#12162a] via-[#1a1f3d] to-[#251b38] border border-amber-400/40 shadow-xl text-white flex flex-col justify-between gap-5 group">
+
+          <div className="flex items-start gap-4">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/50 shadow-md">
+              <img
+                src="/src/assets/images/game_adversary_partner_1793030978874.jpg"
+                alt="Adversary Partner"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-top filter contrast-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <span className="absolute bottom-1 left-2 text-[9px] font-mono text-amber-300 font-bold uppercase">
+                Game #1
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center space-x-1.5 text-amber-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+                <span>{language === 'fr' ? 'Épreuve Reine · Face au Duel' : language === 'zh' ? '风投首战 · 面对博弈' : 'Flagship Duel · Facing the Game'}</span>
+              </div>
+
+              <h2 className="text-lg sm:text-xl font-serif-luxury font-bold text-white leading-snug">
+                {language === 'fr'
+                  ? 'Face au Duel : Sérénité & Maîtrise'
+                  : language === 'zh'
+                  ? '面对博弈 · 定力与破局'
+                  : 'Facing the Game: Composure & Leverage'}
+              </h2>
+
+              <p className="text-[11px] text-stone-300 leading-relaxed line-clamp-2 sm:line-clamp-3">
+                {language === 'fr'
+                  ? 'Désamorcez les pièges d’ancrage bas, de liquidation participante et de fausse urgence avec une sérénité souveraine.'
+                  : language === 'zh'
+                  ? '博弈的核心不是击败对手，而是看透心机，守住定力。抵御极限压价、清算毒丸与倒计时施压，悟透创投博弈精髓。'
+                  : 'Defend your cap table against predatory anchors, poison pills, and fake deadlines across 20 randomized rounds.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+            <button
+              onClick={() => setIsLeaderboardOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-stone-200 font-mono text-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-300" />
+              <span>{language === 'fr' ? 'Records' : language === 'zh' ? '巅峰榜' : 'High Scores'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveGameId('game_01')}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-mono font-bold text-xs shadow-lg flex items-center space-x-2 active:scale-95 transition-all cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>{language === 'fr' ? 'Jouer Game #1' : language === 'zh' ? '进入博弈对决' : 'Play Game #1'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Flagship Game #2: 极速估值心算 · 秒级破局 */}
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#0a1a1f] via-[#0f282e] to-[#121e33] border border-emerald-400/40 shadow-xl text-white flex flex-col justify-between gap-5 group">
+          <div className="flex items-start gap-4">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-emerald-400/50 shadow-md bg-[#0a141c] flex items-center justify-center p-3">
+              <div className="w-full h-full rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-inner">
+                <Zap className="w-8 h-8 text-white fill-current animate-pulse" />
+              </div>
+              <span className="absolute bottom-1 left-2 text-[9px] font-mono text-emerald-300 font-bold uppercase">
+                Game #2
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center space-x-1.5 text-emerald-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+                <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
+                <span>{language === 'fr' ? 'Armure Cognitive · Valorisation' : language === 'zh' ? '认知防线 · 估值心算' : 'Mental Armor · Speed Valuation'}</span>
+              </div>
+
+              <h2 className="text-lg sm:text-xl font-serif-luxury font-bold text-white leading-snug">
+                {language === 'fr'
+                  ? 'Valorisation Éclair : Le Réflexe 3s'
+                  : language === 'zh'
+                  ? '极速估值心算 · 秒级破局'
+                  : 'Speed Valuation: The 3-Second Mental Edge'}
+              </h2>
+
+              <p className="text-[11px] text-stone-300 leading-relaxed line-clamp-2 sm:line-clamp-3">
+                {language === 'fr'
+                  ? 'L’hésitation trahit l’insécurité. Calculez instantanément le Pré, le Post et les pièges de pool pour dominer la table.'
+                  : language === 'zh'
+                  ? '估值心算不是冷冰冰的算术，而是创始人的谈判护城河。秒级心算投后估值、股权稀释与期权池真实折价，建立专业威慑。'
+                  : 'Grabbing a calculator signals hesitation. Master instant mental shortcuts to lock post-money and counter dilution traps.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+            <button
+              onClick={() => setIsLeaderboardOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-stone-200 font-mono text-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-300" />
+              <span>{language === 'fr' ? 'Records' : language === 'zh' ? '巅峰榜' : 'High Scores'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveGameId('game_02')}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-stone-950 font-mono font-bold text-xs shadow-lg flex items-center space-x-2 active:scale-95 transition-all cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5 fill-current" />
+              <span>{language === 'fr' ? 'Jouer Game #2' : language === 'zh' ? '进入极速心算' : 'Play Game #2'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* GAME 1: FACING THE GAME MOUNT */}
+      {activeGameId === 'game_01' && (
+        <FacingTheGame
+          onFinish={(score) => {
+            recordGameScore('game_01', score);
+          }}
+          onExit={() => setActiveGameId(null)}
+        />
+      )}
+
+      {/* GAME 2: SPEED VALUATION LIVE ENGINE MOUNT */}
+      {activeGameId === 'game_02' && (
+        <SpeedValuationGame
+          onFinish={(score) => {
+            recordGameScore('game_02', score);
+          }}
+          onExit={() => setActiveGameId(null)}
+        />
+      )}
+
+      {/* Active Game Modal / Sandbox Overlay (Other Games: Game #3, #4, #5...) */}
+      {activeGameId && activeGameId !== 'game_01' && activeGameId !== 'game_02' && activeGame && (
         <div className="p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border-2 border-emerald-500 shadow-xl space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between border-b border-border-main dark:border-stone-800 pb-4">
             <div>
@@ -245,115 +345,16 @@ export const GamesHubView: React.FC = () => {
               </h2>
             </div>
             <button
-              onClick={() => {
-                setActiveGameId(null);
-                setValIsActive(false);
-              }}
+              onClick={() => setActiveGameId(null)}
               className="text-xs px-3 py-1.5 rounded-lg bg-surface-muted dark:bg-stone-800 text-text-secondary hover:text-text-primary"
             >
               {language === 'fr' ? 'Quitter le jeu' : language === 'zh' ? '退出游戏' : 'Exit Game'}
             </button>
           </div>
 
-          {/* GAME 2: SPEED VALUATION LIVE ENGINE */}
-          {activeGameId === 'game_02' && (
-            <div className="space-y-6">
-              {!valIsActive && valRound === 1 && valScore === 0 ? (
-                <div className="text-center py-8 space-y-4 max-w-lg mx-auto">
-                  <Zap className="w-12 h-12 text-amber-500 mx-auto" />
-                  <h3 className="text-lg font-bold text-text-primary dark:text-stone-100">
-                    {language === 'fr'
-                      ? 'Prêt pour le défi de valorisation éclair ?'
-                      : language === 'zh'
-                      ? '准备好开始极速估值挑战了吗？'
-                      : 'Ready for Speed Valuation?'}
-                  </h3>
-                  <p className="text-xs text-text-secondary dark:text-stone-400 leading-relaxed">
-                    {language === 'fr'
-                      ? '5 questions successives. 30 secondes par tour. Calculez instantanément la valorisation Post-Money et la part investisseur.'
-                      : language === 'zh'
-                      ? '连续5轮快速作答，每轮30秒。快速心算投后估值与投资人稀释占比。'
-                      : '5 consecutive rounds. 30 seconds per round. Compute Post-Money Valuation and investor dilution instantly.'}
-                  </p>
-                  <button
-                    onClick={startSpeedValuation}
-                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md"
-                  >
-                    {language === 'fr' ? 'Démarrer le Chronomètre' : language === 'zh' ? '开始计时挑战' : 'Start Timer'}
-                  </button>
-                </div>
-              ) : valIsActive ? (
-                <div className="space-y-6 max-w-xl mx-auto">
-                  {/* Status HUD */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface-muted dark:bg-stone-800 text-xs font-mono">
-                    <span>Round {valRound} / 5</span>
-                    <span className="flex items-center space-x-1 text-amber-600 font-bold">
-                      <Clock className="w-4 h-4" />
-                      <span>{valTimer}s</span>
-                    </span>
-                    <span className="text-emerald-600 font-bold">{valScore} pts</span>
-                  </div>
-
-                  {/* Question Box */}
-                  <div className="p-6 rounded-2xl bg-stone-100 dark:bg-stone-800/80 text-center space-y-2">
-                    <span className="text-xs font-mono uppercase text-text-secondary dark:text-stone-400">
-                      Scenario #{valRound}
-                    </span>
-                    <div className="text-sm md:text-base font-semibold text-text-primary dark:text-stone-100">
-                      Pre-Money = <strong className="text-emerald-600">{formatMoney(valPre)}</strong> | Investment = <strong className="text-blue-600">{formatMoney(valInvest)}</strong>
-                    </div>
-                    <p className="text-xs text-text-secondary dark:text-stone-400">
-                      What is the resulting Post-Money Valuation?
-                    </p>
-                  </div>
-
-                  {/* 3 Selectable Options */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {[
-                      valPre + valInvest,
-                      valPre + valInvest * 1.5,
-                      valPre - valInvest > 0 ? valPre - valInvest : valPre * 1.2,
-                    ]
-                      .sort(() => Math.random() - 0.5)
-                      .map((valOpt, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleValAnswer(valOpt)}
-                          className="p-3.5 rounded-xl bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-700 hover:border-emerald-500 text-sm font-mono font-bold text-text-primary dark:text-stone-100 hover:bg-emerald-500/10 transition-all"
-                        >
-                          {formatMoney(valOpt)}
-                        </button>
-                      ))}
-                  </div>
-
-                  {valFeedback && (
-                    <div className="text-center text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 animate-pulse">
-                      {valFeedback}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-8 space-y-4 max-w-lg mx-auto">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-                  <h3 className="text-xl font-bold text-text-primary dark:text-stone-100 font-heading">
-                    Challenge Completed!
-                  </h3>
-                  <p className="text-sm font-mono text-emerald-600 font-bold">
-                    Final Score: {valScore} / 100 pts (+XP added)
-                  </p>
-                  <button
-                    onClick={startSpeedValuation}
-                    className="px-5 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-medium text-xs hover:bg-stone-300"
-                  >
-                    Play Again
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* GAME 5: TERM SHEET DETECTIVE LIVE ENGINE */}
           {activeGameId === 'game_05' && (
+
             <div className="space-y-6 max-w-2xl mx-auto">
               <div className="p-4 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-950 dark:text-amber-200">
                 <strong>Mission :</strong> {language === 'fr'
@@ -497,6 +498,13 @@ export const GamesHubView: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Global Leaderboard Modal */}
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
+      />
     </div>
   );
 };
+

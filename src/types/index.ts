@@ -155,3 +155,22 @@ export interface PsychologyGameMeta {
   bestScoreKey: string;
   iconName: string;
 }
+
+export type SessionModeKey = 'all' | '5_rounds' | '10_rounds' | '20_rounds' | 'speed' | 'detective';
+
+export interface LeaderboardRecord {
+  id: string;
+  gameId: string;
+  sessionMode: '5_rounds' | '10_rounds' | '20_rounds' | 'speed' | 'detective';
+  playerName: string;
+  playerTitle: LocalizedString;
+  score: number;
+  composure: number;
+  leverage: number;
+  valuationSaved: number;
+  roundsCompleted: number;
+  totalRounds: number;
+  timestamp: string;
+  isUser: boolean;
+  tier: 'sovereign' | 'alpha' | 'principal' | 'associate';
+}
