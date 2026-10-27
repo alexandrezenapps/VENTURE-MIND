@@ -19,7 +19,10 @@ import { gamesData } from '../../data/gamesData';
 import { GameInfo } from '../../types';
 import { FacingTheGame } from './FacingTheGame';
 import { SpeedValuationGame } from './SpeedValuationGame';
+import { CapTableBattleGame } from './CapTableBattleGame';
 import { LeaderboardModal } from '../common/LeaderboardModal';
+import speedValuationIcon from '../../assets/images/speed_valuation_icon_1793106944524.jpg';
+import capTableIcon from '../../assets/images/cap_table_sovereignty_icon_1793108638526.jpg';
 
 export const GamesHubView: React.FC = () => {
   const { language, progress, recordGameScore, formatMoney, setActiveTab } = useApp();
@@ -194,8 +197,8 @@ export const GamesHubView: React.FC = () => {
         </button>
       </div>
 
-      {/* Premier Dual Flagship Showcases: Game #1 & Game #2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* Premier Triple Flagship Showcases: Game #1, Game #2 & Game #3 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* Flagship Game #1: 面对博弈 · 定力与破局 */}
         <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#12162a] via-[#1a1f3d] to-[#251b38] border border-amber-400/40 shadow-xl text-white flex flex-col justify-between gap-5 group">
 
@@ -213,7 +216,7 @@ export const GamesHubView: React.FC = () => {
               </span>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 flex-1 min-w-0">
               <div className="inline-flex items-center space-x-1.5 text-amber-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
                 <span>{language === 'fr' ? 'Épreuve Reine · Face au Duel' : language === 'zh' ? '风投首战 · 面对博弈' : 'Flagship Duel · Facing the Game'}</span>
@@ -259,19 +262,27 @@ export const GamesHubView: React.FC = () => {
         {/* Flagship Game #2: 极速估值心算 · 秒级破局 */}
         <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#0a1a1f] via-[#0f282e] to-[#121e33] border border-emerald-400/40 shadow-xl text-white flex flex-col justify-between gap-5 group">
           <div className="flex items-start gap-4">
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-emerald-400/50 shadow-md bg-[#0a141c] flex items-center justify-center p-3">
-              <div className="w-full h-full rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-inner">
-                <Zap className="w-8 h-8 text-white fill-current animate-pulse" />
-              </div>
-              <span className="absolute bottom-1 left-2 text-[9px] font-mono text-emerald-300 font-bold uppercase">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-emerald-400/60 shadow-lg bg-[#0a141c]">
+              <img
+                src={speedValuationIcon}
+                alt="Speed Valuation Game Icon"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <span className="absolute bottom-1 left-2 text-[9px] font-mono text-emerald-300 font-bold uppercase drop-shadow-md">
                 Game #2
               </span>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center space-x-1.5 text-emerald-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
-                <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
-                <span>{language === 'fr' ? 'Armure Cognitive · Valorisation' : language === 'zh' ? '认知防线 · 估值心算' : 'Mental Armor · Speed Valuation'}</span>
+            <div className="space-y-1.5 flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap text-emerald-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+                <span className="inline-flex items-center space-x-1">
+                  <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
+                  <span>{language === 'fr' ? 'Armure Cognitive' : language === 'zh' ? '认知防线 · 估值心算' : 'Mental Armor'}</span>
+                </span>
+                <span className="text-emerald-500/60">·</span>
+                <span className="text-amber-400 font-bold">
+                  {language === 'fr' ? '3 Paliers (5 / 25 / 50)' : language === 'zh' ? '初中高三级 (5/25/50题)' : '3 Tiers (5/25/50)'}
+                </span>
               </div>
 
               <h2 className="text-lg sm:text-xl font-serif-luxury font-bold text-white leading-snug">
@@ -284,10 +295,10 @@ export const GamesHubView: React.FC = () => {
 
               <p className="text-[11px] text-stone-300 leading-relaxed line-clamp-2 sm:line-clamp-3">
                 {language === 'fr'
-                  ? 'L’hésitation trahit l’insécurité. Calculez instantanément le Pré, le Post et les pièges de pool pour dominer la table.'
+                  ? 'L’hésitation trahit l’insécurité. Calculez instantanément le Pré, le Post et les pièges de pool en 5, 25 ou 50 épreuves dynamiques sans répétition.'
                   : language === 'zh'
-                  ? '估值心算不是冷冰冰的算术，而是创始人的谈判护城河。秒级心算投后估值、股权稀释与期权池真实折价，建立专业威慑。'
-                  : 'Grabbing a calculator signals hesitation. Master instant mental shortcuts to lock post-money and counter dilution traps.'}
+                  ? '估值心算不是冷冰冰的算术，而是创始人的谈判护城河。初级5题热身、中级25题董事会推演、高级50题极限连击，随机出题永不重复。'
+                  : 'Grabbing a calculator signals hesitation. Master instant mental shortcuts across 5, 25, or 50 procedural non-repeating rounds.'}
               </p>
             </div>
           </div>
@@ -310,6 +321,69 @@ export const GamesHubView: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Flagship Game #3: 股权结构防卫战 · 守卫生命线 */}
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#17130a] via-[#241c10] to-[#1a2335] border border-amber-400/50 shadow-xl text-white flex flex-col justify-between gap-5 group">
+          <div className="flex items-start gap-4">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/60 shadow-lg bg-[#0e111a]">
+              <img
+                src={capTableIcon}
+                alt="Cap Table Defense Icon"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <span className="absolute bottom-1 left-2 text-[9px] font-mono text-amber-300 font-bold uppercase drop-shadow-md">
+                Game #3
+              </span>
+            </div>
+
+            <div className="space-y-1.5 flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap text-amber-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+                <span className="inline-flex items-center space-x-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{language === 'fr' ? 'Citadelle de Souveraineté' : language === 'zh' ? '主权防线 · 股权保卫' : 'Sovereignty Citadel'}</span>
+                </span>
+                <span className="text-amber-500/60">·</span>
+                <span className="text-emerald-400 font-bold">
+                  {language === 'fr' ? '3 Paliers (5 / 25 / 50)' : language === 'zh' ? '初中高三级 (5/25/50题)' : '3 Tiers (5/25/50)'}
+                </span>
+              </div>
+
+              <h2 className="text-lg sm:text-xl font-serif-luxury font-bold text-white leading-snug">
+                {language === 'fr'
+                  ? 'Guerre de Capitalisation : Le Pouvoir Absolu'
+                  : language === 'zh'
+                  ? '股权结构防卫战 · 守卫生命线'
+                  : 'Cap Table Defense: War for Sovereignty'}
+              </h2>
+
+              <p className="text-[11px] text-stone-300 leading-relaxed line-clamp-2 sm:line-clamp-3">
+                {language === 'fr'
+                  ? 'La défense de la table n’est pas pour thésauriser, mais pour protéger la vision. Déjouez les coups d’État et les pools prédateurs en 5, 25 ou 50 questions dynamiques.'
+                  : language === 'zh'
+                  ? '股权防卫绝非守财，而是守护愿景的绝对掌控权。初级5题摸底、中级25题董事会推演、高级50题终局决战，破期权池洗牌与全棘轮毒丸，题题随机不重复。'
+                  : 'Cap table defense preserves sovereign control over your life’s vision. Master board balance, dual-class stock, and ratchets across 5, 25, or 50 procedural rounds.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+            <button
+              onClick={() => setIsLeaderboardOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-stone-200 font-mono text-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-300" />
+              <span>{language === 'fr' ? 'Records' : language === 'zh' ? '巅峰榜' : 'High Scores'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveGameId('game_03')}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 hover:from-amber-400 hover:to-emerald-300 text-stone-950 font-mono font-bold text-xs shadow-lg flex items-center space-x-2 active:scale-95 transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 fill-current text-stone-950" />
+              <span>{language === 'fr' ? 'Jouer Game #3' : language === 'zh' ? '进入股权防卫战' : 'Play Game #3'}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* GAME 1: FACING THE GAME MOUNT */}
@@ -325,15 +399,19 @@ export const GamesHubView: React.FC = () => {
       {/* GAME 2: SPEED VALUATION LIVE ENGINE MOUNT */}
       {activeGameId === 'game_02' && (
         <SpeedValuationGame
-          onFinish={(score) => {
-            recordGameScore('game_02', score);
-          }}
           onExit={() => setActiveGameId(null)}
         />
       )}
 
-      {/* Active Game Modal / Sandbox Overlay (Other Games: Game #3, #4, #5...) */}
-      {activeGameId && activeGameId !== 'game_01' && activeGameId !== 'game_02' && activeGame && (
+      {/* GAME 3: CAP TABLE BATTLE LIVE ENGINE MOUNT */}
+      {activeGameId === 'game_03' && (
+        <CapTableBattleGame
+          onExit={() => setActiveGameId(null)}
+        />
+      )}
+
+      {/* Active Game Modal / Sandbox Overlay (Other Games: Game #4, #5...) */}
+      {activeGameId && activeGameId !== 'game_01' && activeGameId !== 'game_02' && activeGameId !== 'game_03' && activeGame && (
         <div className="p-6 rounded-2xl bg-surface-main dark:bg-stone-900 border-2 border-emerald-500 shadow-xl space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between border-b border-border-main dark:border-stone-800 pb-4">
             <div>

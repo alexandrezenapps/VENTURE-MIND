@@ -156,12 +156,12 @@ export interface PsychologyGameMeta {
   iconName: string;
 }
 
-export type SessionModeKey = 'all' | '5_rounds' | '10_rounds' | '20_rounds' | 'speed' | 'detective';
+export type SessionModeKey = 'all' | '5_rounds' | '10_rounds' | '20_rounds' | '25_rounds' | '50_rounds' | 'speed' | 'detective';
 
 export interface LeaderboardRecord {
   id: string;
   gameId: string;
-  sessionMode: '5_rounds' | '10_rounds' | '20_rounds' | 'speed' | 'detective';
+  sessionMode: Exclude<SessionModeKey, 'all'>;
   playerName: string;
   playerTitle: LocalizedString;
   score: number;
@@ -174,3 +174,6 @@ export interface LeaderboardRecord {
   isUser: boolean;
   tier: 'sovereign' | 'alpha' | 'principal' | 'associate';
 }
+
+export type { InvestorPersona, NegotiationStyle } from '../data/investorPersonasData';
+

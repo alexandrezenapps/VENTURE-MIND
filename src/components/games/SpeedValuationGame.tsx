@@ -16,21 +16,24 @@ import {
   ShieldCheck,
   Percent,
   Sparkles,
+  Layers,
+  Target,
+  Compass,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
-  SPEED_VALUATION_QUESTIONS,
+  SpeedValuationTier,
+  generateDynamicValuationSession,
   ValuationQuestion,
 } from '../../data/speedValuationData';
+import speedValuationIcon from '../../assets/images/speed_valuation_icon_1793106944524.jpg';
 import {
   addLeaderboardRecord,
   getUserPlayerName,
 } from '../../utils/leaderboardStorage';
 import { LeaderboardModal } from '../common/LeaderboardModal';
 
-type GameSessionLength = 5 | 10;
-
-// Fisher-Yates shuffle
+// Fisher-Yates array shuffle
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -46,10 +49,10 @@ export const SpeedValuationGame: React.FC<{
 }> = ({ onFinish, onExit }) => {
   const { language, speak, recordGameScore, formatMoney } = useApp();
 
-  // Mode: 5 questions or 10 questions
-  const [sessionLength, setSessionLength] = useState<GameSessionLength>(5);
+  // Tier selection: 初级 (5题), 中级 (25题), 高级 (50题)
+  const [selectedTier, setSelectedTier] = useState<SpeedValuationTier>('junior');
 
-  // Active question queue
+  // Active procedural question queue
   const [questionQueue, setQuestionQueue] = useState<ValuationQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -71,22 +74,23 @@ export const SpeedValuationGame: React.FC<{
   const [streak, setStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [fastAnswerCount, setFastAnswerCount] = useState(0); // <3s responses
+  const [fastAnswerCount, setFastAnswerCount] = useState(0); // <3.5s rapid responses
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
   // Audio feedback setting
   const [audioFeedbackEnabled, setAudioFeedbackEnabled] = useState(true);
 
-  // Initialize and shuffle question queue
-  const initGameSession = useCallback((length: GameSessionLength) => {
-    const shuffled = shuffleArray(SPEED_VALUATION_QUESTIONS);
-    const selected = shuffled.slice(0, length);
+  // Initialize and generate procedural non-repeating question queue
+  const initGameSession = useCallback((tier: SpeedValuationTier) => {
+    // Generate fresh non-repeating procedural questions based on tier
+    const generatedQuestions = generateDynamicValuationSession(tier);
     // Shuffle options inside each question to prevent position memorization
-    const finalized = selected.map((q) => ({
+    const finalized = generatedQuestions.map((q) => ({
       ...q,
       options: shuffleArray(q.options),
     }));
+
     setQuestionQueue(finalized);
     setCurrentIndex(0);
     setScore(0);
@@ -111,6 +115,26 @@ export const SpeedValuationGame: React.FC<{
 
   const currentQ = questionQueue[currentIndex];
 
+  // Handle timeout (hesitation penalty)
+  const handleTimeout = useCallback(() => {
+    setIsTimedOut(true);
+    setHasAnswered(true);
+    setStreak(0);
+    setResponseTimes((prev) => [...prev, maxTime]);
+
+    if (audioFeedbackEnabled) {
+      setTimeout(() => {
+        speak(
+          language === 'fr'
+            ? 'Temps écoulé ! En négociation, l’hésitation coûte cher.'
+            : language === 'zh'
+            ? '时间耗尽！在创投博弈中，犹豫意味着丧失定价权。'
+            : 'Time out! Hesitation costs leverage in dealmaking.'
+        );
+      }, 0);
+    }
+  }, [audioFeedbackEnabled, language, maxTime, speak]);
+
   // Timer interval handling
   useEffect(() => {
     if (!hasStarted || hasAnswered || isGameOver || !currentQ) {
@@ -119,38 +143,21 @@ export const SpeedValuationGame: React.FC<{
     }
 
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          handleTimeout();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [hasStarted, hasAnswered, isGameOver, currentIndex]);
+  }, [hasStarted, hasAnswered, isGameOver, currentQ, currentIndex]);
 
-  // Handle timeout (hesitation penalty)
-  const handleTimeout = () => {
-    setIsTimedOut(true);
-    setHasAnswered(true);
-    setStreak(0);
-    setResponseTimes((prev) => [...prev, maxTime]);
-
-    if (audioFeedbackEnabled) {
-      speak(
-        language === 'fr'
-          ? 'Temps écoulé ! En négociation, l’hésitation coûte cher.'
-          : language === 'zh'
-          ? '时间耗尽！在创投博弈中，犹豫意味着丧失定价权。'
-          : 'Time out! Hesitation costs leverage in dealmaking.'
-      );
+  // Handle timeout safely when timeLeft reaches 0
+  useEffect(() => {
+    if (hasStarted && !hasAnswered && !isGameOver && timeLeft === 0) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      handleTimeout();
     }
-  };
+  }, [timeLeft, hasStarted, hasAnswered, isGameOver, handleTimeout]);
 
   // Play haptic audio tone
   const playTone = (isCorrect: boolean) => {
@@ -195,7 +202,7 @@ export const SpeedValuationGame: React.FC<{
     setHasAnswered(true);
 
     const opt = currentQ.options[idx];
-    const isFast = elapsedSeconds <= 4.0;
+    const isFast = elapsedSeconds <= 3.5;
 
     if (opt.isCorrect) {
       playTone(true);
@@ -206,8 +213,9 @@ export const SpeedValuationGame: React.FC<{
 
       // Score computation: base 100 pts + streak bonus + speed bonus
       const streakMultiplier = 1 + (newStreak - 1) * 0.25; // 1x, 1.25x, 1.5x...
-      const speedBonus = isFast ? 30 : Math.max(0, Math.round((maxTime - elapsedSeconds) * 2));
-      const pointsEarned = Math.round(100 * streakMultiplier + speedBonus);
+      const speedBonus = isFast ? 40 : Math.max(0, Math.round((maxTime - elapsedSeconds) * 2));
+      const tierBonus = selectedTier === 'senior' ? 30 : selectedTier === 'mid' ? 15 : 0;
+      const pointsEarned = Math.round(100 * streakMultiplier + speedBonus + tierBonus);
       setScore((prev) => prev + pointsEarned);
 
       if (isFast) {
@@ -215,26 +223,30 @@ export const SpeedValuationGame: React.FC<{
       }
 
       if (audioFeedbackEnabled) {
-        speak(
-          language === 'fr'
-            ? 'Formule exacte. Réflexe de valorisation instantané.'
-            : language === 'zh'
-            ? '精准绝杀！秒级心算，守住估值底线。'
-            : 'Spot on! Instant mental valuation reflex.'
-        );
+        setTimeout(() => {
+          speak(
+            language === 'fr'
+              ? 'Formule exacte. Réflexe de valorisation instantané.'
+              : language === 'zh'
+              ? '精准绝杀！秒级心算，守住估值底线。'
+              : 'Spot on! Instant mental valuation reflex.'
+          );
+        }, 0);
       }
     } else {
       playTone(false);
       setStreak(0);
 
       if (audioFeedbackEnabled) {
-        speak(
-          language === 'fr'
-            ? 'Piège classique de dilution détecté.'
-            : language === 'zh'
-            ? '落入经典稀释陷阱，切记分母为投后。'
-            : 'Fell into dilution trap. Denominator is post-money.'
-        );
+        setTimeout(() => {
+          speak(
+            language === 'fr'
+              ? 'Piège classique de dilution détecté.'
+              : language === 'zh'
+              ? '落入经典稀释陷阱，切记分母为投后。'
+              : 'Fell into dilution trap. Denominator is post-money.'
+          );
+        }, 0);
       }
     }
   };
@@ -262,37 +274,59 @@ export const SpeedValuationGame: React.FC<{
     if (timerRef.current) clearInterval(timerRef.current);
 
     // Normalize final score for App progress (0 - 100 scaled)
-    const accuracy = questionQueue.length > 0 ? (correctCount / questionQueue.length) : 0;
+    const accuracy = questionQueue.length > 0 ? correctCount / questionQueue.length : 0;
     const finalNormalizedScore = Math.min(100, Math.round(accuracy * 100));
 
-    recordGameScore('game_02', finalNormalizedScore);
-    if (onFinish) onFinish(finalNormalizedScore);
+    // Save to Leaderboard with modeKey
+    const modeKey =
+      selectedTier === 'junior'
+        ? '5_rounds'
+        : selectedTier === 'mid'
+        ? '25_rounds'
+        : '50_rounds';
 
-    // Save to Leaderboard
-    const modeKey = sessionLength === 5 ? '5_rounds' : '10_rounds';
     const playerName = getUserPlayerName();
-    const avgSpeed = responseTimes.length > 0
-      ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
-      : '0.0';
+    const valuePerQuestion = selectedTier === 'senior' ? 3000000 : selectedTier === 'mid' ? 2500000 : 2000000;
 
     addLeaderboardRecord({
       gameId: 'game_02',
       sessionMode: modeKey,
       playerName: playerName || 'Mental Quant Founder',
       playerTitle: {
-        en: accuracy >= 0.9 ? 'Valuation Maestro' : accuracy >= 0.7 ? 'Senior Quant' : 'Dilution Apprentice',
-        fr: accuracy >= 0.9 ? 'Maître de la Valorisation' : accuracy >= 0.7 ? 'Quant Senior' : 'Apprenti Fondateur',
-        zh: accuracy >= 0.9 ? '估值心算大师' : accuracy >= 0.7 ? '资深量化操盘手' : '创投新锐领航者',
+        en:
+          accuracy >= 0.9
+            ? 'Grandmaster Quant Titan'
+            : accuracy >= 0.7
+            ? 'Valuation Architect'
+            : 'Dilution Defense Apprentice',
+        fr:
+          accuracy >= 0.9
+            ? 'Maître Suprême de la Valorisation'
+            : accuracy >= 0.7
+            ? 'Architecte de Valorisation'
+            : 'Apprenti Négociateur',
+        zh:
+          accuracy >= 0.9
+            ? '董事会顶级量化神算'
+            : accuracy >= 0.7
+            ? '资深估值博弈架构师'
+            : '创投心算新锐学徒',
       },
       score: score,
       composure: Math.min(100, Math.round(accuracy * 100)),
       leverage: Math.min(100, Math.round((fastAnswerCount / Math.max(1, questionQueue.length)) * 100 + 40)),
-      valuationSaved: correctCount * 2500000,
+      valuationSaved: correctCount * valuePerQuestion,
       roundsCompleted: questionQueue.length,
       totalRounds: questionQueue.length,
       isUser: true,
       tier: accuracy >= 0.9 ? 'sovereign' : accuracy >= 0.7 ? 'alpha' : 'principal',
     });
+
+    // Safely update App progress and notify caller outside the active render turn
+    setTimeout(() => {
+      recordGameScore('game_02', finalNormalizedScore);
+      if (onFinish) onFinish(finalNormalizedScore);
+    }, 0);
   };
 
   // Compute stats
@@ -308,66 +342,65 @@ export const SpeedValuationGame: React.FC<{
   }, [correctCount, questionQueue.length]);
 
   return (
-    <div className="relative rounded-3xl bg-surface-main dark:bg-[#0d111c] border border-border-main dark:border-stone-800 shadow-2xl overflow-hidden text-text-primary dark:text-stone-100 p-5 sm:p-8 space-y-6">
+    <div className="relative rounded-3xl bg-surface-main dark:bg-[#0b0f1a] border border-border-main dark:border-stone-800 shadow-2xl overflow-hidden text-text-primary dark:text-stone-100 p-5 sm:p-8 space-y-6">
       {/* Background ambient luxury styling */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* HEADER SECTION */}
       <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-main dark:border-stone-800/80 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2 text-xs font-mono tracking-wider text-emerald-600 dark:text-emerald-400 font-bold uppercase">
-            <Zap className="w-4 h-4 text-emerald-500 fill-current" />
-            <span>Game #2 · {language === 'fr' ? 'Valorisation Éclair' : language === 'zh' ? '极速估值心算' : 'Speed Valuation'}</span>
-            <span className="text-stone-400 dark:text-stone-600">·</span>
-            <span className="text-amber-500 font-normal">
-              {language === 'fr' ? 'Armure Cognitive de Négociation' : language === 'zh' ? '谈判桌上的认知防线' : 'Negotiation Defense Armor'}
-            </span>
+        <div className="flex items-center space-x-3.5">
+          <img
+            src={speedValuationIcon}
+            alt="Speed Valuation Game Emblem"
+            className="w-12 h-12 rounded-xl object-cover border border-emerald-400/50 shadow-md shrink-0"
+          />
+          <div className="space-y-0.5">
+            <div className="flex items-center space-x-2 text-xs font-mono tracking-wider text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+              <Zap className="w-3.5 h-3.5 text-emerald-500 fill-current" />
+              <span>Game #2 · {language === 'fr' ? 'Valorisation Éclair' : language === 'zh' ? '极速估值心算' : 'Speed Valuation'}</span>
+              <span className="text-stone-400 dark:text-stone-600">·</span>
+              <span className="text-amber-500 font-normal">
+                {language === 'fr' ? 'Armure Cognitive' : language === 'zh' ? '谈判桌认知防线' : 'Boardroom Armor'}
+              </span>
+            </div>
+
+            <h2 className="text-lg sm:text-xl font-serif-luxury font-bold text-text-primary dark:text-white">
+              {language === 'fr'
+                ? 'Calcul Mental Éclair : L’Art de Verrouiller la Valeur'
+                : language === 'zh'
+                ? '极速估值心算 · 秒级破局'
+                : 'Speed Valuation: The 3-Second Mental Edge'}
+            </h2>
           </div>
-
-          <h2 className="fluid-heading-2 font-serif-luxury font-bold text-text-primary dark:text-white">
-            {language === 'fr'
-              ? 'Calcul Mental Éclair : L’Art de Verrouiller la Valeur'
-              : language === 'zh'
-              ? '极速估值心算 · 秒级破局'
-              : 'Speed Valuation: The 3-Second Mental Edge'}
-          </h2>
-
-          <p className="text-xs text-text-secondary dark:text-stone-400 max-w-2xl leading-relaxed">
-            {language === 'fr'
-              ? 'En réunion de closing, hésiter ou sortir une calculatrice trahit l’insécurité. Calculez instantanément le Pré, le Post et les pièges de pool pour dominer l’échange.'
-              : language === 'zh'
-              ? '顶级谈判桌上，掏出计算器或犹豫发呆等于拱手让出定价权。以秒级心算脱口而出投后估值、稀释比例与期权池真实折价，建立坚不可摧的专业威慑。'
-              : 'In high-stakes fundraising, grabbing a calculator signals hesitation. Master instant mental shortcuts to lock post-money valuations and counter dilution traps.'}
-          </p>
         </div>
 
-        {/* Top Control Buttons */}
-        <div className="flex items-center space-x-3 shrink-0">
+        {/* Global Controls & Exit */}
+        <div className="flex items-center space-x-2 self-end md:self-auto">
           <button
-            onClick={() => setAudioFeedbackEnabled((v) => !v)}
-            className={`p-2.5 rounded-xl border text-xs font-mono transition-colors ${
+            onClick={() => setAudioFeedbackEnabled(!audioFeedbackEnabled)}
+            className={`p-2 rounded-xl border transition-colors cursor-pointer ${
               audioFeedbackEnabled
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
                 : 'bg-surface-muted dark:bg-stone-800 border-border-main dark:border-stone-700 text-stone-400'
             }`}
-            title="Toggle Voice Feedback"
+            title="Audio commentary"
           >
             <Volume2 className="w-4 h-4" />
           </button>
 
           <button
             onClick={() => setIsLeaderboardOpen(true)}
-            className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-mono font-bold transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 hover:bg-amber-500/25 text-xs font-mono font-bold flex items-center space-x-1.5 transition-all cursor-pointer"
           >
-            <Trophy className="w-4 h-4" />
-            <span>{language === 'fr' ? 'Records' : language === 'zh' ? '风云榜' : 'High Scores'}</span>
+            <Trophy className="w-3.5 h-3.5" />
+            <span>{language === 'fr' ? 'Classement' : language === 'zh' ? '巅峰榜' : 'High Scores'}</span>
           </button>
 
           {onExit && (
             <button
               onClick={onExit}
-              className="px-3.5 py-2 rounded-xl bg-surface-muted dark:bg-stone-800/80 hover:bg-surface-elevated text-text-secondary text-xs font-mono transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-surface-muted dark:bg-stone-800/80 hover:bg-surface-elevated text-text-secondary text-xs font-mono transition-colors cursor-pointer"
             >
               {language === 'fr' ? 'Fermer' : language === 'zh' ? '退出' : 'Exit'}
             </button>
@@ -375,87 +408,184 @@ export const SpeedValuationGame: React.FC<{
         </div>
       </div>
 
-      {/* VIEW A: PRE-START INTRO / MODE SELECTOR */}
+      {/* VIEW A: PRE-START INTRO / DIFFICULTY TIER SELECTOR */}
       {!hasStarted && (
-        <div className="max-w-2xl mx-auto py-6 sm:py-10 space-y-8 text-center">
-          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-400 p-0.5 shadow-xl">
-            <div className="w-full h-full rounded-2xl bg-[#0f1424] flex items-center justify-center">
-              <Percent className="w-10 h-10 text-emerald-400" />
+        <div className="max-w-3xl mx-auto py-4 sm:py-6 space-y-7 text-center">
+          {/* Hero Branding with Generated Game Emblem */}
+          <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 rounded-3xl p-1 bg-gradient-to-tr from-emerald-500 via-amber-400 to-teal-400 shadow-[0_12px_36px_rgba(16,185,129,0.35)]">
+            <img
+              src={speedValuationIcon}
+              alt="Speed Valuation Game Icon"
+              className="w-full h-full object-cover rounded-[22px] border border-white/20"
+            />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-400/80 text-[10px] font-mono text-emerald-300 font-bold uppercase tracking-wider shadow-lg whitespace-nowrap">
+              Game #2 Flagship
             </div>
           </div>
 
+          {/* Theme & Core Meaning Manifesto */}
           <div className="space-y-3">
             <h3 className="text-xl sm:text-2xl font-serif-luxury font-bold text-text-primary dark:text-white">
-              {language === 'fr' ? 'Choisissez votre Épreuve de Calcul' : language === 'zh' ? '选择心算对决规模' : 'Select Challenge Session'}
-            </h3>
-            <p className="text-xs text-text-secondary dark:text-stone-400 max-w-lg mx-auto leading-relaxed">
               {language === 'fr'
-                ? 'Chaque question propose un contexte d’investissement réel avec ses raccourcis mentaux de 3 secondes. Testez votre sang-froid sous le compte à rebours.'
+                ? 'Choisissez votre Niveau d’Épreuve Mentale'
                 : language === 'zh'
-                ? '每道题目均来自一线创投真实交锋，附带顶级VC私藏的3秒速算心法与防坑复盘。在极速倒计时高压下淬炼你的大脑算力。'
-                : 'Every scenario mirrors real venture deal points, paired with 3-second shortcut secrets. Test your cognitive precision under timer pressure.'}
-            </p>
-          </div>
-
-          {/* Mode Selector Segment */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
-            <div
-              onClick={() => setSessionLength(5)}
-              className={`p-4 rounded-2xl border text-left cursor-pointer transition-all ${
-                sessionLength === 5
-                  ? 'bg-emerald-500/10 border-emerald-500/60 shadow-lg text-emerald-950 dark:text-emerald-100'
-                  : 'bg-surface-muted dark:bg-stone-900 border-border-main dark:border-stone-800 hover:border-border-focus text-text-secondary'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">
-                  {language === 'fr' ? '5 Épreuves' : language === 'zh' ? '5轮速记试炼' : '5-Round Sprint'}
+                ? '选择你的估值心算实战等级'
+                : 'Select Your Boardroom Mental Tier'}
+            </h3>
+            <div className="p-3.5 max-w-xl mx-auto rounded-2xl bg-surface-muted dark:bg-[#121629] border border-amber-400/20 text-xs text-text-secondary dark:text-stone-300 leading-relaxed text-left space-y-1.5">
+              <div className="flex items-center space-x-1.5 font-bold text-amber-500 text-[11px] uppercase font-mono">
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>
+                  {language === 'fr'
+                    ? 'Le Principe Fondamental'
+                    : language === 'zh'
+                    ? '创投心算法则 · 创始人的认知铠甲'
+                    : 'The Core Founder Doctrine'}
                 </span>
-                <Clock className="w-4 h-4 text-emerald-500" />
               </div>
-              <p className="text-xs font-semibold text-text-primary dark:text-stone-200">
-                {language === 'fr' ? 'Format Sprint (~2 min)' : language === 'zh' ? '快节奏闪电破局 (~2分钟)' : 'High-tempo rapid drill (~2 min)'}
-              </p>
-              <p className="text-[11px] text-text-secondary dark:text-stone-400 mt-1">
-                {language === 'fr' ? 'Idéal pour l’échauffement matinal' : language === 'zh' ? '专注投后与稀释核心心算' : 'Focus on pre/post & dilution basics'}
-              </p>
-            </div>
-
-            <div
-              onClick={() => setSessionLength(10)}
-              className={`p-4 rounded-2xl border text-left cursor-pointer transition-all ${
-                sessionLength === 10
-                  ? 'bg-amber-500/10 border-amber-500/60 shadow-lg text-amber-950 dark:text-amber-100'
-                  : 'bg-surface-muted dark:bg-stone-900 border-border-main dark:border-stone-800 hover:border-border-focus text-text-secondary'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-400">
-                  {language === 'fr' ? '10 Épreuves' : language === 'zh' ? '10轮全真模拟' : '10-Round Masterclass'}
-                </span>
-                <Brain className="w-4 h-4 text-amber-500" />
-              </div>
-              <p className="text-xs font-semibold text-text-primary dark:text-stone-200">
-                {language === 'fr' ? 'Format Boardroom (~4 min)' : language === 'zh' ? '高阶复杂博弈推演 (~4分钟)' : 'Complex deal points (~4 min)'}
-              </p>
-              <p className="text-[11px] text-text-secondary dark:text-stone-400 mt-1">
-                {language === 'fr' ? 'Intègre ESOP, SAFE et Multiples' : language === 'zh' ? '涵盖期权池、SAFE转股与退出倍数' : 'Includes ESOP pool & SAFE clash'}
+              <p className="text-[11px] leading-relaxed">
+                {language === 'fr'
+                  ? 'En négociation, attraper une calculatrice trahit l’insécurité et fait chuter votre levier. Un calcul mental en 3 secondes signale une maîtrise souveraine de la table.'
+                  : language === 'zh'
+                  ? '估值心算不是冷冰冰的数字算术，而是创始人在谈判桌上的认知防线。低头拿计算器是怯场的信号；3秒心算绝杀，才能在董事会博弈中牢牢锁死主动权与股权底线！'
+                  : 'Grabbing a calculator in the boardroom projects insecurity and surrenders leverage. Executing instant 3-second mental math locks post-money and commands peer respect.'}
               </p>
             </div>
           </div>
 
+          {/* 3 Difficulty Tiers: 初级(5题) · 中级(25题) · 高级(50题) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            {/* 1. 初级 Junior (5 Questions) */}
+            <div
+              onClick={() => setSelectedTier('junior')}
+              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
+                selectedTier === 'junior'
+                  ? 'bg-cyan-500/10 border-cyan-500/80 shadow-[0_8px_24px_rgba(6,182,212,0.18)] ring-1 ring-cyan-500 text-cyan-950 dark:text-cyan-100'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-cyan-500/40 text-text-secondary'
+              }`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase text-cyan-500 flex items-center space-x-1">
+                    <Zap className="w-3.5 h-3.5 fill-current" />
+                    <span>{language === 'fr' ? 'Niveau Débutant' : language === 'zh' ? '初级 · 闪电破局' : 'Junior Sprint'}</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold">
+                    5 题
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-text-primary dark:text-white">
+                  {language === 'fr' ? '5 Épreuves · 15s/tour' : language === 'zh' ? '5道精选题 · 15秒限时' : '5 Rounds · 15s Limit'}
+                </h4>
+                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Addition Pré/Post, règle du 20% inversé et dilution de base.'
+                    : language === 'zh'
+                    ? '专注投后估值加法原理、20%黄金倒数与基础出资稀释。'
+                    : 'Master Post-money addition, 20% golden inversion, and seed dilution.'}
+                </p>
+              </div>
+              <div className="pt-3 mt-2 border-t border-cyan-500/20 text-[10px] font-mono text-cyan-400">
+                {language === 'fr' ? 'Échauffement rapide (~1.5 min)' : language === 'zh' ? '高频速战 · 建立敏感度 (~1.5分钟)' : 'Rapid warm-up (~1.5 min)'}
+              </div>
+            </div>
+
+            {/* 2. 中级 Mid (25 Questions) */}
+            <div
+              onClick={() => setSelectedTier('mid')}
+              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
+                selectedTier === 'mid'
+                  ? 'bg-emerald-500/10 border-emerald-500/80 shadow-[0_8px_24px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500 text-emerald-950 dark:text-emerald-100'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-emerald-500/40 text-text-secondary'
+              }`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase text-emerald-500 flex items-center space-x-1">
+                    <Compass className="w-3.5 h-3.5" />
+                    <span>{language === 'fr' ? 'Niveau Intermédiaire' : language === 'zh' ? '中级 · 董事会全真' : 'Mid Boardroom'}</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
+                    25 题
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-text-primary dark:text-white">
+                  {language === 'fr' ? '25 Épreuves · 12s/tour' : language === 'zh' ? '25道全真题 · 12秒限时' : '25 Rounds · 12s Limit'}
+                </h4>
+                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Pool ESOP avant/après, fractions 1/6 & 1/8, SAFE discount et prix par action.'
+                    : language === 'zh'
+                    ? '深度剖析期权池前置折价、16.7%与12.5%特殊倒数、每股价格与SAFE折扣。'
+                    : 'Deconstruct ESOP pre-money shuffle, 1/6 & 1/8 shortcuts, and SAFE cap discount.'}
+                </p>
+              </div>
+              <div className="pt-3 mt-2 border-t border-emerald-500/20 text-[10px] font-mono text-emerald-400">
+                {language === 'fr' ? 'Simulation complète (~5 min)' : language === 'zh' ? '全景攻防 · 深度实操 (~5分钟)' : 'Full simulation (~5 min)'}
+              </div>
+            </div>
+
+            {/* 3. 高级 Senior (50 Questions) */}
+            <div
+              onClick={() => setSelectedTier('senior')}
+              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
+                selectedTier === 'senior'
+                  ? 'bg-rose-500/10 border-rose-500/80 shadow-[0_8px_24px_rgba(244,63,94,0.18)] ring-1 ring-rose-500 text-rose-950 dark:text-rose-100'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-rose-500/40 text-text-secondary'
+              }`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase text-rose-500 flex items-center space-x-1">
+                    <Flame className="w-3.5 h-3.5 fill-current" />
+                    <span>{language === 'fr' ? 'Niveau Expert' : language === 'zh' ? '高级 · 巅峰决战' : 'Senior Grandmaster'}</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold">
+                    50 题
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-text-primary dark:text-white">
+                  {language === 'fr' ? '50 Épreuves · 10s/tour' : language === 'zh' ? '50道巅峰题 · 10秒极限' : '50 Rounds · 10s Limit'}
+                </h4>
+                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Cadence infernale, haircuts de Down-rounds, Step-up multiples et contrôle fondateur.'
+                    : language === 'zh'
+                    ? '全题型极限连击，降轮Haircut折价、估值跳升倍数(Step-up)与创始人保留权底线。'
+                    : 'Extreme tempo, Down-round haircuts, step-up multiples, and founder control defense.'}
+                </p>
+              </div>
+              <div className="pt-3 mt-2 border-t border-rose-500/20 text-[10px] font-mono text-rose-400">
+                {language === 'fr' ? 'Épreuve d’endurance (~8 min)' : language === 'zh' ? '极限耐力 · 登顶天梯榜 (~8分钟)' : 'Endurance trial (~8 min)'}
+              </div>
+            </div>
+          </div>
+
+          {/* Random / Non-repeating Question Engine Assurance */}
+          <div className="flex items-center justify-center space-x-2 text-[11px] font-mono text-stone-400">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>
+              {language === 'fr'
+                ? 'Générateur Procédural Dynamique : Toutes les questions et nombres sont générés à la volée sans répétition.'
+                : language === 'zh'
+                ? '程序化动态题库引擎：每次进入游戏随机实时出题，参数完全不重复，确保边玩边学的极致神秘感与新鲜感。'
+                : 'Procedural Valuation Engine: dynamic infinite non-repeating parameters on every run.'}
+            </span>
+          </div>
+
+          {/* Launch Button */}
           <div className="pt-2">
             <button
-              onClick={() => initGameSession(sessionLength)}
-              className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono font-bold text-sm shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center space-x-3 mx-auto cursor-pointer"
+              onClick={() => initGameSession(selectedTier)}
+              className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-mono font-bold text-sm shadow-[0_12px_30px_rgba(16,185,129,0.3)] hover:shadow-emerald-500/40 active:scale-95 transition-all flex items-center justify-center space-x-3 mx-auto cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-current" />
               <span>
                 {language === 'fr'
-                  ? `Démarrer le Défi (${sessionLength} Épreuves)`
+                  ? `Démarrer le Défi (${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} Épreuves)`
                   : language === 'zh'
-                  ? `开启极速心算挑战 (${sessionLength}题)`
-                  : `Launch Mental Arithmetic (${sessionLength} Rounds)`}
+                  ? `开启极速心算对决 (${selectedTier === 'senior' ? '高级 50题' : selectedTier === 'mid' ? '中级 25题' : '初级 5题'})`
+                  : `Launch Valuation Challenge (${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} Rounds)`}
               </span>
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -466,14 +596,18 @@ export const SpeedValuationGame: React.FC<{
       {/* VIEW B: ACTIVE LIVE GAMEPLAY */}
       {hasStarted && !isGameOver && currentQ && (
         <div className="space-y-6 max-w-3xl mx-auto">
-          {/* HUD: Round counter, Timer with progress bar, Live score, Combo streak */}
+          {/* HUD: Round counter, Tier badge, Timer with progress bar, Live score, Combo streak */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-surface-muted dark:bg-[#121626] border border-border-main dark:border-stone-800 text-xs font-mono">
             <div className="flex items-center space-x-3">
               <span className="text-text-secondary dark:text-stone-400">
                 Round <strong className="text-text-primary dark:text-white tabular-nums">{currentIndex + 1}</strong> / {questionQueue.length}
               </span>
               <span className="text-stone-400 dark:text-stone-600">·</span>
-              <span className="text-text-secondary dark:text-stone-400 uppercase">
+              <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 font-bold uppercase text-[10px]">
+                {selectedTier === 'senior' ? '高级 50题' : selectedTier === 'mid' ? '中级 25题' : '初级 5题'}
+              </span>
+              <span className="text-stone-400 dark:text-stone-600 hidden sm:inline">·</span>
+              <span className="text-text-secondary dark:text-stone-400 uppercase hidden sm:inline">
                 {currentQ.category.replace('_', ' ')}
               </span>
             </div>
@@ -578,11 +712,13 @@ export const SpeedValuationGame: React.FC<{
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {currentQ.options.map((opt, optIdx) => {
               const isSelected = selectedOptionIndex === optIdx;
-              let btnStyle = 'bg-surface-main dark:bg-[#121626] border-border-main dark:border-stone-800 hover:border-emerald-500/50 hover:bg-emerald-500/5 text-text-primary dark:text-stone-200';
+              let btnStyle =
+                'bg-surface-main dark:bg-[#121626] border-border-main dark:border-stone-800 hover:border-emerald-500/50 hover:bg-emerald-500/5 text-text-primary dark:text-stone-200';
 
               if (hasAnswered) {
                 if (opt.isCorrect) {
-                  btnStyle = 'bg-emerald-500/15 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold shadow-md shadow-emerald-500/10';
+                  btnStyle =
+                    'bg-emerald-500/15 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold shadow-md shadow-emerald-500/10';
                 } else if (isSelected && !opt.isCorrect) {
                   btnStyle = 'bg-rose-500/15 border-rose-500 text-rose-950 dark:text-rose-200 font-bold';
                 } else {
@@ -685,24 +821,33 @@ export const SpeedValuationGame: React.FC<{
       {/* VIEW C: FINAL GAME AUDIT & SCORE REPORT */}
       {isGameOver && (
         <div className="max-w-2xl mx-auto py-6 sm:py-8 space-y-6 text-center animate-in fade-in duration-300">
-          <div className="relative mx-auto w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-500 via-emerald-500 to-indigo-600 p-0.5 shadow-2xl">
-            <div className="w-full h-full rounded-3xl bg-[#0d111c] flex items-center justify-center">
-              <Trophy className="w-12 h-12 text-amber-400 animate-pulse" />
-            </div>
+          <div className="relative mx-auto w-24 h-24 rounded-3xl p-1 bg-gradient-to-tr from-amber-500 via-emerald-500 to-indigo-600 shadow-2xl">
+            <img
+              src={speedValuationIcon}
+              alt="Game Completed Emblem"
+              className="w-full h-full object-cover rounded-[22px] border border-white/20"
+            />
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs font-mono uppercase text-emerald-500 font-bold tracking-widest">
-              {language === 'fr' ? 'Épreuve Terminée' : language === 'zh' ? '极速估值对决圆满完成' : 'Challenge Completed'}
+            <div className="text-xs font-mono uppercase text-emerald-500 font-bold tracking-widest flex items-center justify-center space-x-1.5">
+              <Trophy className="w-3.5 h-3.5" />
+              <span>
+                {language === 'fr'
+                  ? `Épreuve ${selectedTier.toUpperCase()} Terminée`
+                  : language === 'zh'
+                  ? `${selectedTier === 'senior' ? '高级 50题' : selectedTier === 'mid' ? '中级 25题' : '初级 5题'} · 估值心算对决圆满完成`
+                  : `${selectedTier.toUpperCase()} Session Completed`}
+              </span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-serif-luxury font-bold text-text-primary dark:text-white">
-              {score >= 800
+              {score >= 2500 || (selectedTier === 'junior' && score >= 500)
                 ? language === 'fr'
                   ? 'Grand Maître Quant du Boardroom'
                   : language === 'zh'
                   ? '董事会顶级量化大师'
                   : 'Sovereign Boardroom Quant'
-                : score >= 500
+                : score >= 1200 || (selectedTier === 'junior' && score >= 300)
                 ? language === 'fr'
                   ? 'Négociateur Émérite'
                   : language === 'zh'
@@ -718,7 +863,7 @@ export const SpeedValuationGame: React.FC<{
               {language === 'fr'
                 ? 'Vos scores ont été enregistrés dans votre profil et au classement mondial.'
                 : language === 'zh'
-                ? '你的实战战报已永久归档至成就库，并同步登记至巅峰排行榜。'
+                ? '你的实战战报已永久归档至成就库，并同步登记至巅峰排行榜对应天梯赛道。'
                 : 'Your mental performance audit has been permanently committed to your ledger and the leaderboard.'}
             </p>
           </div>
@@ -773,11 +918,25 @@ export const SpeedValuationGame: React.FC<{
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <button
-              onClick={() => initGameSession(sessionLength)}
+              onClick={() => initGameSession(selectedTier)}
               className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>{language === 'fr' ? 'Rejouer ce Défi' : language === 'zh' ? '再次对决挑战' : 'Play Again'}</span>
+              <span>
+                {language === 'fr'
+                  ? 'Rejouer ce Niveau (Nouveaux Chiffres)'
+                  : language === 'zh'
+                  ? '换一批全新题目 · 再战一局'
+                  : 'Replay Tier (Fresh Numbers)'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setHasStarted(false)}
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
+            >
+              <Layers className="w-4 h-4" />
+              <span>{language === 'fr' ? 'Changer de Niveau' : language === 'zh' ? '切换等级' : 'Change Tier'}</span>
             </button>
 
             <button
@@ -791,7 +950,7 @@ export const SpeedValuationGame: React.FC<{
             {onExit && (
               <button
                 onClick={onExit}
-                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-surface-muted dark:bg-stone-800 text-text-secondary text-xs font-mono hover:bg-surface-elevated transition-colors"
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-surface-muted dark:bg-stone-800 text-text-secondary text-xs font-mono hover:bg-surface-elevated transition-colors cursor-pointer"
               >
                 {language === 'fr' ? 'Retour au Hub' : language === 'zh' ? '返回游戏大厅' : 'Back to Hub'}
               </button>

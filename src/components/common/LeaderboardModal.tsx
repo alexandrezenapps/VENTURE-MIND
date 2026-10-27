@@ -97,9 +97,11 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
     },
     tabs: {
       all: { en: 'All Sessions', fr: 'Toutes Sessions', zh: '全部天梯' },
-      quick5: { en: '5-Round Duel', fr: '5 Manches', zh: '5 回合速战' },
-      deep10: { en: '10-Round Masterclass', fr: '10 Manches', zh: '10 回合深弈' },
-      grand20: { en: '20-Round Grand Slam', fr: '20 Manches', zh: '20 回合传奇' },
+      quick5: { en: '5-Round (Junior)', fr: '5 Manches (Junior)', zh: '5题 · 初级速战' },
+      deep10: { en: '10-Round', fr: '10 Manches', zh: '10 回合深弈' },
+      grand20: { en: '20-Round', fr: '20 Manches', zh: '20 回合传奇' },
+      mid25: { en: '25-Round (Mid)', fr: '25 Manches (Moyen)', zh: '25题 · 中级推演' },
+      senior50: { en: '50-Round (Senior)', fr: '50 Manches (Expert)', zh: '50题 · 高级巅峰' },
     },
     cols: {
       rank: { en: 'Rank', fr: 'Rang', zh: '排名' },
@@ -126,11 +128,15 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
   const getSessionBadge = (mode: string) => {
     switch (mode) {
       case '5_rounds':
-        return { label: '5-Round', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-400/20' };
+        return { label: '5-Round (初级)', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-400/20' };
       case '10_rounds':
         return { label: '10-Round', color: 'text-purple-400 bg-purple-500/10 border-purple-400/20' };
       case '20_rounds':
-        return { label: '20-Round', color: 'text-amber-400 bg-amber-500/10 border-amber-400/20' };
+        return { label: '20-Round (传奇)', color: 'text-amber-400 bg-amber-500/10 border-amber-400/20' };
+      case '25_rounds':
+        return { label: '25-Round (中级)', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-400/20' };
+      case '50_rounds':
+        return { label: '50-Round (高级)', color: 'text-rose-400 bg-rose-500/10 border-rose-400/20' };
       default:
         return { label: 'Duel', color: 'text-stone-300 bg-stone-500/10 border-stone-400/20' };
     }
@@ -266,6 +272,26 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
             }`}
           >
             {t.tabs.grand20[language]}
+          </button>
+          <button
+            onClick={() => setActiveMode('25_rounds')}
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+              activeMode === '25_rounds'
+                ? 'bg-emerald-500 text-stone-950 font-bold shadow-xs'
+                : 'text-stone-400 hover:text-white'
+            }`}
+          >
+            {t.tabs.mid25[language]}
+          </button>
+          <button
+            onClick={() => setActiveMode('50_rounds')}
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+              activeMode === '50_rounds'
+                ? 'bg-rose-500 text-white font-bold shadow-xs'
+                : 'text-stone-400 hover:text-white'
+            }`}
+          >
+            {t.tabs.senior50[language]}
           </button>
         </div>
 
