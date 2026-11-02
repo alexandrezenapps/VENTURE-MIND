@@ -33,6 +33,7 @@ import { MindfulPauseWidget } from '../mindfulness/MindfulPauseWidget';
 import { OverlappingCardStack } from '../common/OverlappingCardStack';
 import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
 import { ProgressChecklistCard, ChecklistItem } from '../common/ProgressChecklistCard';
+import { HorizontalAccordion } from '../common/HorizontalAccordion';
 
 // Image paths from batch generation
 const IMAGES = {
@@ -906,6 +907,12 @@ export const DashboardView: React.FC = () => {
         onReset={handleResetChecklist}
         accent="emerald"
       />
+
+      {/* ========================================================
+          Dynamic Horizontal Accordion Component (横向手风琴组件)
+          默认等宽窄条，点击某条展开变宽，显示详情，其余同步收窄，内容延迟淡入
+          ======================================================== */}
+      <HorizontalAccordion />
 
       {/* Grid: Dual Masterpiece Cards (Daily Term & Mindful Psychology) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">

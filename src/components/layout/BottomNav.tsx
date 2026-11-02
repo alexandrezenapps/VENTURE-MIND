@@ -12,6 +12,7 @@ import {
   X,
   Sparkles,
   ChevronUp,
+  ChevronRight,
   Aperture,
   Layers,
 } from 'lucide-react';
@@ -24,7 +25,9 @@ export const BottomNav: React.FC = () => {
     setSelectedSimulator,
     language,
     progress,
+    isOpeningPortalOpen,
     setIsOpeningPortalOpen,
+    isCardStackModalOpen,
     setIsCardStackModalOpen,
   } = useApp();
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -187,6 +190,95 @@ export const BottomNav: React.FC = () => {
     },
   ];
 
+  // Sliding active highlight block state & refs for "More" (更多) menu
+  const moreContainerRef = useRef<HTMLDivElement | null>(null);
+  const moreItemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [hoveredMoreKey, setHoveredMoreKey] = useState<string | null>(null);
+  const [moreIndicatorStyle, setMoreIndicatorStyle] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    opacity: number;
+  }>({ left: 0, top: 0, width: 0, height: 0, opacity: 0 });
+
+  const activeMoreKey = ['simulators', 'negotiation', 'termsheet', 'exam', 'profile'].includes(activeTab)
+    ? activeTab
+    : 'simulators';
+  const currentMoreKey = hoveredMoreKey || activeMoreKey;
+
+  const updateMoreIndicator = useCallback((keyToTarget?: string) => {
+    const targetKey = keyToTarget ?? currentMoreKey;
+    const container = moreContainerRef.current;
+    const btn = moreItemRefs.current.get(targetKey);
+    if (!container || !btn) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    if (containerRect.width === 0 || btnRect.width === 0) {
+      return;
+    }
+
+    setMoreIndicatorStyle({
+      left: Math.round(btnRect.left - containerRect.left),
+      top: Math.round(btnRect.top - containerRect.top),
+      width: Math.round(btnRect.width),
+      height: Math.round(btnRect.height),
+      opacity: 1,
+    });
+  }, [currentMoreKey]);
+
+  useEffect(() => {
+    if (!isMoreMenuOpen) {
+      setHoveredMoreKey(null);
+      return;
+    }
+
+    let rId1: number;
+    let rId2: number;
+
+    const run = () => {
+      updateMoreIndicator();
+    };
+
+    run();
+    rId1 = requestAnimationFrame(() => {
+      run();
+      rId2 = requestAnimationFrame(run);
+    });
+
+    return () => {
+      cancelAnimationFrame(rId1);
+      cancelAnimationFrame(rId2);
+    };
+  }, [isMoreMenuOpen, updateMoreIndicator, activeTab, currentMoreKey, language]);
+
+  useEffect(() => {
+    if (!isMoreMenuOpen) return;
+    const container = moreContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      updateMoreIndicator();
+    });
+    observer.observe(container);
+
+    moreItemRefs.current.forEach((btn) => {
+      if (btn) observer.observe(btn);
+    });
+
+    const handleResize = () => updateMoreIndicator();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isMoreMenuOpen, updateMoreIndicator]);
+
   return (
     <>
       {/* "More" Sheet Modal for Mobile */}
@@ -214,94 +306,329 @@ export const BottomNav: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-2.5">
-              {/* Art Portal Opening Cover Button */}
-              <button
-                onClick={() => {
-                  setIsOpeningPortalOpen(true);
-                  setIsMoreMenuOpen(false);
+            <div
+              ref={moreContainerRef}
+              onMouseLeave={() => {
+                setHoveredMoreKey(null);
+                updateMoreIndicator(activeMoreKey);
+              }}
+              onPointerLeave={() => {
+                setHoveredMoreKey(null);
+                updateMoreIndicator(activeMoreKey);
+              }}
+              className="grid grid-cols-1 gap-2.5 relative isolate"
+            >
+              {/* Sliding rounded highlight block with spring rebound */}
+              <div
+                className={`pointer-events-none absolute top-0 left-0 rounded-2xl border-2 transition-colors duration-300 ${
+                  currentMoreKey === 'portal'
+                    ? 'border-amber-400/80 bg-gradient-to-r from-amber-500/25 via-purple-500/20 to-amber-500/15 shadow-[0_4px_24px_rgba(245,158,11,0.28)]'
+                    : currentMoreKey === 'cardstack'
+                    ? 'border-indigo-400/80 bg-gradient-to-r from-indigo-500/25 via-purple-500/20 to-indigo-500/15 shadow-[0_4px_24px_rgba(99,102,241,0.28)]'
+                    : currentMoreKey === 'negotiation'
+                    ? 'border-rose-400/80 bg-gradient-to-r from-rose-500/25 via-orange-500/20 to-rose-500/15 shadow-[0_4px_24px_rgba(244,63,94,0.28)]'
+                    : currentMoreKey === 'exam'
+                    ? 'border-indigo-400/80 bg-gradient-to-r from-indigo-500/25 via-purple-500/20 to-indigo-500/15 shadow-[0_4px_24px_rgba(99,102,241,0.28)]'
+                    : currentMoreKey === 'profile'
+                    ? 'border-emerald-400/80 bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-emerald-500/15 shadow-[0_4px_24px_rgba(16,185,129,0.28)]'
+                    : 'border-amber-400/80 bg-gradient-to-r from-amber-500/25 via-cyan-500/20 to-amber-500/15 shadow-[0_4px_24px_rgba(245,158,11,0.28)]'
+                } z-0`}
+                style={{
+                  transform: `translate3d(${moreIndicatorStyle.left}px, ${moreIndicatorStyle.top}px, 0)`,
+                  width: `${moreIndicatorStyle.width}px`,
+                  height: `${moreIndicatorStyle.height}px`,
+                  opacity: moreIndicatorStyle.opacity,
+                  transition:
+                    'transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1), width 420ms cubic-bezier(0.34, 1.56, 0.64, 1), height 420ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 180ms ease, border-color 300ms ease, background-color 300ms ease, box-shadow 300ms ease',
                 }}
-                className="w-full p-3.5 rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/20 via-purple-500/15 to-amber-500/10 text-left flex items-center space-x-3.5 shadow-sm active:scale-95 transition-all cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-xl bg-amber-500/25 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-400">
-                  <Aperture className="w-5 h-5 animate-spin-slow" />
-                </div>
-                <div className="flex-1 truncate">
-                  <div className="font-bold text-xs text-amber-300 flex items-center space-x-1.5">
-                    <span>
-                      {language === 'fr'
-                        ? 'Portail d’Art & Ouverture'
-                        : language === 'zh'
-                        ? '镂空大标题 · 艺术主页'
-                        : 'Knockout Title Art Portal'}
-                    </span>
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                  </div>
-                  <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
-                    {language === 'zh'
-                      ? 'VENTURE MIND 全屏手势缩放'
-                      : 'VENTURE MIND gesture zoom & presets'}
-                  </div>
-                </div>
-              </button>
+                {/* Visual tactile glint for prestigious feedback */}
+                <div className="absolute top-1 right-2 w-2 h-2 rounded-full bg-amber-400/70 blur-[1px] animate-pulse" />
+              </div>
+
+              {/* Art Portal Opening Cover Button */}
+              {(() => {
+                const isSelected = isOpeningPortalOpen;
+                const isItemCurrent = currentMoreKey === 'portal';
+                return (
+                  <button
+                    ref={(el) => {
+                      if (el) moreItemRefs.current.set('portal', el);
+                      else moreItemRefs.current.delete('portal');
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredMoreKey('portal');
+                      updateMoreIndicator('portal');
+                    }}
+                    onPointerEnter={() => {
+                      setHoveredMoreKey('portal');
+                      updateMoreIndicator('portal');
+                    }}
+                    onTouchStart={() => {
+                      setHoveredMoreKey('portal');
+                      updateMoreIndicator('portal');
+                    }}
+                    onFocus={() => {
+                      setHoveredMoreKey('portal');
+                      updateMoreIndicator('portal');
+                    }}
+                    onClick={() => {
+                      setHoveredMoreKey('portal');
+                      updateMoreIndicator('portal');
+                      setIsOpeningPortalOpen(true);
+                      setIsMoreMenuOpen(false);
+                    }}
+                    className={`relative z-10 w-full p-3.5 rounded-2xl border text-left flex items-center justify-between space-x-3.5 shadow-sm active:scale-95 transition-all duration-200 cursor-pointer ${
+                      isItemCurrent
+                        ? 'border-transparent bg-transparent scale-[1.01]'
+                        : isSelected
+                        ? 'border-amber-400/40 bg-surface-muted/50 dark:bg-stone-800/50 shadow-xs'
+                        : 'border-border-main/50 dark:border-stone-800/80 bg-surface-muted/60 dark:bg-stone-800/60 hover:border-amber-400/40'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                      <div className={`w-10 h-10 rounded-xl bg-amber-500/25 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-400 transition-transform duration-200 ${isItemCurrent ? 'scale-105' : 'scale-100'}`}>
+                        <Aperture className="w-5 h-5 animate-spin-slow" />
+                      </div>
+                      <div className="flex-1 truncate">
+                        <div className={`font-bold text-xs flex items-center space-x-1.5 transition-colors duration-200 ${
+                          isItemCurrent ? 'text-amber-300' : isSelected ? 'text-amber-400' : 'text-text-primary dark:text-stone-100'
+                        }`}>
+                          <span>
+                            {language === 'fr'
+                              ? 'Portail d’Art & Ouverture'
+                              : language === 'zh'
+                              ? '镂空大标题 · 艺术主页'
+                              : 'Knockout Title Art Portal'}
+                          </span>
+                          <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                        </div>
+                        <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
+                          {language === 'zh'
+                            ? 'VENTURE MIND 全屏手势缩放'
+                            : 'VENTURE MIND gesture zoom & presets'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 shrink-0 pl-1">
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold transition-all duration-300 ${
+                          isSelected
+                            ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40 opacity-100 scale-100'
+                            : 'opacity-0 scale-75 pointer-events-none'
+                        }`}
+                      >
+                        {language === 'zh' ? '当前' : language === 'fr' ? 'Actif' : 'Active'}
+                      </span>
+                      <span
+                        className={`w-2 h-2 rounded-full bg-amber-400 transition-all duration-300 ${
+                          isSelected
+                            ? 'opacity-100 scale-100 shadow-[0_0_8px_rgba(251,191,36,0.9)]'
+                            : isItemCurrent
+                            ? 'opacity-40 scale-75'
+                            : 'opacity-0 scale-50'
+                        }`}
+                      />
+                      <ChevronRight
+                        className={`w-4 h-4 transition-all duration-200 ${
+                          isItemCurrent
+                            ? 'text-amber-400 translate-x-0.5 opacity-100'
+                            : 'text-stone-500 opacity-40'
+                        }`}
+                      />
+                    </div>
+                  </button>
+                );
+              })()}
 
               {/* Overlapping Stacks Deck Button */}
-              <button
-                onClick={() => {
-                  setIsCardStackModalOpen(true);
-                  setIsMoreMenuOpen(false);
-                }}
-                className="w-full p-3.5 rounded-2xl border border-indigo-500/40 bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-indigo-500/10 text-left flex items-center space-x-3.5 shadow-sm active:scale-95 transition-all cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/25 border border-indigo-500/40 flex items-center justify-center shrink-0 text-indigo-400">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <div className="flex-1 truncate">
-                  <div className="font-bold text-xs text-indigo-300 flex items-center space-x-1.5">
-                    <span>
-                      {language === 'fr'
-                        ? 'Composant de Cartes Empilées'
-                        : language === 'zh'
-                        ? '重叠式卡组 · 四大场景'
-                        : 'Overlapping Card Stacks'}
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
-                    {language === 'zh'
-                      ? '三分之一覆盖 · 课程/收藏/词汇/资料'
-                      : '1/3 Stack • Courses, Bookmarks, Vocab, Profile'}
-                  </div>
-                </div>
-              </button>
+              {(() => {
+                const isSelected = isCardStackModalOpen;
+                const isItemCurrent = currentMoreKey === 'cardstack';
+                return (
+                  <button
+                    ref={(el) => {
+                      if (el) moreItemRefs.current.set('cardstack', el);
+                      else moreItemRefs.current.delete('cardstack');
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredMoreKey('cardstack');
+                      updateMoreIndicator('cardstack');
+                    }}
+                    onPointerEnter={() => {
+                      setHoveredMoreKey('cardstack');
+                      updateMoreIndicator('cardstack');
+                    }}
+                    onTouchStart={() => {
+                      setHoveredMoreKey('cardstack');
+                      updateMoreIndicator('cardstack');
+                    }}
+                    onFocus={() => {
+                      setHoveredMoreKey('cardstack');
+                      updateMoreIndicator('cardstack');
+                    }}
+                    onClick={() => {
+                      setHoveredMoreKey('cardstack');
+                      updateMoreIndicator('cardstack');
+                      setIsCardStackModalOpen(true);
+                      setIsMoreMenuOpen(false);
+                    }}
+                    className={`relative z-10 w-full p-3.5 rounded-2xl border text-left flex items-center justify-between space-x-3.5 shadow-sm active:scale-95 transition-all duration-200 cursor-pointer ${
+                      isItemCurrent
+                        ? 'border-transparent bg-transparent scale-[1.01]'
+                        : isSelected
+                        ? 'border-indigo-400/40 bg-surface-muted/50 dark:bg-stone-800/50 shadow-xs'
+                        : 'border-border-main/50 dark:border-stone-800/80 bg-surface-muted/60 dark:bg-stone-800/60 hover:border-indigo-400/40'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                      <div className={`w-10 h-10 rounded-xl bg-indigo-500/25 border border-indigo-500/40 flex items-center justify-center shrink-0 text-indigo-400 transition-transform duration-200 ${isItemCurrent ? 'scale-105' : 'scale-100'}`}>
+                        <Layers className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 truncate">
+                        <div className={`font-bold text-xs flex items-center space-x-1.5 transition-colors duration-200 ${
+                          isItemCurrent ? 'text-indigo-300' : isSelected ? 'text-indigo-400' : 'text-text-primary dark:text-stone-100'
+                        }`}>
+                          <span>
+                            {language === 'fr'
+                              ? 'Composant de Cartes Empilées'
+                              : language === 'zh'
+                              ? '重叠式卡组 · 四大场景'
+                              : 'Overlapping Card Stacks'}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-stone-300 truncate mt-0.5 font-mono">
+                          {language === 'zh'
+                            ? '三分之一覆盖 · 课程/收藏/词汇/资料'
+                            : '1/3 Stack • Courses, Bookmarks, Vocab, Profile'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 shrink-0 pl-1">
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold transition-all duration-300 ${
+                          isSelected
+                            ? 'bg-indigo-400/20 text-indigo-300 border border-indigo-400/40 opacity-100 scale-100'
+                            : 'opacity-0 scale-75 pointer-events-none'
+                        }`}
+                      >
+                        {language === 'zh' ? '当前' : language === 'fr' ? 'Actif' : 'Active'}
+                      </span>
+                      <span
+                        className={`w-2 h-2 rounded-full bg-indigo-400 transition-all duration-300 ${
+                          isSelected
+                            ? 'opacity-100 scale-100 shadow-[0_0_8px_rgba(99,102,241,0.9)]'
+                            : isItemCurrent
+                            ? 'opacity-40 scale-75'
+                            : 'opacity-0 scale-50'
+                        }`}
+                      />
+                      <ChevronRight
+                        className={`w-4 h-4 transition-all duration-200 ${
+                          isItemCurrent
+                            ? 'text-indigo-400 translate-x-0.5 opacity-100'
+                            : 'text-stone-500 opacity-40'
+                        }`}
+                      />
+                    </div>
+                  </button>
+                );
+              })()}
+
               {moreItems.map((item) => {
                 const Icon = item.icon;
                 const isSelected = activeTab === item.id;
+                const isItemCurrent = currentMoreKey === item.id;
                 return (
                   <button
                     key={item.id}
+                    ref={(el) => {
+                      if (el) moreItemRefs.current.set(item.id, el);
+                      else moreItemRefs.current.delete(item.id);
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredMoreKey(item.id);
+                      updateMoreIndicator(item.id);
+                    }}
+                    onPointerEnter={() => {
+                      setHoveredMoreKey(item.id);
+                      updateMoreIndicator(item.id);
+                    }}
+                    onTouchStart={() => {
+                      setHoveredMoreKey(item.id);
+                      updateMoreIndicator(item.id);
+                    }}
+                    onFocus={() => {
+                      setHoveredMoreKey(item.id);
+                      updateMoreIndicator(item.id);
+                    }}
                     onClick={() => {
+                      setHoveredMoreKey(item.id);
+                      updateMoreIndicator(item.id);
                       if (item.simulator) setSelectedSimulator(item.simulator);
                       setActiveTab(item.id);
                       setIsMoreMenuOpen(false);
                     }}
-                    className={`w-full p-3.5 rounded-2xl border text-left flex items-center space-x-3.5 transition-all ${
-                      isSelected
-                        ? 'bg-gradient-to-r from-emerald-500/10 via-amber-500/5 to-purple-500/10 border-emerald-500/40 shadow-xs'
-                        : 'bg-surface-muted/60 dark:bg-stone-800/60 border-border-main dark:border-stone-800 hover:border-stone-400'
+                    className={`relative z-10 w-full p-3.5 rounded-2xl border text-left flex items-center justify-between space-x-3.5 transition-all duration-200 active:scale-95 cursor-pointer ${
+                      isItemCurrent
+                        ? 'border-transparent bg-transparent scale-[1.01]'
+                        : isSelected
+                        ? 'border-amber-400/40 bg-surface-muted/50 dark:bg-stone-800/50 shadow-xs'
+                        : 'border-border-main/50 dark:border-stone-800/80 bg-surface-muted/60 dark:bg-stone-800/60 hover:border-stone-400'
                     }`}
                   >
-                    <div
-                      className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shrink-0 shadow-inner`}
-                    >
-                      <Icon className="w-5 h-5" />
+                    <div className="flex items-center space-x-3.5 min-w-0 flex-1">
+                      <div
+                        className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shrink-0 shadow-inner transition-transform duration-200 ${
+                          isItemCurrent ? 'scale-105' : 'scale-100'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 truncate">
+                        <div className={`font-bold text-xs transition-colors duration-200 ${
+                          isItemCurrent
+                            ? 'text-amber-300 dark:text-amber-300'
+                            : isSelected
+                            ? 'text-amber-400 dark:text-amber-400'
+                            : 'text-text-primary dark:text-stone-100'
+                        }`}>
+                          {item.label[language]}
+                        </div>
+                        <div className="text-[11px] text-text-secondary dark:text-stone-400 truncate mt-0.5 transition-colors duration-200">
+                          {item.desc[language]}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 truncate">
-                      <div className="font-bold text-xs text-text-primary dark:text-stone-100">
-                        {item.label[language]}
-                      </div>
-                      <div className="text-[11px] text-text-secondary dark:text-stone-400 truncate mt-0.5">
-                        {item.desc[language]}
-                      </div>
+
+                    <div className="flex items-center space-x-2 shrink-0 pl-1">
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold transition-all duration-300 ${
+                          isSelected
+                            ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40 opacity-100 scale-100'
+                            : 'opacity-0 scale-75 pointer-events-none'
+                        }`}
+                      >
+                        {language === 'zh' ? '当前' : language === 'fr' ? 'Actif' : 'Active'}
+                      </span>
+                      <span
+                        className={`w-2 h-2 rounded-full bg-amber-400 transition-all duration-300 ${
+                          isSelected
+                            ? 'opacity-100 scale-100 shadow-[0_0_8px_rgba(251,191,36,0.9)]'
+                            : isItemCurrent
+                            ? 'opacity-40 scale-75'
+                            : 'opacity-0 scale-50'
+                        }`}
+                      />
+                      <ChevronRight
+                        className={`w-4 h-4 transition-all duration-200 ${
+                          isItemCurrent
+                            ? 'text-amber-400 translate-x-0.5 opacity-100'
+                            : 'text-stone-500 opacity-40'
+                        }`}
+                      />
                     </div>
                   </button>
                 );
