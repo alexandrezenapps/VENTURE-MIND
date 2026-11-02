@@ -35,6 +35,7 @@ import {
   addLeaderboardRecord,
   getUserPlayerName,
 } from '../../utils/leaderboardStorage';
+import { recordCapTableBattleResult } from '../../services/capTableLeaderboardService';
 import { LeaderboardModal } from '../common/LeaderboardModal';
 
 // Fisher-Yates array shuffle
@@ -48,13 +49,14 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export const CapTableBattleGame: React.FC<{
+  initialTier?: CapTableDefenseTier;
   onFinish?: (score: number) => void;
   onExit?: () => void;
-}> = ({ onFinish, onExit }) => {
+}> = ({ initialTier = 'junior', onFinish, onExit }) => {
   const { language, speak, recordGameScore, formatMoney } = useApp();
 
-  // Tier selection: 初级 (5题), 中级 (25题), 高级 (50题)
-  const [selectedTier, setSelectedTier] = useState<CapTableDefenseTier>('junior');
+  // Mode selection: Beginner ('junior' - 5 Qs), Intermediate ('mid' - 25 Qs), Advanced ('senior' - 50 Qs)
+  const [selectedTier, setSelectedTier] = useState<CapTableDefenseTier>(initialTier);
 
   // Active question queue
   const [questionQueue, setQuestionQueue] = useState<CapTableQuestion[]>([]);
@@ -291,38 +293,13 @@ export const CapTableBattleGame: React.FC<{
     const playerName = getUserPlayerName();
     const valuePerQuestion = selectedTier === 'senior' ? 5000000 : selectedTier === 'mid' ? 3500000 : 2500000;
 
-    addLeaderboardRecord({
-      gameId: 'game_03',
+    recordCapTableBattleResult({
       sessionMode: modeKey,
-      playerName: playerName || 'Cap Table Defender',
-      playerTitle: {
-        en:
-          accuracy >= 0.9
-            ? 'Sovereign Visionary (Unshakable Chair)'
-            : accuracy >= 0.7
-            ? 'Cap Table Fortress Architect'
-            : 'Boardroom Governance Apprentice',
-        fr:
-          accuracy >= 0.9
-            ? 'Président Souverain Inamovible'
-            : accuracy >= 0.7
-            ? 'Architecte de la Citadelle'
-            : 'Apprenti au Conseil',
-        zh:
-          accuracy >= 0.9
-            ? '终身掌舵者 · 传奇董事长'
-            : accuracy >= 0.7
-            ? '股权铁壁防御架构师'
-            : '公司治理新锐学徒',
-      },
       score: score,
-      composure: Math.min(100, Math.round(accuracy * 100)),
-      leverage: Math.min(100, Math.round((fastAnswerCount / Math.max(1, questionQueue.length)) * 100 + 45)),
-      valuationSaved: correctCount * valuePerQuestion,
-      roundsCompleted: questionQueue.length,
-      totalRounds: questionQueue.length,
-      isUser: true,
-      tier: accuracy >= 0.9 ? 'sovereign' : accuracy >= 0.7 ? 'alpha' : 'principal',
+      accuracyPct: accuracy * 100,
+      fastAnswerCount: fastAnswerCount,
+      totalQuestions: questionQueue.length,
+      valuationDefended: correctCount * valuePerQuestion,
     });
 
     setTimeout(() => {
@@ -425,173 +402,320 @@ export const CapTableBattleGame: React.FC<{
             </div>
           </div>
 
-          {/* Theme & Core Meaning Manifesto */}
+          {/* Selection Screen Header */}
           <div className="space-y-3">
-            <h3 className="text-xl sm:text-2xl font-serif-luxury font-bold text-text-primary dark:text-white">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-xs uppercase tracking-wider font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>
+                {language === 'fr'
+                  ? 'Sélectionnez votre Mode de Jeu'
+                  : language === 'zh'
+                  ? '股权防卫战 · 关卡模式选择'
+                  : 'Select Your Defense Mode'}
+              </span>
+            </div>
+
+            <h3 className="text-2xl sm:text-3xl font-serif-luxury font-bold text-text-primary dark:text-white">
               {language === 'fr'
-                ? 'Choisissez votre Niveau de Défense de Capitalisation'
+                ? 'Choisissez votre Niveau d’Épreuve'
                 : language === 'zh'
-                ? '选择你的股权结构防卫战实战等级'
-                : 'Select Your Cap Table Defense Tier'}
+                ? '选择实战等级：初级 5题 / 中级 25题 / 高级 50题'
+                : 'Choose Game Mode: Beginner, Intermediate, or Advanced'}
             </h3>
 
-            <div className="p-4 max-w-xl mx-auto rounded-2xl bg-surface-muted dark:bg-[#12162a] border border-amber-400/30 text-xs text-text-secondary dark:text-stone-300 leading-relaxed text-left space-y-2">
-              <div className="flex items-center space-x-1.5 font-bold text-amber-400 text-[11px] uppercase font-mono">
-                <Crown className="w-4 h-4 text-amber-400" />
+            <p className="text-xs sm:text-sm text-stone-300 max-w-xl mx-auto leading-relaxed">
+              {language === 'fr'
+                ? 'Chaque session puise dynamiquement dans notre banque procédurale sans aucune répétition de question.'
+                : language === 'zh'
+                ? '所有关卡均直接接入52+套真实风投博弈场景题库，单局内绝不重复出题，重开随机洗牌参数，边玩边学守护股权生命线。'
+                : 'Each session pulls dynamically from our 52+ non-repeating scenario bank. Zero question repetition within any session.'}
+            </p>
+          </div>
+
+          {/* Core Meaning Doctrine Box */}
+          <div className="p-4 sm:p-5 max-w-2xl mx-auto rounded-2xl bg-surface-muted dark:bg-[#11172a] border border-amber-400/30 text-xs text-text-secondary dark:text-stone-300 leading-relaxed text-left space-y-2 shadow-lg">
+            <div className="flex items-center space-x-2 font-bold text-amber-400 text-xs uppercase font-mono">
+              <Crown className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>
+                {language === 'fr'
+                  ? 'Le Manifeste Fondateur : Souveraineté & Contrôle'
+                  : language === 'zh'
+                  ? '股权结构防卫战核心真谛 · 守护愿景掌控权'
+                  : 'The Founder Doctrine: Sovereign Boardroom Control'}
+              </span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-stone-200">
+              {language === 'fr'
+                ? 'La défense de la table de capitalisation n’est pas pour thésauriser, mais pour protéger la vision stratégique. Maîtrisez le pool ESOP, le conseil d’administration et le vote double pour ne jamais être évincé.'
+                : language === 'zh'
+                ? '股权结构防卫战绝不是为了守财，而是守护创始团队对公司长远愿景的绝对掌控权与生命线！在多轮融资巨浪中，若不懂期权池投前暗算、董事会席位制衡、超级表决权与反稀释护城河，创始人终将沦为打工仔甚至在董事会突袭中被踢出局！'
+                : 'Cap table defense is not about hoarding wealth—it is about preserving sovereign control over your life’s vision. Defeat pre-money pool shuffles, board coups, and full ratchets.'}
+            </p>
+          </div>
+
+          {/* 3 Game Modes Grid: Beginner (5 Qs) · Intermediate (25 Qs) · Advanced (50 Qs) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 text-left">
+            {/* 1. BEGINNER MODE (5 Questions) */}
+            <div
+              onClick={() => setSelectedTier('junior')}
+              className={`p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between group ${
+                selectedTier === 'junior'
+                  ? 'bg-gradient-to-b from-cyan-950/40 via-[#0e172a] to-[#0c1424] border-cyan-400/90 shadow-[0_0_25px_rgba(6,182,212,0.25)] ring-2 ring-cyan-400/50 text-white'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-cyan-500/40 text-text-secondary hover:text-white'
+              }`}
+            >
+              <div className="space-y-3">
+                {/* Header row */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center space-x-1.5">
+                    <Shield className="w-4 h-4 fill-cyan-400/20" />
+                    <span>{language === 'fr' ? 'Débutant' : language === 'zh' ? '初级模式' : 'Beginner'}</span>
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold border border-cyan-500/40">
+                      5 {language === 'zh' ? '题' : 'Questions'}
+                    </span>
+                    {selectedTier === 'junior' && (
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    {language === 'fr'
+                      ? 'Mode Débutant (5 Questions)'
+                      : language === 'zh'
+                      ? '初级 · 种子防御战 (5题)'
+                      : 'Beginner Mode (5 Questions)'}
+                  </h4>
+                  <div className="text-[10px] font-mono text-cyan-400/90 mt-0.5">
+                    ★☆☆ {language === 'fr' ? '25s/question • ~2 min' : language === 'zh' ? '25秒/题 • 限时约2分钟' : '25s/question • ~2 min'}
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Fondations SAFE Post-Money, seuil critique 50,1 %, vesting 4 ans avec cliff et exclusion des sièges d’anges.'
+                    : language === 'zh'
+                    ? '专注种子轮SAFE纯净架构、50.1%绝对控股安全线、4年按月成熟+1年悬崖期，以及阻击天使投资人染指董事会。'
+                    : 'Master Post-Money SAFE caps, 50.1% control threshold, 4-year vesting with 1-year cliff, and angel board defense.'}
+                </p>
+
+                {/* Key topics pill badges */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
+                    SAFE Cap
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
+                    4Y Vesting
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
+                    50.1% Veto
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-3 border-t border-cyan-500/20 flex items-center justify-between text-[10px] font-mono text-cyan-300">
+                <span>{language === 'fr' ? '5 Épreuves Uniques' : language === 'zh' ? '5道精选不重复题' : '5 Unique Questions'}</span>
+                <span className="font-bold">{selectedTier === 'junior' ? '✓ SELECTED' : 'SELECT'}</span>
+              </div>
+            </div>
+
+            {/* 2. INTERMEDIATE MODE (25 Questions) */}
+            <div
+              onClick={() => setSelectedTier('mid')}
+              className={`p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between group ${
+                selectedTier === 'mid'
+                  ? 'bg-gradient-to-b from-amber-950/40 via-[#18192a] to-[#0e1424] border-amber-400/90 shadow-[0_0_25px_rgba(245,158,11,0.25)] ring-2 ring-amber-400/50 text-white'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-amber-500/40 text-text-secondary hover:text-white'
+              }`}
+            >
+              <div className="space-y-3">
+                {/* Header row */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
+                    <Crown className="w-4 h-4 fill-amber-400/20" />
+                    <span>{language === 'fr' ? 'Intermédiaire' : language === 'zh' ? '中级模式' : 'Intermediate'}</span>
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/40">
+                      25 {language === 'zh' ? '题' : 'Questions'}
+                    </span>
+                    {selectedTier === 'mid' && (
+                      <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors">
+                    {language === 'fr'
+                      ? 'Mode Intermédiaire (25 Questions)'
+                      : language === 'zh'
+                      ? '中级 · 董事会推演战 (25题)'
+                      : 'Intermediate Mode (25 Questions)'}
+                  </h4>
+                  <div className="text-[10px] font-mono text-amber-400/90 mt-0.5">
+                    ★★☆ {language === 'fr' ? '20s/question • ~6 min' : language === 'zh' ? '20秒/题 • 限时约6分钟' : '20s/question • ~6 min'}
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Désamorçage du pool ESOP en pré-money, vote double 10:1 (Zuckerberg), 1x non-participante, conseil 2-2-1 et seuil 33,4 %.'
+                    : language === 'zh'
+                    ? '深度剖析期权池大洗牌精算、AB双重股权10:1超级投票权、1倍非参与清算优先权、2-2-1董事会制衡与33.4%一票否决权防线。'
+                    : 'Deconstruct ESOP pre-money pool shuffles, 10:1 dual-class stock, 1x non-participating, 2-2-1 boards, and 33.4% veto lines.'}
+                </p>
+
+                {/* Key topics pill badges */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                    ESOP Shuffle
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                    10:1 Dual Class
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                    2-2-1 Board
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                    33.4% Veto
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-3 border-t border-amber-500/20 flex items-center justify-between text-[10px] font-mono text-amber-300">
+                <span>{language === 'fr' ? '25 Épreuves Non-Répétées' : language === 'zh' ? '25道全真不重复题' : '25 Non-Repeating Questions'}</span>
+                <span className="font-bold">{selectedTier === 'mid' ? '✓ SELECTED' : 'SELECT'}</span>
+              </div>
+            </div>
+
+            {/* 3. ADVANCED MODE (50 Questions) */}
+            <div
+              onClick={() => setSelectedTier('senior')}
+              className={`p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between group ${
+                selectedTier === 'senior'
+                  ? 'bg-gradient-to-b from-rose-950/40 via-[#1e1326] to-[#0e1424] border-rose-400/90 shadow-[0_0_25px_rgba(244,63,94,0.25)] ring-2 ring-rose-400/50 text-white'
+                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-rose-500/40 text-text-secondary hover:text-white'
+              }`}
+            >
+              <div className="space-y-3">
+                {/* Header row */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-rose-400 flex items-center space-x-1.5">
+                    <Flame className="w-4 h-4 fill-rose-400/20" />
+                    <span>{language === 'fr' ? 'Avancé' : language === 'zh' ? '高级模式' : 'Advanced'}</span>
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/40">
+                      50 {language === 'zh' ? '题' : 'Questions'}
+                    </span>
+                    {selectedTier === 'senior' && (
+                      <CheckCircle2 className="w-4 h-4 text-rose-400" />
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-base font-bold text-white group-hover:text-rose-300 transition-colors">
+                    {language === 'fr'
+                      ? 'Mode Avancé (50 Questions)'
+                      : language === 'zh'
+                      ? '高级 · 终局决战 (50题)'
+                      : 'Advanced Mode (50 Questions)'}
+                  </h4>
+                  <div className="text-[10px] font-mono text-rose-400/90 mt-0.5">
+                    ★★★ {language === 'fr' ? '15s/question • ~12 min' : language === 'zh' ? '15秒极限 • 限时约12分钟' : '15s/question • ~12 min'}
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-stone-300 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Full-Ratchet mortel, sanctions Pay-to-Play, dividendes cumulatifs 8 %, rachat forcé à 5 ans, warrants de dette et restructurations en tour baissier.'
+                    : language === 'zh'
+                    ? '全棘轮毒丸死亡螺旋、Pay-to-Play寒冬统战、8%累积复利股息、5年强制回购抽贷、风险债权认股权证与下折轮重组清洗防御。'
+                    : 'Full-ratchet death spirals, Pay-to-Play sanctions, 8% cumulative dividends, 5-year redemption puts, warrants, and down-round cramdowns.'}
+                </p>
+
+                {/* Key topics pill badges */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-500/30">
+                    Full Ratchet
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-500/30">
+                    Pay-to-Play
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-500/30">
+                    8% Dividend
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-500/30">
+                    Warrant Kickers
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-3 border-t border-rose-500/20 flex items-center justify-between text-[10px] font-mono text-rose-300">
+                <span>{language === 'fr' ? '50 Épreuves Suprêmes' : language === 'zh' ? '50道终局极限不重复题' : '50 Ultimate Questions'}</span>
+                <span className="font-bold">{selectedTier === 'senior' ? '✓ SELECTED' : 'SELECT'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Non-repeating Question Bank Reassurance Banner */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#0e1a22] to-amber-950/30 border border-emerald-500/30 text-left flex items-start gap-3.5 shadow-md">
+            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 shrink-0 text-emerald-400 mt-0.5">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="space-y-1">
+              <div className="text-xs font-bold font-mono text-emerald-300 flex items-center gap-2">
                 <span>
                   {language === 'fr'
-                    ? 'Le Manifeste Fondateur'
+                    ? 'Garantie de Banque Procédurale Non-Répétitive'
                     : language === 'zh'
-                    ? '股权结构防卫战核心真谛 · 守护掌控权'
-                    : 'The Founder Doctrine of Sovereignty'}
+                    ? '题库防重保障：52+真实风投情境程序化动态抽选'
+                    : 'Procedural Non-Repeating Bank Guarantee'}
+                </span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
+                  Zero Repetition
                 </span>
               </div>
-              <p className="text-[11px] leading-relaxed text-stone-200">
+              <p className="text-[11px] text-stone-300 leading-relaxed">
                 {language === 'fr'
-                  ? 'La défense de la table de capitalisation n’est pas pour thésauriser, mais pour protéger la vision stratégique. Maîtrisez le pool ESOP, le conseil d’administration et le vote double pour ne jamais être évincé.'
+                  ? `Chaque session génère exactement ${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} questions différentes échantillonnées sans doublon parmi 52+ archétypes de gouvernance VC. Les montants, ratios et contre-propositions sont recalculés à chaque nouvelle partie.`
                   : language === 'zh'
-                  ? '股权结构防卫战绝不是为了守财，而是守护创始团队对公司长远愿景的绝对掌控权与生命线！在多轮融资巨浪中，若不懂期权池投前暗算、董事会席位制衡、超级表决权与反稀释护城河，创始人终将沦为打工仔甚至在董事会突袭中被踢出局！'
-                  : 'Cap table defense is not about hoarding wealth—it is about preserving sovereign control over your life’s vision. Defeat pre-money pool shuffles, board coups, and full ratchets.'}
+                  ? `本局将精确调取 ${selectedTier === 'senior' ? '50道' : selectedTier === 'mid' ? '25道' : '5道'} 互不重合的实战试炼，单局绝对不重复；每次重新开局都会生成全新风投资方、估值数字、反稀释公式与干扰项，确保学无止境。`
+                  : `This session generates exactly ${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} distinct non-repeating questions sampled across 52+ venture governance scenarios. Valuation figures and terms refresh dynamically on every play.`}
               </p>
             </div>
           </div>
 
-          {/* 3 Difficulty Tiers: 初级(5题) · 中级(25题) · 高级(50题) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            {/* 1. 初级 Junior (5 Questions) */}
-            <div
-              onClick={() => setSelectedTier('junior')}
-              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
-                selectedTier === 'junior'
-                  ? 'bg-cyan-500/10 border-cyan-500/80 shadow-[0_8px_24px_rgba(6,182,212,0.18)] ring-1 ring-cyan-500 text-cyan-950 dark:text-cyan-100'
-                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-cyan-500/40 text-text-secondary'
-              }`}
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold uppercase text-cyan-400 flex items-center space-x-1">
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>{language === 'fr' ? 'Niveau Débutant' : language === 'zh' ? '初级 · 种子防御' : 'Junior Sprint'}</span>
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold">
-                    5 题
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-text-primary dark:text-white">
-                  {language === 'fr' ? '5 Épreuves · 25s/tour' : language === 'zh' ? '5道经典题 · 25秒限时' : '5 Rounds · 25s Limit'}
-                </h4>
-                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
-                  {language === 'fr'
-                    ? 'Post-Money SAFE, seuil de majorité 50,1 %, vesting 4 ans et rejet des sièges d’anges.'
-                    : language === 'zh'
-                    ? '专注种子轮SAFE纯净架构、50.1%绝对控股安全线、4年成熟与天使董事席位防范。'
-                    : 'Master Post-Money SAFE, 50.1% majority threshold, 4-year vesting, and angel board defense.'}
-                </p>
-              </div>
-              <div className="pt-3 mt-2 border-t border-cyan-500/20 text-[10px] font-mono text-cyan-400">
-                {language === 'fr' ? 'Épreuve rapide (~2 min)' : language === 'zh' ? '基础底线 · 建立主权认知 (~2分钟)' : 'Rapid drill (~2 min)'}
-              </div>
-            </div>
-
-            {/* 2. 中级 Mid (25 Questions) */}
-            <div
-              onClick={() => setSelectedTier('mid')}
-              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
-                selectedTier === 'mid'
-                  ? 'bg-amber-500/10 border-amber-500/80 shadow-[0_8px_24px_rgba(245,158,11,0.18)] ring-1 ring-amber-500 text-amber-950 dark:text-amber-100'
-                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-amber-500/40 text-text-secondary'
-              }`}
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold uppercase text-amber-400 flex items-center space-x-1">
-                    <Crown className="w-3.5 h-3.5" />
-                    <span>{language === 'fr' ? 'Niveau Intermédiaire' : language === 'zh' ? '中级 · 董事会全真' : 'Mid Boardroom'}</span>
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
-                    25 题
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-text-primary dark:text-white">
-                  {language === 'fr' ? '25 Épreuves · 20s/tour' : language === 'zh' ? '25道全真题 · 20秒限时' : '25 Rounds · 20s Limit'}
-                </h4>
-                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
-                  {language === 'fr'
-                    ? 'Option Pool Shuffle, vote double 10:1 (Zuckerberg), 1x non-participante et conseil 2-2-1.'
-                    : language === 'zh'
-                    ? '深度剖析期权池大洗牌精算、AB股10:1超级表决权、1倍非参与清算与2-2-1制衡董事会。'
-                    : 'Deconstruct ESOP pre-money shuffle, 10:1 dual-class voting, 1x non-participating, and 2-2-1 boards.'}
-                </p>
-              </div>
-              <div className="pt-3 mt-2 border-t border-amber-500/20 text-[10px] font-mono text-amber-400">
-                {language === 'fr' ? 'Simulation complète (~6 min)' : language === 'zh' ? '实战博弈 · 深度攻防推演 (~6分钟)' : 'Full simulation (~6 min)'}
-              </div>
-            </div>
-
-            {/* 3. 高级 Senior (50 Questions) */}
-            <div
-              onClick={() => setSelectedTier('senior')}
-              className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative flex flex-col justify-between ${
-                selectedTier === 'senior'
-                  ? 'bg-rose-500/10 border-rose-500/80 shadow-[0_8px_24px_rgba(244,63,94,0.18)] ring-1 ring-rose-500 text-rose-950 dark:text-rose-100'
-                  : 'bg-surface-muted dark:bg-[#101424] border-border-main dark:border-stone-800 hover:border-rose-500/40 text-text-secondary'
-              }`}
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold uppercase text-rose-400 flex items-center space-x-1">
-                    <Flame className="w-3.5 h-3.5 fill-current" />
-                    <span>{language === 'fr' ? 'Niveau Expert' : language === 'zh' ? '高级 · 终局决战' : 'Senior Grandmaster'}</span>
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold">
-                    50 题
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-text-primary dark:text-white">
-                  {language === 'fr' ? '50 Épreuves · 15s/tour' : language === 'zh' ? '50道终局题 · 15秒极限' : '50 Rounds · 15s Limit'}
-                </h4>
-                <p className="text-[11px] text-text-secondary dark:text-stone-300 leading-relaxed">
-                  {language === 'fr'
-                    ? 'Spirale Full-Ratchet, Pay-to-Play en crise, dividende cumulatif 8 % et minorité 33,4 %.'
-                    : language === 'zh'
-                    ? '全棘轮毒丸死亡螺旋、Pay-to-Play寒冬统战、8%累积复利股息与33.4%否决权生死红线。'
-                    : 'Full-ratchet death spirals, Pay-to-Play crisis sanctions, 8% cumulative dividends, and 33.4% veto defenses.'}
-                </p>
-              </div>
-              <div className="pt-3 mt-2 border-t border-rose-500/20 text-[10px] font-mono text-rose-400">
-                {language === 'fr' ? 'Épreuve d’endurance (~10 min)' : language === 'zh' ? '极限高压 · 登顶风投天梯榜 (~10分钟)' : 'Endurance trial (~10 min)'}
-              </div>
-            </div>
-          </div>
-
-          {/* Random / Non-repeating Question Engine Assurance */}
-          <div className="flex items-center justify-center space-x-2 text-[11px] font-mono text-stone-400">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>
-              {language === 'fr'
-                ? 'Moteur Procédural Dynamique : Toutes les questions et clauses sont générées à la volée sans répétition.'
-                : language === 'zh'
-                ? '程序化动态题库引擎：每次进入游戏随机实时出题，情境与参数完全不重复，确保边玩边学的极致探索感。'
-                : 'Procedural Cap Table Engine: infinite dynamic non-repeating parameters on every replay.'}
-            </span>
-          </div>
-
-          {/* Launch Button */}
-          <div className="pt-2">
+          {/* Launch Action Controls */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={() => initGameSession(selectedTier)}
-              className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-emerald-600 to-teal-500 hover:from-amber-400 hover:to-emerald-500 text-stone-950 font-mono font-bold text-sm shadow-[0_12px_30px_rgba(245,158,11,0.3)] hover:shadow-amber-500/40 active:scale-95 transition-all flex items-center justify-center space-x-3 mx-auto cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 hover:from-amber-400 hover:to-emerald-300 text-stone-950 font-mono font-bold text-sm shadow-[0_12px_30px_rgba(245,158,11,0.3)] hover:shadow-amber-500/40 active:scale-95 transition-all flex items-center justify-center space-x-3 cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 fill-current text-stone-950" />
+              <ShieldCheck className="w-5 h-5 fill-current text-stone-950" />
               <span>
                 {language === 'fr'
-                  ? `Démarrer l’Épreuve (${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} Questions)`
+                  ? `Lancer le Mode ${selectedTier === 'senior' ? 'Avancé (50 Questions)' : selectedTier === 'mid' ? 'Intermédiaire (25 Questions)' : 'Débutant (5 Questions)'}`
                   : language === 'zh'
-                  ? `开启股权防卫战 (${selectedTier === 'senior' ? '高级 50题' : selectedTier === 'mid' ? '中级 25题' : '初级 5题'})`
-                  : `Launch Cap Table Defense (${selectedTier === 'senior' ? 50 : selectedTier === 'mid' ? 25 : 5} Rounds)`}
+                  ? `开启${selectedTier === 'senior' ? '高级模式 (50题)' : selectedTier === 'mid' ? '中级模式 (25题)' : '初级模式 (5题)'}`
+                  : `Launch ${selectedTier === 'senior' ? 'Advanced (50 Questions)' : selectedTier === 'mid' ? 'Intermediate (25 Questions)' : 'Beginner (5 Questions)'}`}
               </span>
               <ArrowRight className="w-4 h-4 text-stone-950" />
             </button>
+
+            {onExit && (
+              <button
+                onClick={onExit}
+                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 text-xs font-mono transition-all cursor-pointer"
+              >
+                {language === 'fr' ? 'Retour au Hub' : language === 'zh' ? '返回游戏大厅' : 'Back to Hub'}
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -599,6 +723,107 @@ export const CapTableBattleGame: React.FC<{
       {/* VIEW B: ACTIVE LIVE GAMEPLAY */}
       {hasStarted && !isGameOver && currentQ && (
         <div className="space-y-6 max-w-3xl mx-auto">
+          {/* Dedicated Question Progress Bar (Questions Completed vs Total: 5, 25, or 50) */}
+          {(() => {
+            const completedCount = hasAnswered ? currentIndex + 1 : currentIndex;
+            const totalCount = questionQueue.length;
+            const progressPercentage = Math.round((completedCount / Math.max(1, totalCount)) * 100);
+
+            return (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#0d1426] via-[#101932] to-[#0d1426] border border-amber-500/30 shadow-lg space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  {/* Left: Progress Title & Tier Mode */}
+                  <div className="flex items-center space-x-2">
+                    <span className="p-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                      <Layers className="w-3.5 h-3.5" />
+                    </span>
+                    <span className="font-bold text-white tracking-wide">
+                      {language === 'fr'
+                        ? 'Progression de l’Épreuve'
+                        : language === 'zh'
+                        ? '实战答题进度'
+                        : 'Challenge Progress'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                      {totalCount === 50
+                        ? language === 'zh' ? '高级 50题' : 'Advanced (50 Qs)'
+                        : totalCount === 25
+                        ? language === 'zh' ? '中级 25题' : 'Intermediate (25 Qs)'
+                        : language === 'zh' ? '初级 5题' : 'Beginner (5 Qs)'}
+                    </span>
+                  </div>
+
+                  {/* Right: Question Counter (e.g., 12 / 25 题) & Percentage */}
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-stone-300 font-mono text-xs">
+                      <span className="text-stone-400">{language === 'zh' ? '已完成' : language === 'fr' ? 'Terminées' : 'Completed'}:</span>{' '}
+                      <strong className="text-emerald-400 font-bold tabular-nums text-sm">
+                        {completedCount}
+                      </strong>{' '}
+                      <span className="text-stone-500">/</span>{' '}
+                      <span className="text-white font-semibold tabular-nums">{totalCount}</span>{' '}
+                      <span className="text-stone-400 text-[10px]">{language === 'zh' ? '题' : 'Qs'}</span>
+                    </span>
+
+                    <span className="px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 border border-amber-400/40 font-mono font-bold text-xs tabular-nums shadow-sm">
+                      {progressPercentage}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Visual Progress Bar Track with Gradient Fill */}
+                <div className="relative h-2.5 w-full bg-stone-900 rounded-full overflow-hidden p-0.5 border border-stone-800">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 shadow-[0_0_12px_rgba(245,158,11,0.5)] transition-all duration-500 ease-out"
+                    style={{
+                      width: `${Math.max(
+                        completedCount > 0 ? 4 : 2,
+                        Math.min(100, progressPercentage)
+                      )}%`,
+                    }}
+                  />
+                </div>
+
+                {/* Sub-track: Discrete Steps for 5 questions, or Milestones for 25 / 50 questions */}
+                {totalCount === 5 ? (
+                  <div className="grid grid-cols-5 gap-1.5 pt-0.5">
+                    {questionQueue.map((_, qIdx) => {
+                      const isDone = qIdx < completedCount;
+                      const isCurrent = qIdx === currentIndex && !hasAnswered;
+                      return (
+                        <div
+                          key={qIdx}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            isDone
+                              ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]'
+                              : isCurrent
+                              ? 'bg-amber-400 animate-pulse'
+                              : 'bg-stone-800'
+                          }`}
+                          title={`Question ${qIdx + 1} of 5`}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between text-[10px] font-mono text-stone-400 pt-0.5 px-0.5">
+                    <span className="flex items-center space-x-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-stone-600 inline-block" />
+                      <span>Start (0)</span>
+                    </span>
+                    <span className="text-stone-500">25% ({Math.round(totalCount * 0.25)})</span>
+                    <span className="text-amber-400/80 font-bold">50% ({Math.round(totalCount * 0.5)})</span>
+                    <span className="text-stone-500">75% ({Math.round(totalCount * 0.75)})</span>
+                    <span className="flex items-center space-x-1 text-emerald-400 font-bold">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Goal ({totalCount})</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
           {/* HUD: Round counter, Tier badge, Timer bar, Live score, Streak */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-surface-muted dark:bg-[#101426] border border-border-main dark:border-stone-800 text-xs font-mono">
             <div className="flex items-center space-x-3">
@@ -607,7 +832,23 @@ export const CapTableBattleGame: React.FC<{
               </span>
               <span className="text-stone-400 dark:text-stone-600">·</span>
               <span className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 font-bold uppercase text-[10px]">
-                {selectedTier === 'senior' ? '高级 50题' : selectedTier === 'mid' ? '中级 25题' : '初级 5题'}
+                {selectedTier === 'senior'
+                  ? language === 'zh'
+                    ? '高级模式 (50题)'
+                    : language === 'fr'
+                    ? 'Avancé (50 Qs)'
+                    : 'Advanced (50 Qs)'
+                  : selectedTier === 'mid'
+                  ? language === 'zh'
+                    ? '中级模式 (25题)'
+                    : language === 'fr'
+                    ? 'Intermédiaire (25 Qs)'
+                    : 'Intermediate (25 Qs)'
+                  : language === 'zh'
+                  ? '初级模式 (5题)'
+                  : language === 'fr'
+                  ? 'Débutant (5 Qs)'
+                  : 'Beginner (5 Qs)'}
               </span>
               <span className="text-stone-400 dark:text-stone-600 hidden sm:inline">·</span>
               <span className="text-text-secondary dark:text-stone-400 uppercase hidden sm:inline">
@@ -954,7 +1195,7 @@ export const CapTableBattleGame: React.FC<{
               className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-mono font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <Layers className="w-4 h-4" />
-              <span>{language === 'fr' ? 'Changer de Niveau' : language === 'zh' ? '切换等级' : 'Change Tier'}</span>
+              <span>{language === 'fr' ? 'Changer de Mode (5 / 25 / 50)' : language === 'zh' ? '切换模式 (初级5/中级25/高级50题)' : 'Change Mode (5/25/50 Qs)'}</span>
             </button>
 
             <button

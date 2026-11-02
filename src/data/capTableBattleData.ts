@@ -1219,9 +1219,16 @@ const GENERATOR_FACTORIES = [
   genSecondarySaleDiscipline,
 ];
 
+import { EXTENDED_GENERATOR_FACTORIES } from './capTableExtendedQuestions';
+
+const ALL_GENERATOR_FACTORIES = [
+  ...GENERATOR_FACTORIES,
+  ...EXTENDED_GENERATOR_FACTORIES,
+];
+
 /**
- * Generate a procedural dynamic session of non-repeating Cap Table Defense questions
- * @param tier 'junior' (5 questions) | 'mid' (25 questions) | 'senior' (50 questions)
+ * Generate a procedural dynamic session of guaranteed non-repeating Cap Table Defense questions
+ * @param tier 'junior' (Beginner, 5 questions) | 'mid' (Intermediate, 25 questions) | 'senior' (Advanced, 50 questions)
  */
 export function generateDynamicCapTableSession(tier: CapTableDefenseTier): CapTableQuestion[] {
   let count = 5;
@@ -1235,34 +1242,19 @@ export function generateDynamicCapTableSession(tier: CapTableDefenseTier): CapTa
     timeLimit = 15;
   }
 
-  const questions: CapTableQuestion[] = [];
-  const usedKeys = new Set<string>();
+  // Shuffle the pool of 52+ distinct scenario factories
+  const shuffledFactories = shuffle([...ALL_GENERATOR_FACTORIES]);
 
-  let attempts = 0;
-  while (questions.length < count && attempts < count * 8) {
-    attempts++;
-    const factory = getRandomItem(GENERATOR_FACTORIES);
-    const qId = `dyn_cap_${tier}_${questions.length + 1}_${Date.now().toString(36).slice(-4)}`;
+  // Select exactly `count` unique factories (each factory produces a distinct venture governance scenario)
+  const selectedFactories = shuffledFactories.slice(0, Math.min(count, shuffledFactories.length));
+
+  // Generate non-repeating questions from distinct factories
+  const questions: CapTableQuestion[] = selectedFactories.map((factory, index) => {
+    const qId = `dyn_cap_${tier}_${index + 1}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
     const q = factory(qId, timeLimit);
     q.tier = tier;
-
-    // Deduplication fingerprint
-    const fingerprint = `${q.category}_${q.options.find((o) => o.isCorrect)?.text.slice(0, 30)}`;
-
-    if (!usedKeys.has(fingerprint)) {
-      usedKeys.add(fingerprint);
-      questions.push(q);
-    }
-  }
-
-  // Fallback padding if strict deduplication under 50 questions capped
-  while (questions.length < count) {
-    const factory = getRandomItem(GENERATOR_FACTORIES);
-    const qId = `dyn_cap_${tier}_${questions.length + 1}_pad_${Math.random()}`;
-    const q = factory(qId, timeLimit);
-    q.tier = tier;
-    questions.push(q);
-  }
+    return q;
+  });
 
   return questions;
 }

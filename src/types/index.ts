@@ -154,6 +154,7 @@ export interface PsychologyGameMeta {
   instructions: LocalizedString;
   bestScoreKey: string;
   iconName: string;
+  logoUrl?: string;
 }
 
 export type SessionModeKey = 'all' | '5_rounds' | '10_rounds' | '20_rounds' | '25_rounds' | '50_rounds' | 'speed' | 'detective';

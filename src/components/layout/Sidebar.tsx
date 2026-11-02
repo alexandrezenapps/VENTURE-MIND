@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   LayoutDashboard,
   BookOpen,
@@ -106,6 +106,85 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     },
   ];
 
+  // Sliding active highlight block state & refs
+  const navRef = useRef<HTMLElement | null>(null);
+  const itemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [hoveredTab, setHoveredTab] = useState<NavTab | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    opacity: number;
+  }>({ top: 0, left: 0, width: 0, height: 0, opacity: 0 });
+
+  const currentTab = hoveredTab || activeTab;
+
+  const updateIndicator = useCallback((tabToTarget?: NavTab) => {
+    const target = tabToTarget || currentTab;
+    const nav = navRef.current;
+    const btn = itemRefs.current.get(target);
+    if (!nav || !btn) {
+      return;
+    }
+
+    const navRect = nav.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    if (navRect.width === 0 || btnRect.width === 0) {
+      return;
+    }
+
+    setIndicatorStyle({
+      top: Math.round(btnRect.top - navRect.top + nav.scrollTop),
+      left: Math.round(btnRect.left - navRect.left),
+      width: Math.round(btnRect.width),
+      height: Math.round(btnRect.height),
+      opacity: 1,
+    });
+  }, [currentTab]);
+
+  useEffect(() => {
+    let rId1: number;
+    let rId2: number;
+    const run = () => {
+      updateIndicator();
+    };
+    run();
+    rId1 = requestAnimationFrame(() => {
+      run();
+      rId2 = requestAnimationFrame(run);
+    });
+    return () => {
+      cancelAnimationFrame(rId1);
+      cancelAnimationFrame(rId2);
+    };
+  }, [updateIndicator, activeTab, currentTab, language, isOpen]);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const observer = new ResizeObserver(() => {
+      updateIndicator();
+    });
+    observer.observe(nav);
+
+    itemRefs.current.forEach((btn) => {
+      if (btn) observer.observe(btn);
+    });
+
+    const handleResize = () => updateIndicator();
+    window.addEventListener('resize', handleResize);
+    nav.addEventListener('scroll', handleResize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', handleResize);
+      nav.removeEventListener('scroll', handleResize);
+    };
+  }, [updateIndicator]);
+
   return (
     <>
       {/* Mobile Backdrop */}
@@ -181,28 +260,77 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
+        <nav
+          ref={navRef}
+          onMouseLeave={() => {
+            setHoveredTab(null);
+            updateIndicator(activeTab);
+          }}
+          onPointerLeave={() => {
+            setHoveredTab(null);
+            updateIndicator(activeTab);
+          }}
+          className="flex-1 px-3 py-3 space-y-1 overflow-y-auto relative isolate"
+        >
+          {/* Sliding rounded highlight block with spring rebound */}
+          <div
+            className="pointer-events-none absolute top-0 left-0 rounded-xl bg-gradient-to-r from-emerald-500/15 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/20 dark:via-emerald-500/15 dark:to-teal-500/15 border border-emerald-500/30 dark:border-emerald-400/40 shadow-[0_2px_14px_rgba(16,185,129,0.18)] z-0"
+            style={{
+              transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
+              width: `${indicatorStyle.width}px`,
+              height: `${indicatorStyle.height}px`,
+              opacity: indicatorStyle.opacity,
+              transition:
+                'transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1), width 420ms cubic-bezier(0.34, 1.56, 0.64, 1), height 420ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 180ms ease',
+            }}
+          >
+            {/* Subtle glowing left accent bar */}
+            <div className="absolute left-1.5 top-2 bottom-2 w-1 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+          </div>
+
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isHighlighted = currentTab === item.id;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
+                ref={(el) => {
+                  if (el) itemRefs.current.set(item.id, el);
+                  else itemRefs.current.delete(item.id);
+                }}
+                onMouseEnter={() => {
+                  setHoveredTab(item.id);
+                  updateIndicator(item.id);
+                }}
+                onPointerEnter={() => {
+                  setHoveredTab(item.id);
+                  updateIndicator(item.id);
+                }}
+                onTouchStart={() => {
+                  setHoveredTab(item.id);
+                  updateIndicator(item.id);
+                }}
+                onFocus={() => {
+                  setHoveredTab(item.id);
+                  updateIndicator(item.id);
+                }}
                 onClick={() => {
                   setActiveTab(item.id);
+                  setHoveredTab(item.id);
                   onClose();
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all group ${
-                  isActive
-                    ? 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold'
-                    : 'text-text-secondary dark:text-stone-400 hover:text-text-primary dark:hover:text-stone-100 hover:bg-surface-muted dark:hover:bg-stone-800/60'
+                className={`relative z-10 w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors group cursor-pointer ${
+                  isHighlighted
+                    ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
+                    : 'text-text-secondary dark:text-stone-400 hover:text-text-primary dark:hover:text-stone-100'
                 }`}
               >
                 <div className="flex items-center space-x-2.5 truncate">
                   <Icon
-                    className={`w-4 h-4 shrink-0 transition-colors ${
-                      isActive
-                        ? 'text-emerald-600 dark:text-emerald-400'
+                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                      isHighlighted
+                        ? 'text-emerald-600 dark:text-emerald-400 scale-105'
                         : 'text-text-secondary dark:text-stone-400 group-hover:text-text-primary dark:group-hover:text-stone-200'
                     }`}
                   />
@@ -210,9 +338,9 @@ export const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 </div>
                 {item.badge && (
                   <span
-                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
+                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md transition-colors ${
                       isActive
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-emerald-600 text-white font-bold'
                         : 'bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
                     }`}
                   >

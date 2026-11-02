@@ -83,6 +83,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_stroop_score',
     iconName: 'Eye',
+    logoUrl: '/src/assets/images/stroop_focus_logo_1793634949901.jpg',
   },
   {
     id: 'psy_dual_nback',
@@ -121,6 +122,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_dual_nback_score',
     iconName: 'Brain',
+    logoUrl: '/src/assets/images/dual_nback_logo_1793634950278.jpg',
   },
   {
     id: 'psy_schulte',
@@ -159,6 +161,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_schulte_score',
     iconName: 'Target',
+    logoUrl: '/src/assets/images/schulte_matrix_logo_1793634951260.jpg',
   },
   {
     id: 'psy_micro_expression',
@@ -197,6 +200,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_micro_expression_score',
     iconName: 'Smile',
+    logoUrl: '/src/assets/images/micro_expression_logo_1793634952146.jpg',
   },
   {
     id: 'psy_heartbeat',
@@ -235,6 +239,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_heartbeat_score',
     iconName: 'HeartPulse',
+    logoUrl: '/src/assets/images/vagus_heart_logo_1793634967453.jpg',
   },
   {
     id: 'psy_marshmallow',
@@ -273,6 +278,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_marshmallow_score',
     iconName: 'Hourglass',
+    logoUrl: '/src/assets/images/marshmallow_delay_logo_1793634967793.jpg',
   },
   {
     id: 'psy_cognitive_reframe',
@@ -311,6 +317,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_cognitive_reframe_score',
     iconName: 'ShieldAlert',
+    logoUrl: '/src/assets/images/cognitive_reframe_logo_1793634968918.jpg',
   },
   {
     id: 'psy_iowa_gambling',
@@ -349,6 +356,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_iowa_gambling_score',
     iconName: 'Coins',
+    logoUrl: '/src/assets/images/iowa_intuition_logo_1793634969248.jpg',
   },
   {
     id: 'psy_gonogo',
@@ -387,6 +395,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_gonogo_score',
     iconName: 'Zap',
+    logoUrl: '/src/assets/images/gonogo_inhibitor_logo_1793634990553.jpg',
   },
   {
     id: 'psy_wisconsin',
@@ -425,6 +434,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_wisconsin_score',
     iconName: 'Sparkles',
+    logoUrl: '/src/assets/images/wisconsin_flex_logo_1793634991902.jpg',
   },
   {
     id: 'psy_sunk_cost',
@@ -463,6 +473,7 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_sunk_cost_score',
     iconName: 'Flame',
+    logoUrl: '/src/assets/images/sunk_cost_logo_1793634992681.jpg',
   },
   {
     id: 'psy_spatial_matrix',
@@ -501,5 +512,6 @@ export const psychologyGamesList: PsychologyGameMeta[] = [
     },
     bestScoreKey: 'psy_spatial_matrix_score',
     iconName: 'Grid',
+    logoUrl: '/src/assets/images/spatial_matrix_logo_1793634992768.jpg',
   },
 ];

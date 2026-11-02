@@ -41,6 +41,7 @@ import { GoNoGoGame } from './games/GoNoGoGame';
 import { WisconsinCardGame } from './games/WisconsinCardGame';
 import { SunkCostGame } from './games/SunkCostGame';
 import { SpatialMatrixGame } from './games/SpatialMatrixGame';
+import { MindGamesOverlappingDeck } from './MindGamesOverlappingDeck';
 
 export const PsychologyGamesHub: React.FC = () => {
   const { language, progress, recordGameScore } = useApp();
@@ -197,6 +198,12 @@ export const PsychologyGamesHub: React.FC = () => {
         </div>
       </div>
 
+      {/* 1/3 Overlapping Mind Games Deck Component */}
+      <MindGamesOverlappingDeck
+        games={psychologyGamesList}
+        onSelectGame={(gameId) => setActiveGameId(gameId)}
+      />
+
       {/* Domain Filter Buttons */}
       <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar">
         <button
@@ -284,13 +291,24 @@ export const PsychologyGamesHub: React.FC = () => {
 
                 {/* Icon & Title */}
                 <div className="flex items-start space-x-3.5 pt-1">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-inner transition-transform group-hover:scale-105"
-                    style={{ backgroundColor: `${domainMeta.accentColor}18`, color: domainMeta.accentColor }}
-                  >
-                    <Icon className="w-6 h-6" />
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-amber-400/30 group-hover:border-amber-400 shadow-md group-hover:scale-105 transition-all bg-black/40">
+                    {game.logoUrl ? (
+                      <img
+                        src={game.logoUrl}
+                        alt={game.title[language]}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: `${domainMeta.accentColor}18`, color: domainMeta.accentColor }}
+                      >
+                        <Icon className="w-6 h-6" />
+                      </div>
+                    )}
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <h3 className="font-serif-luxury font-bold text-base text-text-primary dark:text-stone-100 group-hover:text-amber-400 transition-colors">
                       {game.title[language]}
                     </h3>
@@ -354,6 +372,33 @@ export const PsychologyGamesHub: React.FC = () => {
             >
               <X className="w-4 h-4" />
             </button>
+
+            {/* Modal Header with Game Logo */}
+            <div className="px-5 py-3.5 bg-gradient-to-r from-[#121629] via-[#171c36] to-[#0e1222] border-b border-amber-400/20 flex items-center space-x-3 rounded-t-3xl pr-14">
+              <div className="relative w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-amber-400/40 shadow-sm bg-black/40">
+                {activeGame.logoUrl ? (
+                  <img
+                    src={activeGame.logoUrl}
+                    alt={activeGame.title[language]}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-amber-400">
+                    <Brain className="w-5 h-5" />
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-bold">
+                    GAME #{activeGame.number < 10 ? `0${activeGame.number}` : activeGame.number} · {psychologyDomainsMeta[activeGame.domain].name[language]}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-white font-serif-luxury truncate">
+                  {activeGame.title[language]}
+                </h4>
+              </div>
+            </div>
 
             {/* Game Renderer by ID */}
             {activeGameId === 'psy_stroop' && (

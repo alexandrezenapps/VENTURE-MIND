@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Compass,
   BookOpen,
@@ -59,6 +59,87 @@ export const BottomNav: React.FC = () => {
       icon: Gamepad2,
     },
   ];
+
+  // Sliding active highlight block state & refs
+  const navContainerRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    opacity: number;
+  }>({ left: 0, top: 0, width: 0, height: 0, opacity: 0 });
+
+  const activeKey = mainTabs.some((t) => t.id === activeTab) ? activeTab : 'more';
+  const currentKey = hoveredKey || activeKey;
+
+  const updateIndicator = useCallback((keyToTarget?: string) => {
+    const targetKey = keyToTarget ?? currentKey;
+    const container = navContainerRef.current;
+    const btn = tabRefs.current.get(targetKey);
+    if (!container || !btn) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    if (containerRect.width === 0 || btnRect.width === 0) {
+      return;
+    }
+
+    setIndicatorStyle({
+      left: Math.round(btnRect.left - containerRect.left),
+      top: Math.round(btnRect.top - containerRect.top),
+      width: Math.round(btnRect.width),
+      height: Math.round(btnRect.height),
+      opacity: 1,
+    });
+  }, [currentKey]);
+
+  useEffect(() => {
+    let rId1: number;
+    let rId2: number;
+
+    const run = () => {
+      updateIndicator();
+    };
+
+    run();
+    rId1 = requestAnimationFrame(() => {
+      run();
+      rId2 = requestAnimationFrame(run);
+    });
+
+    return () => {
+      cancelAnimationFrame(rId1);
+      cancelAnimationFrame(rId2);
+    };
+  }, [updateIndicator, activeTab, currentKey, language, isMoreMenuOpen]);
+
+  useEffect(() => {
+    const container = navContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      updateIndicator();
+    });
+    observer.observe(container);
+
+    tabRefs.current.forEach((btn) => {
+      if (btn) observer.observe(btn);
+    });
+
+    const handleResize = () => updateIndicator();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [updateIndicator]);
 
   const moreItems: {
     id: NavTab;
@@ -232,25 +313,79 @@ export const BottomNav: React.FC = () => {
 
       {/* Floating Glass Bottom Nav */}
       <nav className="lg:hidden fixed bottom-3 left-3 right-3 z-40">
-        <div className="mx-auto max-w-md bg-[#131626]/90 dark:bg-[#0D101C]/92 backdrop-blur-2xl border border-amber-400/35 dark:border-amber-400/25 rounded-2xl shadow-[0_12px_44px_rgba(0,0,0,0.65),0_0_20px_rgba(229,184,66,0.12)] p-1.5 flex items-center justify-around">
+        <div
+          ref={navContainerRef}
+          onMouseLeave={() => {
+            setHoveredKey(null);
+            updateIndicator(activeKey);
+          }}
+          onPointerLeave={() => {
+            setHoveredKey(null);
+            updateIndicator(activeKey);
+          }}
+          className="mx-auto max-w-md bg-[#131626]/90 dark:bg-[#0D101C]/92 backdrop-blur-2xl border border-amber-400/35 dark:border-amber-400/25 rounded-2xl shadow-[0_12px_44px_rgba(0,0,0,0.65),0_0_20px_rgba(229,184,66,0.12)] p-1.5 flex items-center justify-around relative isolate"
+        >
+          {/* Sliding rounded highlight block with spring rebound */}
+          <div
+            className={`pointer-events-none absolute top-0 left-0 rounded-xl border transition-colors ${
+              currentKey === 'more'
+                ? 'bg-purple-500/25 border-purple-400/50 shadow-[0_2px_14px_rgba(168,85,247,0.3)]'
+                : 'bg-gradient-to-tr from-amber-500/25 via-amber-400/20 to-purple-500/20 border-amber-400/50 shadow-[0_2px_14px_rgba(245,158,11,0.28)]'
+            } z-0`}
+            style={{
+              transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
+              width: `${indicatorStyle.width}px`,
+              height: `${indicatorStyle.height}px`,
+              opacity: indicatorStyle.opacity,
+              transition:
+                'transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1), width 420ms cubic-bezier(0.34, 1.56, 0.64, 1), height 420ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 180ms ease',
+            }}
+          />
+
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
+            const isHighlighted = currentKey === tab.id;
+            const isSelected = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
+                ref={(el) => {
+                  if (el) tabRefs.current.set(tab.id, el);
+                  else tabRefs.current.delete(tab.id);
+                }}
+                onMouseEnter={() => {
+                  setHoveredKey(tab.id);
+                  updateIndicator(tab.id);
+                }}
+                onPointerEnter={() => {
+                  setHoveredKey(tab.id);
+                  updateIndicator(tab.id);
+                }}
+                onTouchStart={() => {
+                  setHoveredKey(tab.id);
+                  updateIndicator(tab.id);
+                }}
+                onFocus={() => {
+                  setHoveredKey(tab.id);
+                  updateIndicator(tab.id);
+                }}
                 onClick={() => {
                   setActiveTab(tab.id);
+                  setHoveredKey(tab.id);
                   setIsMoreMenuOpen(false);
                 }}
-                className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
-                  isActive
-                    ? 'text-amber-400 font-bold bg-amber-500/15 shadow-inner'
+                className={`relative z-10 flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  isHighlighted
+                    ? 'text-amber-300 font-bold scale-[1.02]'
                     : 'text-stone-400 hover:text-stone-200'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-amber-400' : ''}`} />
+                  <Icon
+                    className={`w-5 h-5 transition-transform duration-200 ${
+                      isHighlighted ? 'text-amber-300 scale-105' : 'text-stone-400'
+                    }`}
+                  />
                   {tab.badge && (
                     <span className="absolute -top-1 -right-2 text-[8px] font-mono px-1 rounded-full bg-amber-500 text-stone-950 font-bold leading-tight">
                       {tab.badge}
@@ -263,24 +398,52 @@ export const BottomNav: React.FC = () => {
                 <span className="text-[10px] mt-1 font-medium tracking-tight">
                   {tab.label[language]}
                 </span>
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-0.5" />
-                )}
+                <span
+                  className={`w-1.5 h-1.5 rounded-full bg-amber-400 mt-0.5 transition-all duration-200 ${
+                    isSelected ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                  }`}
+                />
               </button>
             );
           })}
 
           {/* "More / Lab" Trigger Button */}
           <button
+            ref={(el) => {
+              if (el) tabRefs.current.set('more', el);
+              else tabRefs.current.delete('more');
+            }}
+            onMouseEnter={() => {
+              setHoveredKey('more');
+              updateIndicator('more');
+            }}
+            onPointerEnter={() => {
+              setHoveredKey('more');
+              updateIndicator('more');
+            }}
+            onTouchStart={() => {
+              setHoveredKey('more');
+              updateIndicator('more');
+            }}
+            onFocus={() => {
+              setHoveredKey('more');
+              updateIndicator('more');
+            }}
             onClick={() => setIsMoreMenuOpen((prev) => !prev)}
-            className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
-              ['simulators', 'negotiation', 'termsheet', 'exam', 'profile'].includes(activeTab) || isMoreMenuOpen
-                ? 'text-purple-400 font-bold bg-purple-500/15 shadow-inner'
+            className={`relative z-10 flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
+              currentKey === 'more' || isMoreMenuOpen
+                ? 'text-purple-300 font-bold scale-[1.02]'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
             <div className="relative">
-              <Sliders className="w-5 h-5" />
+              <Sliders
+                className={`w-5 h-5 transition-transform duration-200 ${
+                  currentKey === 'more' || isMoreMenuOpen
+                    ? 'text-purple-300 scale-105'
+                    : 'text-stone-400'
+                }`}
+              />
               <ChevronUp
                 className={`w-3 h-3 absolute -top-1 -right-2 transition-transform duration-200 ${
                   isMoreMenuOpen ? 'rotate-180' : ''
@@ -290,6 +453,11 @@ export const BottomNav: React.FC = () => {
             <span className="text-[10px] mt-1 font-medium tracking-tight">
               {language === 'fr' ? 'Lab +' : language === 'zh' ? '更多+' : 'More+'}
             </span>
+            <span
+              className={`w-1.5 h-1.5 rounded-full bg-purple-400 mt-0.5 transition-all duration-200 ${
+                activeKey === 'more' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+              }`}
+            />
           </button>
         </div>
       </nav>

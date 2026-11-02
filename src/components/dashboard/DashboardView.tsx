@@ -32,6 +32,7 @@ import { psychologyPrinciples } from '../../data/psychologyData';
 import { MindfulPauseWidget } from '../mindfulness/MindfulPauseWidget';
 import { OverlappingCardStack } from '../common/OverlappingCardStack';
 import { DOMAIN_STACKS_DATA } from '../../data/overlappingCardsData';
+import { ProgressChecklistCard, ChecklistItem } from '../common/ProgressChecklistCard';
 
 // Image paths from batch generation
 const IMAGES = {
@@ -39,6 +40,80 @@ const IMAGES = {
   equilibrium: '/src/assets/images/dashboard_zen_equilibrium_1793030559181.jpg',
   gears: '/src/assets/images/dashboard_precision_gears_1793030560318.jpg',
 };
+
+// Executive Venture Sovereignty & Pre-Deal Checklist Items
+const EXECUTIVE_CHECKLIST_ITEMS: ChecklistItem[] = [
+  {
+    id: 'liq_pref',
+    category: { en: 'Economics', fr: 'Économie', zh: '核心经济条款' },
+    title: {
+      en: '1.0x Non-Participating Grounding',
+      fr: 'Préférence 1.0x Non-Participante Stricte',
+      zh: '1.0x 非参与型清算优先权底线',
+    },
+    desc: {
+      en: 'Never accept participating double-dipping liquidation structures under standard market conditions.',
+      fr: 'Refuser formellement tout cumul de liquidation participante avec la part au pro-rata.',
+      zh: '守住底线：杜绝退出时VC先拿本金再双重分红的掠夺性参与型清算条款。',
+    },
+  },
+  {
+    id: 'option_pool',
+    category: { en: 'Dilution', fr: 'Capitalisation', zh: '股权与稀释防线' },
+    title: {
+      en: 'Option Pool Shuffle Defense',
+      fr: 'Garde-fous sur le Pool Pré-Money',
+      zh: '杜绝期权池前置单方稀释洗牌',
+    },
+    desc: {
+      en: 'Cap unallocated hiring pool at realistic 18-month hiring needs (~8-10%) rather than arbitrary 20%.',
+      fr: 'Dimensionner le pool aux besoins réels sur 18 mois (8-10%) sans subir une dilution aveugle de 20%.',
+      zh: '精算抗辩：期权池严格限定为18个月内实际招募所需的8-10%，绝不承担20%凭空多稀释。',
+    },
+  },
+  {
+    id: 'board_control',
+    category: { en: 'Governance', fr: 'Gouvernance', zh: '控制权与公司治理' },
+    title: {
+      en: '2-2-1 Balanced Governance Anchor',
+      fr: 'Conseil Équilibré 2-2-1',
+      zh: '2-2-1 均衡董事会控制权架构',
+    },
+    desc: {
+      en: 'Preserve 2 Founder seats against 2 Investor seats, with 1 mutually agreed independent tie-breaker.',
+      fr: 'Garantir 2 sièges Fondateurs contre 2 Investisseurs avec 1 administrateur indépendant mutuel.',
+      zh: '公司治理安全：创始人保持2席对等投资人2席，中立独立董事由双方共同选定。',
+    },
+  },
+  {
+    id: 'tactical_pause',
+    category: { en: 'Composure', fr: 'Psychologie', zh: '正念定力与临场应变' },
+    title: {
+      en: '4-Second Tactical Composure Protocol',
+      fr: 'Protocole de Pause Stratégique de 4s',
+      zh: '极限压价下的4秒战术深呼吸心法',
+    },
+    desc: {
+      en: 'Pause somatic adrenaline before responding to abrupt lowball term sheet counter-offers.',
+      fr: 'Maîtriser le pouls avant de répondre aux contre-offres agressives en réunion.',
+      zh: '消除对抗冲动：听到极限苛刻条件时不辩解、不急躁，以平静从容的数理模型降维回应。',
+    },
+  },
+  {
+    id: 'batna_sovereignty',
+    category: { en: 'Leverage', fr: 'Levier', zh: '战略筹码与离席底牌' },
+    title: {
+      en: 'BATNA & Self-Funded Runway Autonomy',
+      fr: 'Souveraineté du BATNA & Runway Propre',
+      zh: '手握随时可离席的生存底牌 (BATNA)',
+    },
+    desc: {
+      en: 'Hold true operational confidence to walk away from predatory terms and execute independently.',
+      fr: 'Conserver la capacité opérationnelle de refuser un term sheet toxique et s’appuyer sur le cash-flow.',
+      zh: '资本博弈之锚：拥有自我造血与随时可离席的真实底牌，谈判才会有绝对定力。',
+    },
+  },
+];
 
 // Curated high-prestige strategic aphorisms
 const STRATEGIC_APHORISMS = [
@@ -178,6 +253,29 @@ export const DashboardView: React.FC = () => {
 
   // Aphorism index
   const [aphorismIndex, setAphorismIndex] = useState(0);
+
+  // Executive Daily Grounding Checklist state
+  const [dashboardChecklist, setDashboardChecklist] = useState<Record<string, boolean>>({
+    liq_pref: true,
+    option_pool: false,
+    board_control: true,
+    tactical_pause: false,
+    batna_sovereignty: false,
+  });
+
+  const handleToggleChecklist = (id: string) => {
+    setDashboardChecklist((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleResetChecklist = () => {
+    setDashboardChecklist({
+      liq_pref: false,
+      option_pool: false,
+      board_control: false,
+      tactical_pause: false,
+      batna_sovereignty: false,
+    });
+  };
 
   // Dilemma state
   const [selectedDilemmaOption, setSelectedDilemmaOption] = useState<string | null>(null);
@@ -781,6 +879,33 @@ export const DashboardView: React.FC = () => {
           ======================================================== */}
       {/* Mindful Pause Widget (Tactical Composure Box Breathing) */}
       <MindfulPauseWidget />
+
+      {/* ========================================================
+          Executive Pre-Deal Grounding & Term Sheet Defense Checklist
+          用组件背景的填充宽度表示完成进度，勾选一项时填充平滑前推，完成后整个组件轻微提亮
+          ======================================================== */}
+      <ProgressChecklistCard
+        badgeText={{
+          en: 'Pre-Deal Governance & Sovereignty Protocol',
+          fr: 'Protocole de Gouvernance & Sérénité Pré-Deal',
+          zh: '创始人创投护城河与定力通关清单',
+        }}
+        title={{
+          en: 'Founder Grounding & Term Sheet Defense Protocol',
+          fr: 'Protocole de Vigilance Juridique & Sang-Froid Exécutif',
+          zh: '重大融资博弈与条款自查通关清单',
+        }}
+        subtitle={{
+          en: 'Check each cornerstone before signing term sheets or entering high-stakes VC meetings. Background fill tracks progress in real-time, and lights up upon completion.',
+          fr: 'Validez chaque jalon de souveraineté avant de négocier ou de signer un term sheet. Le fond s’illumine au succès.',
+          zh: '会面VC或签署意向书前逐项核对：背景填充宽度平滑前推实时呈现进度，全部勾选通关后全幅充盈微光提亮。',
+        }}
+        items={EXECUTIVE_CHECKLIST_ITEMS}
+        checkedMap={dashboardChecklist}
+        onToggle={handleToggleChecklist}
+        onReset={handleResetChecklist}
+        accent="emerald"
+      />
 
       {/* Grid: Dual Masterpiece Cards (Daily Term & Mindful Psychology) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">

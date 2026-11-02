@@ -20,6 +20,7 @@ import { GameInfo } from '../../types';
 import { FacingTheGame } from './FacingTheGame';
 import { SpeedValuationGame } from './SpeedValuationGame';
 import { CapTableBattleGame } from './CapTableBattleGame';
+import { CapTableGlobalLeaderboard } from './CapTableGlobalLeaderboard';
 import { LeaderboardModal } from '../common/LeaderboardModal';
 import speedValuationIcon from '../../assets/images/speed_valuation_icon_1793106944524.jpg';
 import capTableIcon from '../../assets/images/cap_table_sovereignty_icon_1793108638526.jpg';
@@ -368,7 +369,14 @@ export const GamesHubView: React.FC = () => {
 
           <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
             <button
-              onClick={() => setIsLeaderboardOpen(true)}
+              onClick={() => {
+                const el = document.getElementById('captable-global-leaderboard');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  setIsLeaderboardOpen(true);
+                }
+              }}
               className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-stone-200 font-mono text-xs transition-all flex items-center space-x-1.5 cursor-pointer"
             >
               <Trophy className="w-3.5 h-3.5 text-amber-300" />
@@ -385,6 +393,15 @@ export const GamesHubView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Dedicated Global Leaderboard for Game #3: 股权结构防卫战 */}
+      {!activeGameId && (
+        <div id="captable-global-leaderboard" className="pt-2 scroll-mt-6">
+          <CapTableGlobalLeaderboard
+            onPlayGame={() => setActiveGameId('game_03')}
+          />
+        </div>
+      )}
 
       {/* GAME 1: FACING THE GAME MOUNT */}
       {activeGameId === 'game_01' && (

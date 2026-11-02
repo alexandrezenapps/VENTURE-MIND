@@ -596,6 +596,107 @@ export const SpeedValuationGame: React.FC<{
       {/* VIEW B: ACTIVE LIVE GAMEPLAY */}
       {hasStarted && !isGameOver && currentQ && (
         <div className="space-y-6 max-w-3xl mx-auto">
+          {/* Dedicated Question Progress Bar (Questions Completed vs Total: 5, 25, or 50) */}
+          {(() => {
+            const completedCount = hasAnswered ? currentIndex + 1 : currentIndex;
+            const totalCount = questionQueue.length;
+            const progressPercentage = Math.round((completedCount / Math.max(1, totalCount)) * 100);
+
+            return (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#0a1a1f] via-[#0f282e] to-[#0a1a1f] border border-emerald-500/30 shadow-lg space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  {/* Left: Progress Title & Tier Mode */}
+                  <div className="flex items-center space-x-2">
+                    <span className="p-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                      <Target className="w-3.5 h-3.5" />
+                    </span>
+                    <span className="font-bold text-white tracking-wide">
+                      {language === 'fr'
+                        ? 'Progression de l’Épreuve'
+                        : language === 'zh'
+                        ? '心算答题进度'
+                        : 'Valuation Progress'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                      {totalCount === 50
+                        ? language === 'zh' ? '高级 50题' : 'Advanced (50 Qs)'
+                        : totalCount === 25
+                        ? language === 'zh' ? '中级 25题' : 'Intermediate (25 Qs)'
+                        : language === 'zh' ? '初级 5题' : 'Beginner (5 Qs)'}
+                    </span>
+                  </div>
+
+                  {/* Right: Question Counter & Percentage */}
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-stone-300 font-mono text-xs">
+                      <span className="text-stone-400">{language === 'zh' ? '已完成' : language === 'fr' ? 'Terminées' : 'Completed'}:</span>{' '}
+                      <strong className="text-emerald-400 font-bold tabular-nums text-sm">
+                        {completedCount}
+                      </strong>{' '}
+                      <span className="text-stone-500">/</span>{' '}
+                      <span className="text-white font-semibold tabular-nums">{totalCount}</span>{' '}
+                      <span className="text-stone-400 text-[10px]">{language === 'zh' ? '题' : 'Qs'}</span>
+                    </span>
+
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 font-mono font-bold text-xs tabular-nums shadow-sm">
+                      {progressPercentage}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Visual Progress Bar Track with Gradient Fill */}
+                <div className="relative h-2.5 w-full bg-stone-900 rounded-full overflow-hidden p-0.5 border border-stone-800">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.5)] transition-all duration-500 ease-out"
+                    style={{
+                      width: `${Math.max(
+                        completedCount > 0 ? 4 : 2,
+                        Math.min(100, progressPercentage)
+                      )}%`,
+                    }}
+                  />
+                </div>
+
+                {/* Sub-track: Discrete Steps for 5 questions, or Milestones for 25 / 50 questions */}
+                {totalCount === 5 ? (
+                  <div className="grid grid-cols-5 gap-1.5 pt-0.5">
+                    {questionQueue.map((_, qIdx) => {
+                      const isDone = qIdx < completedCount;
+                      const isCurrent = qIdx === currentIndex && !hasAnswered;
+                      return (
+                        <div
+                          key={qIdx}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            isDone
+                              ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]'
+                              : isCurrent
+                              ? 'bg-amber-400 animate-pulse'
+                              : 'bg-stone-800'
+                          }`}
+                          title={`Question ${qIdx + 1} of 5`}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between text-[10px] font-mono text-stone-400 pt-0.5 px-0.5">
+                    <span className="flex items-center space-x-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-stone-600 inline-block" />
+                      <span>Start (0)</span>
+                    </span>
+                    <span className="text-stone-500">25% ({Math.round(totalCount * 0.25)})</span>
+                    <span className="text-emerald-400 font-bold">50% ({Math.round(totalCount * 0.5)})</span>
+                    <span className="text-stone-500">75% ({Math.round(totalCount * 0.75)})</span>
+                    <span className="flex items-center space-x-1 text-emerald-400 font-bold">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Goal ({totalCount})</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
           {/* HUD: Round counter, Tier badge, Timer with progress bar, Live score, Combo streak */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-surface-muted dark:bg-[#121626] border border-border-main dark:border-stone-800 text-xs font-mono">
             <div className="flex items-center space-x-3">

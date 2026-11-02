@@ -638,108 +638,219 @@ export const MindfulnessSanctuaryView: React.FC = () => {
 
       {/* ========================================================
           4. Pre-Deal Mindful Grounding Diagnostic Checklist
+          用组件背景的填充宽度表示完成进度，勾选一项时填充平滑前推，完成后整个组件轻微提亮
           ======================================================== */}
-      <div className="rounded-3xl p-6 sm:p-8 bg-surface-main dark:bg-stone-900 border border-border-main dark:border-stone-800 shadow-xl space-y-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-border-main dark:border-stone-800">
-          <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-purple-600 dark:text-purple-400 font-bold">
-              <ShieldCheck className="w-4 h-4" />
-              <span>
-                {language === 'fr'
-                  ? 'Contrôle de Vigilance Pré-Négociation'
-                  : language === 'zh'
-                  ? '重大交易与会前 · 心理防御自查清单'
-                  : 'Pre-Negotiation Mindful Grounding Checklist'}
-              </span>
+      {(() => {
+        const isComplete = composureScore === 100;
+        return (
+          <div
+            className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-xl space-y-5 transition-all duration-700 ease-out isolate ${
+              isComplete
+                ? 'bg-surface-main/95 dark:bg-[#16142a]/95 border-emerald-500/60 dark:border-amber-400/60 shadow-[0_20px_50px_-10px_rgba(16,185,129,0.22),0_0_36px_rgba(245,158,11,0.2)] brightness-[1.07] ring-1 ring-amber-400/40'
+                : 'bg-surface-main/80 dark:bg-stone-900/80 border-border-main dark:border-stone-800 shadow-xl brightness-100'
+            }`}
+            style={{
+              transition:
+                'filter 650ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 650ms cubic-bezier(0.16, 1, 0.3, 1), border-color 650ms cubic-bezier(0.16, 1, 0.3, 1), background-color 650ms cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            {/* Component Background Progress Fill Layer */}
+            <div
+              className={`absolute inset-y-0 left-0 pointer-events-none -z-10 ${
+                isComplete
+                  ? 'bg-gradient-to-r from-emerald-500/25 via-teal-500/30 to-amber-500/25'
+                  : 'bg-gradient-to-r from-purple-500/18 via-indigo-500/18 to-emerald-500/18'
+              }`}
+              style={{
+                width: `${composureScore}%`,
+                transition: 'width 650ms cubic-bezier(0.34, 1.25, 0.64, 1)',
+              }}
+            >
+              {/* Leading Edge Shimmer / Glow Light Bar */}
+              {composureScore > 0 && composureScore < 100 && (
+                <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-transparent via-amber-400 to-transparent shadow-[0_0_14px_rgba(245,158,11,0.9)]" />
+              )}
+              {isComplete && (
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-emerald-400/15 to-transparent pointer-events-none animate-pulse" />
+              )}
             </div>
-            <h3 className="fluid-heading-2 font-bold text-text-primary dark:text-stone-100 mt-1">
-              {language === 'fr'
-                ? 'Êtes-vous dans un état d’esprit souverain ?'
-                : language === 'zh'
-                ? '签约或会面VC前，检视你的心理盲区与自主定力'
-                : 'Are You Grounded in Sovereign Conviction?'}
-            </h3>
-          </div>
 
-          <div className="px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-emerald-500/10 border border-purple-500/20 text-right">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-text-secondary dark:text-stone-400">
-              {language === 'fr' ? 'Indice de Sang-froid' : language === 'zh' ? '当前定力指数' : 'Composure Score'}
-            </div>
-            <div className="text-xl font-mono font-extrabold text-purple-600 dark:text-purple-400">
-              {composureScore}%
-            </div>
-          </div>
-        </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-border-main/70 dark:border-stone-800">
+              <div className="space-y-1">
+                <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-purple-600 dark:text-purple-400 font-bold">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>
+                    {language === 'fr'
+                      ? 'Contrôle de Vigilance Pré-Négociation'
+                      : language === 'zh'
+                      ? '重大交易与会前 · 心理防御自查清单'
+                      : 'Pre-Negotiation Mindful Grounding Checklist'}
+                  </span>
+                </div>
+                <h3 className="fluid-heading-2 font-bold text-text-primary dark:text-stone-100">
+                  {language === 'fr'
+                    ? 'Êtes-vous dans un état d’esprit souverain ?'
+                    : language === 'zh'
+                    ? '签约或会面VC前，检视你的心理盲区与自主定力'
+                    : 'Are You Grounded in Sovereign Conviction?'}
+                </h3>
+              </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-          {[
-            {
-              key: 'egoCheck',
-              label: {
-                en: 'Ego Separation: I am optimizing for governance safety and long-term equity, not headline valuation vanity.',
-                fr: 'Détachement de l’Ego : J’optimise la gouvernance et le contrôle, non la vanité d’une valorisation faciale.',
-                zh: '剥离虚荣：我追求的是公司治理安全与长远股权价值，而非虚高的估值数字。',
-              },
-            },
-            {
-              key: 'fomoImmunity',
-              label: {
-                en: 'FOMO Immunity: I recognize that deadlines and artificial exclusivity are psychological tactics designed to induce panic.',
-                fr: 'Immunité FOMO : Je reconnais que les délais couperets sont des tactiques destinées à provoquer l’urgence.',
-                zh: '免疫FOMO：我清醒识破倒计时排他与限期签约不过是诱导仓促让步的心理压迫。',
-              },
-            },
-            {
-              key: 'batnaClarity',
-              label: {
-                en: 'BATNA Sovereignty: I am genuinely prepared to walk away and execute on my cash-flow runway if predatory terms persist.',
-                fr: 'Clarté du BATNA : Je suis prêt à refuser l’offre et à m’appuyer sur ma piste d’atterrissage autonome.',
-                zh: '底牌确信：若对方坚持严苛霸王条款，我具备随时离席并依靠自有造血生存的真正底气。',
-              },
-            },
-            {
-              key: 'sunkCostFree',
-              label: {
-                en: 'Sunk Cost Immunity: Months of roadshow exhaustion will not force me to sign a toxic liquidation waterfall.',
-                fr: 'Immunité aux coûts irrécupérables : La fatigue du roadshow ne me fera pas signer une clause toxique.',
-                zh: '沉没成本免疫：数月路演的身体疲惫，决不能成为我妥协签署带毒清算瀑布的理由。',
-              },
-            },
-            {
-              key: 'bodyRelaxed',
-              label: {
-                en: 'Somatic Stillness: My jaw is unclenched, shoulders are dropped, and my breathing remains slow and steady.',
-                fr: 'Détente Somatique : Ma mâchoire est détendue, mes épaules sont basses, mon souffle est calme.',
-                zh: '身心松沉：下颌已松，双肩下沉，呼吸绵长平稳，声调不亢不卑。',
-              },
-            },
-          ].map((item) => {
-            const isChecked = checklist[item.key];
-            return (
-              <button
-                key={item.key}
-                onClick={() => toggleCheck(item.key)}
-                className={`p-4 rounded-2xl border text-left flex items-start space-x-3 transition-all cursor-pointer ${
-                  isChecked
-                    ? 'bg-purple-500/10 dark:bg-purple-950/30 border-purple-500/40 text-text-primary dark:text-stone-100'
-                    : 'bg-surface-muted/40 dark:bg-stone-800/40 border-border-main dark:border-stone-800 text-text-secondary dark:text-stone-400 hover:border-stone-400'
-                }`}
-              >
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    setChecklist({
+                      egoCheck: false,
+                      fomoImmunity: false,
+                      batnaClarity: false,
+                      sunkCostFree: false,
+                      bodyRelaxed: false,
+                    })
+                  }
+                  className="p-2 rounded-xl text-text-secondary dark:text-stone-400 hover:text-amber-500 hover:bg-surface-muted dark:hover:bg-stone-800/60 transition-colors cursor-pointer text-xs flex items-center space-x-1"
+                  title="Reset checklist"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline font-mono">
+                    {language === 'fr' ? 'Réinitialiser' : language === 'zh' ? '重置' : 'Reset'}
+                  </span>
+                </button>
+
                 <div
-                  className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                    isChecked
-                      ? 'bg-purple-600 border-purple-600 text-white'
-                      : 'border-stone-400 dark:border-stone-600'
+                  className={`px-4 py-2 rounded-2xl border transition-all duration-500 text-right ${
+                    isComplete
+                      ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 shadow-md ring-1 ring-emerald-400/40'
+                      : 'bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-emerald-500/10 border-purple-500/20'
                   }`}
                 >
-                  {isChecked && <CheckCircle2 className="w-4 h-4" />}
+                  <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono uppercase tracking-wider text-text-secondary dark:text-stone-400">
+                    {isComplete && <Sparkles className="w-3 h-3 text-amber-400 animate-spin-slow" />}
+                    <span>
+                      {isComplete
+                        ? language === 'fr'
+                          ? 'Sérénité Parfaite'
+                          : language === 'zh'
+                          ? '极致定力达成'
+                          : 'Sovereign Calm'
+                        : language === 'fr'
+                        ? 'Indice de Sang-froid'
+                        : language === 'zh'
+                        ? '当前定力指数'
+                        : 'Composure Score'}
+                    </span>
+                  </div>
+                  <div className="text-xl font-mono font-extrabold flex items-baseline justify-end gap-1">
+                    <span
+                      className={`transition-colors duration-300 ${
+                        isComplete
+                          ? 'text-emerald-500 dark:text-emerald-300'
+                          : 'text-purple-600 dark:text-purple-400'
+                      }`}
+                    >
+                      {composureScore}%
+                    </span>
+                    <span className="text-[11px] font-normal text-text-secondary dark:text-stone-400">
+                      ({checkedCount}/5)
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs sm:text-sm leading-relaxed">{item.label[language]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {[
+                {
+                  key: 'egoCheck',
+                  label: {
+                    en: 'Ego Separation: I am optimizing for governance safety and long-term equity, not headline valuation vanity.',
+                    fr: 'Détachement de l’Ego : J’optimise la gouvernance et le contrôle, non la vanité d’une valorisation faciale.',
+                    zh: '剥离虚荣：我追求的是公司治理安全与长远股权价值，而非虚高的估值数字。',
+                  },
+                },
+                {
+                  key: 'fomoImmunity',
+                  label: {
+                    en: 'FOMO Immunity: I recognize that deadlines and artificial exclusivity are psychological tactics designed to induce panic.',
+                    fr: 'Immunité FOMO : Je reconnais que les délais couperets sont des tactiques destinées à provoquer l’urgence.',
+                    zh: '免疫FOMO：我清醒识破倒计时排他与限期签约不过是诱导仓促让步的心理压迫。',
+                  },
+                },
+                {
+                  key: 'batnaClarity',
+                  label: {
+                    en: 'BATNA Sovereignty: I am genuinely prepared to walk away and execute on my cash-flow runway if predatory terms persist.',
+                    fr: 'Clarté du BATNA : Je suis prêt à refuser l’offre et à m’appuyer sur ma piste d’atterrissage autonome.',
+                    zh: '底牌确信：若对方坚持严苛霸王条款，我具备随时离席并依靠自有造血生存的真正底气。',
+                  },
+                },
+                {
+                  key: 'sunkCostFree',
+                  label: {
+                    en: 'Sunk Cost Immunity: Months of roadshow exhaustion will not force me to sign a toxic liquidation waterfall.',
+                    fr: 'Immunité aux coûts irrécupérables : La fatigue du roadshow ne me fera pas signer une clause toxique.',
+                    zh: '沉没成本免疫：数月路演的身体疲惫，决不能成为我妥协签署带毒清算瀑布的理由。',
+                  },
+                },
+                {
+                  key: 'bodyRelaxed',
+                  label: {
+                    en: 'Somatic Stillness: My jaw is unclenched, shoulders are dropped, and my breathing remains slow and steady.',
+                    fr: 'Détente Somatique : Ma mâchoire est détendue, mes épaules sont basses, mon souffle est calme.',
+                    zh: '身心松沉：下颌已松，双肩下沉，呼吸绵长平稳，声调不亢不卑。',
+                  },
+                },
+              ].map((item) => {
+                const isChecked = checklist[item.key];
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => toggleCheck(item.key)}
+                    className={`p-4 rounded-2xl border text-left flex items-start space-x-3.5 transition-all duration-300 cursor-pointer active:scale-[0.99] ${
+                      isChecked
+                        ? 'bg-purple-500/15 dark:bg-purple-950/35 border-purple-500/50 text-text-primary dark:text-stone-100 shadow-sm'
+                        : 'bg-surface-main/60 dark:bg-stone-800/40 border-border-main/70 dark:border-stone-800 text-text-secondary dark:text-stone-400 hover:border-purple-400/50 hover:bg-surface-muted/60 dark:hover:bg-stone-800/70'
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
+                        isChecked
+                          ? 'bg-purple-600 border-purple-500 text-white scale-105 shadow-[0_0_10px_rgba(168,85,247,0.5)]'
+                          : 'border-stone-400 dark:border-stone-600'
+                      }`}
+                    >
+                      <CheckCircle2
+                        className={`w-4 h-4 transition-all duration-300 ${
+                          isChecked ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                        }`}
+                      />
+                    </div>
+                    <span className="text-xs sm:text-sm leading-relaxed">{item.label[language]}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Completion Celebration Footer */}
+            {isComplete && (
+              <div className="mt-4 pt-3.5 border-t border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono text-emerald-600 dark:text-emerald-300 animate-fadeIn">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span className="font-bold">
+                    {language === 'fr'
+                      ? '5/5 Validé · Sang-froid Exécutif Absolu'
+                      : language === 'zh'
+                      ? '5/5 全部达成 · 极致定力已就位 (+100 XP)'
+                      : '5/5 Mastered · Full Executive Sovereign Calm (+100 XP)'}
+                  </span>
+                </div>
+                <span className="text-[11px] text-amber-500 dark:text-amber-400 font-semibold">
+                  {language === 'fr' ? 'Composant Illuminé' : language === 'zh' ? '组件充盈提亮' : 'Component Illuminated'}
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ========================================================
           5. Trilingual Stoic & Zen Dealmaking Wisdom Cards
