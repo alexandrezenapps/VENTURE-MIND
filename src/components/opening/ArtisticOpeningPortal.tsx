@@ -512,69 +512,69 @@ export const ArtisticOpeningPortal: React.FC<ArtisticOpeningPortalProps> = ({
         style={{ opacity: Math.max(0, 1 - progress * 2.2) }}
       >
         {/* Top Header Bar */}
-        <div className="flex items-center justify-between text-xs tracking-widest uppercase font-mono text-stone-400">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between text-sm sm:text-base tracking-widest uppercase font-mono text-stone-200">
+          <div className="flex items-center space-x-2.5">
             <span
-              className="w-2 h-2 rounded-full animate-ping"
+              className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.9)]"
               style={{ backgroundColor: currentMatte.goldAccent }}
             />
-            <span className="text-stone-300 font-semibold">VENTURE MIND</span>
-            <span className="hidden sm:inline text-stone-500">· ED. 2026</span>
+            <span className="text-white font-bold tracking-wider">VENTURE MIND</span>
+            <span className="hidden sm:inline text-amber-300/80 font-mono">· ED. 2026</span>
           </div>
 
-          <div className="hidden md:flex items-center space-x-4 text-[11px] text-stone-400">
+          <div className="hidden md:flex items-center space-x-4 text-xs sm:text-sm text-stone-200 font-medium">
             <span>{activePreset.city}</span>
-            <span>·</span>
+            <span className="text-amber-400">·</span>
             <span>{activePreset.coordinates}</span>
           </div>
 
-          <div className="text-[11px] text-amber-400 font-mono">
+          <div className="text-xs sm:text-sm text-amber-300 font-mono font-bold">
             {Math.round(progress * 100)}% PORTAL
           </div>
         </div>
 
         {/* Center Tagline above or below the knockout headline */}
         {config.showTagline && (
-          <div className="text-center space-y-2 pointer-events-none">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-amber-500/30 text-[11px] font-mono tracking-widest text-amber-300">
-              <Sparkles className="w-3 h-3 text-amber-400" />
+          <div className="text-center space-y-2.5 pointer-events-none">
+            <div className="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-amber-400/40 text-sm sm:text-base md:text-lg font-serif-luxury tracking-wide text-amber-200 shadow-[0_8px_24px_rgba(0,0,0,0.7)]">
+              <Sparkles className="w-4 h-4 text-amber-300" />
               <span>{t.tagline[language]}</span>
             </div>
-            <div className="text-[10px] tracking-wider text-stone-400 font-mono">
+            <div className="text-xs sm:text-sm tracking-widest text-stone-200 font-mono font-medium">
               {activePreset.city.toUpperCase()} · {activePreset.country.toUpperCase()}
             </div>
           </div>
         )}
 
         {/* Bottom Swipe Prompt */}
-        <div className="flex flex-col items-center space-y-2 text-center pointer-events-none">
-          <div className="flex items-center space-x-1.5 text-xs tracking-wider uppercase font-mono text-amber-400 animate-bounce">
-            <ArrowUp className="w-3.5 h-3.5" />
+        <div className="flex flex-col items-center space-y-2.5 text-center pointer-events-none">
+          <div className="flex items-center space-x-2 text-sm sm:text-base md:text-lg tracking-wider uppercase font-mono font-bold text-amber-300 animate-bounce drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <ArrowUp className="w-4 h-4" />
             <span>{t.swipeUpHint[language]}</span>
-            <ArrowUp className="w-3.5 h-3.5" />
+            <ArrowUp className="w-4 h-4" />
           </div>
-          <div className="text-[10px] text-stone-500 font-mono">
+          <div className="text-xs sm:text-sm text-stone-200 font-mono font-medium bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
             {language === 'zh'
-              ? '支持手势滑动、滚轮缩放、右侧进度拖拽或自动演示'
-              : 'Touch swipe, scroll wheel, drag scrubber or auto demo'}
+              ? '支持手势上滑、滚轮缩放、右侧进度拖拽或自动演示开启'
+              : 'Touch swipe up, scroll wheel, drag scrubber or auto demo'}
           </div>
         </div>
       </div>
 
       {/* 4. Interactive Floating HUD & Quick Actions (Always accessible) */}
-      <div className="absolute top-4 right-4 z-20 flex items-center space-x-2 pointer-events-auto">
+      <div className="absolute top-4 right-4 z-20 flex items-center space-x-2.5 pointer-events-auto">
         {/* Auto Play / Pause Toggle */}
         <button
           onClick={() => setIsAutoPlaying((prev) => !prev)}
-          className={`p-2.5 rounded-2xl backdrop-blur-xl border text-xs transition-all active:scale-95 cursor-pointer flex items-center space-x-1.5 ${
+          className={`p-3 rounded-2xl backdrop-blur-xl border text-sm transition-all active:scale-95 cursor-pointer flex items-center space-x-2 ${
             isAutoPlaying
-              ? 'bg-amber-500 text-stone-950 font-bold border-amber-400 shadow-lg'
-              : 'bg-black/50 hover:bg-black/75 border-white/20 text-stone-200 hover:text-white'
+              ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-bold border-amber-300 shadow-xl'
+              : 'bg-black/60 hover:bg-black/80 border-white/25 text-stone-100 hover:text-white shadow-lg'
           }`}
           title="Auto play zoom animation"
         >
           {isAutoPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-          <span className="hidden sm:inline text-[11px]">
+          <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
             {isAutoPlaying
               ? language === 'zh'
                 ? '暂停演示'
@@ -588,26 +588,26 @@ export const ArtisticOpeningPortal: React.FC<ArtisticOpeningPortalProps> = ({
         {/* Customization Settings Button */}
         <button
           onClick={() => setIsCustomizerOpen(true)}
-          className="p-2.5 rounded-2xl bg-black/50 hover:bg-black/75 backdrop-blur-xl border border-white/20 hover:border-amber-400/60 text-stone-200 hover:text-amber-400 transition-all active:scale-95 cursor-pointer flex items-center space-x-1.5 shadow-lg"
+          className="p-3 rounded-2xl bg-black/60 hover:bg-black/80 backdrop-blur-xl border border-white/25 hover:border-amber-400 text-stone-100 hover:text-amber-300 transition-all active:scale-95 cursor-pointer flex items-center space-x-2 shadow-xl"
           title="Open Customizer (Backgrounds, Crop, Typography, Dynamics)"
         >
-          <Sliders className="w-4 h-4" />
-          <span className="hidden sm:inline text-[11px] font-medium">{t.customize[language]}</span>
+          <Sliders className="w-4 h-4 text-amber-300" />
+          <span className="hidden sm:inline text-xs sm:text-sm font-semibold">{t.customize[language]}</span>
         </button>
 
         {/* Fast Enter App Button */}
         <button
           onClick={onEnterApp}
-          className="px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center space-x-1.5 shadow-xl"
+          className="px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold text-sm sm:text-base transition-all active:scale-95 cursor-pointer flex items-center space-x-2 shadow-2xl"
         >
           <span>{t.enterApp[language]}</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 
       {/* 5. City Quick Presets Bottom Bar (When resting or low progress) */}
       {progress < 0.35 && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1.5 p-1.5 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/15 max-w-[95vw] overflow-x-auto no-scrollbar pointer-events-auto">
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2 p-2 rounded-2xl bg-black/75 backdrop-blur-2xl border border-amber-400/30 max-w-[95vw] overflow-x-auto no-scrollbar pointer-events-auto shadow-2xl">
           {CITY_PRESETS.map((preset) => {
             const isSelected = config.presetId === preset.id && !config.customImageDataUrl;
             return (
@@ -622,10 +622,10 @@ export const ArtisticOpeningPortal: React.FC<ArtisticOpeningPortalProps> = ({
                     imageFilter: preset.defaultFilter,
                   })
                 }
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-all shrink-0 cursor-pointer ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 cursor-pointer ${
                   isSelected
-                    ? 'bg-amber-500 text-stone-950 font-bold shadow-xs'
-                    : 'text-stone-300 hover:text-white hover:bg-white/10'
+                    ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-md font-bold'
+                    : 'text-stone-200 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {preset.city}

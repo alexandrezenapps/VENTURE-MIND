@@ -28,6 +28,7 @@ export interface AccordionPillar {
     border: string;
     borderActive: string;
     bgGradient: string;
+    collapsedBg: string;
     text: string;
     accent: string;
     glow: string;
@@ -63,12 +64,13 @@ const DEFAULT_PILLARS: AccordionPillar[] = [
     },
     icon: Sliders,
     color: {
-      border: 'border-cyan-500/30',
-      borderActive: 'border-cyan-400',
-      bgGradient: 'from-cyan-950/80 via-[#0a1525]/90 to-[#070d18]',
-      text: 'text-cyan-400',
-      accent: 'bg-cyan-500',
-      glow: 'shadow-[0_0_30px_rgba(6,182,212,0.25)]',
+      border: 'border-cyan-500/25',
+      borderActive: 'border-cyan-400/60',
+      bgGradient: 'from-[#0B1A34]/98 via-[#071224]/95 to-[#040813]',
+      collapsedBg: 'bg-gradient-to-b from-[#0F1C33]/85 via-[#0A1325]/90 to-[#060C18]/95 hover:from-[#132342]/90 hover:to-[#0A1224]',
+      text: 'text-cyan-300',
+      accent: 'bg-cyan-400',
+      glow: 'shadow-[0_16px_40px_rgba(6,182,212,0.18),inset_0_1px_1px_rgba(255,255,255,0.18)]',
     },
     metrics: [
       { label: { en: 'Preference Anchor', fr: 'Préférence Standard', zh: '清算优先权底线' }, value: '1.0x Non-Part' },
@@ -112,12 +114,13 @@ const DEFAULT_PILLARS: AccordionPillar[] = [
     },
     icon: Flame,
     color: {
-      border: 'border-rose-500/30',
-      borderActive: 'border-rose-400',
-      bgGradient: 'from-rose-950/80 via-[#1c0e15]/90 to-[#10070c]',
-      text: 'text-rose-400',
-      accent: 'bg-rose-500',
-      glow: 'shadow-[0_0_30px_rgba(244,63,94,0.25)]',
+      border: 'border-rose-500/25',
+      borderActive: 'border-rose-400/60',
+      bgGradient: 'from-[#260D1C]/98 via-[#180711]/95 to-[#0C0308]',
+      collapsedBg: 'bg-gradient-to-b from-[#25101F]/85 via-[#180A14]/90 to-[#0E050B]/95 hover:from-[#2F1427]/90 hover:to-[#150711]',
+      text: 'text-rose-300',
+      accent: 'bg-rose-400',
+      glow: 'shadow-[0_16px_40px_rgba(244,63,94,0.18),inset_0_1px_1px_rgba(255,255,255,0.18)]',
     },
     metrics: [
       { label: { en: 'Somatic Pause', fr: 'Pause Somatique', zh: '战术生理深呼吸' }, value: '4.0 Seconds' },
@@ -162,11 +165,12 @@ const DEFAULT_PILLARS: AccordionPillar[] = [
     icon: FileSpreadsheet,
     color: {
       border: 'border-amber-500/30',
-      borderActive: 'border-amber-400',
-      bgGradient: 'from-amber-950/80 via-[#1a1409]/90 to-[#0e0a05]',
-      text: 'text-amber-400',
-      accent: 'bg-amber-500',
-      glow: 'shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+      borderActive: 'border-amber-400/70',
+      bgGradient: 'from-[#281A08]/98 via-[#190F05]/95 to-[#0D0702]',
+      collapsedBg: 'bg-gradient-to-b from-[#261B0D]/85 via-[#191107]/90 to-[#0E0A04]/95 hover:from-[#312310]/90 hover:to-[#170E05]',
+      text: 'text-amber-300',
+      accent: 'bg-amber-400',
+      glow: 'shadow-[0_16px_40px_rgba(245,158,11,0.22),inset_0_1px_1px_rgba(255,255,255,0.22)]',
     },
     metrics: [
       { label: { en: 'Board Balance', fr: 'Équilibre Conseil', zh: '董事会治理结构' }, value: '2-2-1 Ratio' },
@@ -210,12 +214,13 @@ const DEFAULT_PILLARS: AccordionPillar[] = [
     },
     icon: Brain,
     color: {
-      border: 'border-purple-500/30',
-      borderActive: 'border-purple-400',
-      bgGradient: 'from-purple-950/80 via-[#180f27]/90 to-[#0e0817]',
-      text: 'text-purple-400',
-      accent: 'bg-purple-500',
-      glow: 'shadow-[0_0_30px_rgba(168,85,247,0.25)]',
+      border: 'border-purple-500/25',
+      borderActive: 'border-purple-400/60',
+      bgGradient: 'from-[#1E0F33]/98 via-[#120720]/95 to-[#090310]',
+      collapsedBg: 'bg-gradient-to-b from-[#1C102C]/85 via-[#120A1D]/90 to-[#0A0511]/95 hover:from-[#25153A]/90 hover:to-[#12061E]',
+      text: 'text-purple-300',
+      accent: 'bg-purple-400',
+      glow: 'shadow-[0_16px_40px_rgba(168,85,247,0.18),inset_0_1px_1px_rgba(255,255,255,0.18)]',
     },
     metrics: [
       { label: { en: 'Scientific Tests', fr: 'Tests Validés', zh: '经典科学范式' }, value: '12 Paradigms' },
@@ -259,12 +264,13 @@ const DEFAULT_PILLARS: AccordionPillar[] = [
     },
     icon: Sparkles,
     color: {
-      border: 'border-emerald-500/30',
-      borderActive: 'border-emerald-400',
-      bgGradient: 'from-emerald-950/80 via-[#0a1c14]/90 to-[#06100b]',
-      text: 'text-emerald-400',
-      accent: 'bg-emerald-500',
-      glow: 'shadow-[0_0_30px_rgba(16,185,129,0.25)]',
+      border: 'border-emerald-500/25',
+      borderActive: 'border-emerald-400/60',
+      bgGradient: 'from-[#0B241A]/98 via-[#061711]/95 to-[#030C08]',
+      collapsedBg: 'bg-gradient-to-b from-[#0E231C]/85 via-[#081813]/90 to-[#040D0A]/95 hover:from-[#132E25]/90 hover:to-[#081912]',
+      text: 'text-emerald-300',
+      accent: 'bg-emerald-400',
+      glow: 'shadow-[0_16px_40px_rgba(16,185,129,0.18),inset_0_1px_1px_rgba(255,255,255,0.18)]',
     },
     metrics: [
       { label: { en: 'Cadence Breath', fr: 'Rythme Respiratoire', zh: '盒式战术呼吸' }, value: '4-4-4-4 Sec' },
@@ -318,59 +324,63 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
   const isAllEqual = expandedId === null;
 
   return (
-    <div className={`relative w-full rounded-3xl bg-surface-main dark:bg-[#0D101E] border border-amber-400/25 p-4 sm:p-7 shadow-[0_12px_44px_rgba(0,0,0,0.55)] overflow-hidden ${className}`}>
-      {/* Background ambient lighting meshes */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className={`relative w-full rounded-3xl bg-gradient-to-b from-[#14182C]/95 via-[#0C0F1E]/98 to-[#060812] border border-amber-400/25 p-5 sm:p-8 shadow-[0_28px_70px_-15px_rgba(0,0,0,0.85),0_0_36px_rgba(217,119,6,0.08),inset_0_1px_1px_rgba(255,255,255,0.15)] overflow-hidden ${className}`}>
+      {/* Background ambient lighting meshes with artistic color coordination */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-radial from-amber-500/12 via-purple-600/8 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-radial from-cyan-500/10 via-emerald-600/8 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute inset-x-16 top-0 h-[1px] bg-gradient-to-r from-transparent via-amber-300/40 to-transparent pointer-events-none" />
 
       {/* Component Top Header & Controls */}
-      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-border-main dark:border-white/10">
-        <div className="space-y-1">
-          <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 text-[11px] font-mono uppercase font-bold tracking-wider">
-            <Zap className="w-3.5 h-3.5" />
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div className="space-y-1.5">
+          <div className="flex items-center space-x-2 text-[11px] font-mono tracking-widest uppercase font-semibold text-amber-300/90">
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span>
               {language === 'fr'
-                ? 'Composant Accordéon Horizontal Dynamique'
+                ? '01 · ARCHITECTURE DE L’ACCORDÉON STRATÉGIQUE'
                 : language === 'zh'
-                ? '横向弹性手风琴 · 点击展开与延迟淡入'
-                : 'Horizontal Flex Accordion · Dynamic Reveal'}
+                ? '01 · 创投五大核心维度战略手风琴'
+                : '01 · EXECUTIVE STRATEGIC PILLARS'}
+            </span>
+            <span aria-hidden="true" className="text-amber-500/40">·</span>
+            <span className="text-stone-400">
+              {language === 'zh' ? '动态展开 & 延迟淡入' : 'Dynamic Reveal'}
             </span>
           </div>
-          <h2 className="text-lg sm:text-2xl font-serif-luxury font-bold text-text-primary dark:text-white flex items-center space-x-2">
+
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-serif-luxury font-medium text-white flex items-center space-x-3 tracking-tight">
             <span>
               {language === 'fr'
                 ? 'Cinq Piliers Stratégiques de l’Entreprise'
                 : language === 'zh'
-                ? '创投五大核心维度战略手风琴'
+                ? '创投五维全景战略手风琴'
                 : 'Five Sovereign Executive Pillars'}
             </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 font-mono">
-              5 Pillars
-            </span>
           </h2>
-          <p className="text-xs text-text-secondary dark:text-stone-300">
+
+          <p className="text-xs sm:text-sm text-stone-300/90 max-w-2xl leading-relaxed">
             {language === 'fr'
               ? 'Par défaut bandes étroites égales. Cliquez pour déployer, rétrécir les autres et révéler le contenu en fondu différé.'
               : language === 'zh'
-              ? '默认等宽窄条排列。点击某条展开变宽展示高阶详情，其余同步收窄为竖条，详细内容平滑延迟淡入。'
+              ? '默认等宽纤细窄条排列。轻触任一维度即平滑变宽展现纵深推演，其余自适应收窄让位，核心指标有序延迟淡入。'
               : 'Equal-width narrow strips by default. Click any strip to expand wider while others narrow, with delayed content fade-in.'}
           </p>
         </div>
 
         {/* Action Toggle Mode: Equalize vs Auto-Expand */}
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex items-center space-x-2 shrink-0 self-start sm:self-center">
           <button
             onClick={() => setExpandedId(null)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95 ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95 ${
               isAllEqual
-                ? 'bg-amber-500 text-stone-950 shadow-md'
-                : 'bg-surface-muted dark:bg-white/5 text-text-secondary dark:text-stone-300 hover:text-text-primary border border-border-main dark:border-white/10'
+                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-[0_0_16px_rgba(245,158,11,0.35)]'
+                : 'bg-white/[0.05] text-stone-300 hover:text-white border border-white/10 hover:border-amber-400/40'
             }`}
           >
             <Minimize2 className="w-3.5 h-3.5" />
             <span>
               {language === 'fr'
-                ? 'Tous Égaux (等宽)'
+                ? 'Tous Égaux'
                 : language === 'zh'
                 ? '全部恢复等宽窄条'
                 : 'Equal Strips'}
@@ -379,7 +389,7 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
           {!isAllEqual && (
             <button
               onClick={() => setExpandedId(pillars[0].id)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold font-mono bg-surface-muted dark:bg-white/5 text-text-secondary dark:text-stone-300 hover:text-text-primary border border-border-main dark:border-white/10 transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-stone-300 hover:text-white border border-white/10 hover:border-amber-400/40 transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
             >
               <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
               <span>{language === 'zh' ? '重置首项展开' : 'Reset First'}</span>
@@ -389,15 +399,13 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
       </div>
 
       {/* Main Horizontal Accordion Container */}
-      <div className="relative z-10 pt-5">
-        <div className="flex flex-col md:flex-row gap-2.5 sm:gap-3 w-full min-h-[490px] md:h-[460px] overflow-hidden select-none">
+      <div className="relative z-10 pt-6">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-3.5 w-full min-h-[500px] md:h-[470px] overflow-hidden select-none">
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             const isExpanded = expandedId === pillar.id;
 
             // Flex calculations:
-            // When all are equal: all get flex-1
-            // When one is expanded: expanded gets flex-[4] on desktop, others flex-[0.75]
             const flexClass = isAllEqual
               ? 'flex-1 md:flex-1'
               : isExpanded
@@ -408,16 +416,16 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
               <div
                 key={pillar.id}
                 onClick={() => toggleItem(pillar.id)}
-                className={`relative rounded-2xl md:rounded-3xl border-2 transition-all duration-500 cubic-bezier(0.25, 1, 0.5, 1) cursor-pointer overflow-hidden flex flex-col justify-between ${flexClass} ${
+                className={`relative rounded-2xl md:rounded-3xl border transition-all duration-500 cubic-bezier(0.25, 1, 0.5, 1) cursor-pointer overflow-hidden flex flex-col justify-between ${flexClass} ${
                   isExpanded
                     ? `${pillar.color.borderActive} ${pillar.color.glow} bg-gradient-to-br ${pillar.color.bgGradient}`
-                    : `${pillar.color.border} bg-surface-muted/40 dark:bg-[#121629]/60 hover:bg-surface-muted/70 dark:hover:bg-[#161c33] hover:border-amber-400/40`
+                    : `${pillar.color.border} ${pillar.color.collapsedBg} shadow-[0_10px_28px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.7)]`
                 }`}
               >
                 {/* Top ambient glint */}
                 <div
-                  className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent transition-opacity duration-300 ${
-                    isExpanded ? 'opacity-100' : 'opacity-20'
+                  className={`absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-current to-transparent transition-opacity duration-300 ${
+                    isExpanded ? 'opacity-100' : 'opacity-25'
                   } ${pillar.color.text}`}
                 />
 
@@ -427,12 +435,12 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                 {!isExpanded && (
                   <div className="h-full w-full p-3 sm:p-4 flex flex-col justify-between items-center text-center transition-opacity duration-300">
                     {/* Number & Icon */}
-                    <div className="space-y-2 flex flex-col items-center">
-                      <span className="w-7 h-7 rounded-lg bg-surface-main dark:bg-stone-800 text-stone-300 font-mono text-xs font-bold flex items-center justify-center border border-white/10 shadow-xs">
+                    <div className="space-y-2.5 flex flex-col items-center">
+                      <span className="w-7 h-7 rounded-lg bg-white/[0.05] text-amber-200/90 font-serif-luxury text-xs font-bold flex items-center justify-center border border-amber-400/25 shadow-xs">
                         {pillar.number}
                       </span>
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-inner ${pillar.color.accent}/20 ${pillar.color.text}`}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-inner ${pillar.color.accent}/20 ${pillar.color.text} border border-current/25`}
                       >
                         <Icon className="w-4 h-4" />
                       </div>
@@ -440,18 +448,18 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
 
                     {/* Vertical Title in narrow mode */}
                     <div className="my-auto py-2 flex flex-col items-center justify-center">
-                      <span className="hidden md:block writing-mode-vertical text-xs font-serif-luxury font-bold text-text-primary dark:text-stone-200 tracking-wider line-clamp-1 py-1">
+                      <span className="hidden md:block writing-mode-vertical text-xs font-serif-luxury font-medium text-stone-200 tracking-widest line-clamp-1 py-1 drop-shadow-sm">
                         {pillar.title[language]}
                       </span>
-                      <span className="md:hidden text-xs font-serif-luxury font-bold text-text-primary dark:text-stone-200">
+                      <span className="md:hidden text-xs font-serif-luxury font-medium text-stone-200">
                         {pillar.title[language]}
                       </span>
                     </div>
 
                     {/* Bottom Indicator Prompt */}
-                    <div className="flex flex-col items-center space-y-1">
+                    <div className="flex flex-col items-center space-y-1.5 pb-1">
                       <span
-                        className={`w-2 h-2 rounded-full ${pillar.color.accent} animate-pulse`}
+                        className={`w-2 h-2 rounded-full ${pillar.color.accent} shadow-[0_0_8px_currentColor]`}
                       />
                       <ChevronRight className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-400 transition-colors" />
                     </div>
@@ -468,34 +476,32 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                     <div className="space-y-4">
                       {/* Expanded Header: Number, Tag, Action badge */}
                       <div className="flex items-center justify-between text-xs font-mono">
-                        <div className="flex items-center space-x-2">
-                          <span className="w-7 h-7 rounded-lg bg-black/40 text-amber-300 font-bold flex items-center justify-center text-xs border border-amber-400/30">
+                        <div className="flex items-center space-x-2.5">
+                          <span className="w-7 h-7 rounded-lg bg-white/[0.08] text-amber-200 font-serif-luxury font-bold flex items-center justify-center text-xs border border-amber-400/35 shadow-xs">
                             #{pillar.number}
                           </span>
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-[10px] ${pillar.color.accent}/20 ${pillar.color.text} border border-current/20`}
-                          >
+                          <span className="text-[11px] font-mono tracking-wider uppercase font-semibold text-stone-300">
                             {pillar.tag[language]}
                           </span>
                         </div>
-                        <div className="flex items-center space-x-1.5 text-[10px] text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-lg border border-amber-400/20">
+                        <div className="flex items-center space-x-1.5 text-[10px] text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">
                           <CheckCircle2 className="w-3 h-3 text-amber-400" />
-                          <span>{language === 'zh' ? '已展开详情' : 'Expanded'}</span>
+                          <span>{language === 'zh' ? '已激活全景推演' : 'Active Focus'}</span>
                         </div>
                       </div>
 
                       {/* Title & Icon Header */}
                       <div className="flex items-start space-x-3.5 pt-1">
                         <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${pillar.color.accent}/25 border border-current/30 ${pillar.color.text}`}
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${pillar.color.accent}/25 border border-current/35 ${pillar.color.text}`}
                         >
                           <Icon className="w-6 h-6" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-serif-luxury font-bold text-base sm:text-xl text-white tracking-wide leading-tight">
+                          <h3 className="font-serif-luxury font-bold text-lg sm:text-xl md:text-2xl text-white tracking-wide leading-tight">
                             {pillar.title[language]}
                           </h3>
-                          <p className="text-xs text-stone-300 mt-1 leading-snug">
+                          <p className="text-xs sm:text-sm text-stone-300/90 mt-1 leading-snug">
                             {pillar.subtitle[language]}
                           </p>
                         </div>
@@ -506,7 +512,7 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                         {pillar.metrics.map((metric, idx) => (
                           <div
                             key={idx}
-                            className="p-2.5 rounded-xl bg-black/40 border border-white/10 flex flex-col justify-between space-y-0.5 shadow-inner"
+                            className="p-3 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex flex-col justify-between space-y-1 shadow-inner"
                           >
                             <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider truncate">
                               {metric.label[language]}
@@ -521,21 +527,21 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                       </div>
 
                       {/* Deep Strategic Description */}
-                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
-                        <div className="flex items-center space-x-1.5 text-xs font-mono font-bold text-stone-200">
+                      <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-2">
+                        <div className="flex items-center space-x-1.5 text-xs font-mono font-bold text-amber-300/90">
                           <Activity className="w-3.5 h-3.5 text-amber-400" />
                           <span>{language === 'fr' ? 'Mécanisme Décisionnel :' : language === 'zh' ? '核心决断逻辑与推演机制：' : 'Executive Mechanism:'}</span>
                         </div>
-                        <p className="text-xs text-stone-300 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-stone-200/95 leading-relaxed">
                           {pillar.description[language]}
                         </p>
                       </div>
 
                       {/* Key Takeaway / Tactical Shield */}
-                      <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-400/30 flex items-start space-x-2 text-xs">
+                      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-600/10 to-transparent border border-amber-400/40 flex items-start space-x-2.5 text-xs sm:text-sm">
                         <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                        <div className="text-amber-200/95 leading-snug">
-                          <span className="font-bold font-mono text-amber-300 mr-1.5">
+                        <div className="text-amber-100/95 leading-snug">
+                          <span className="font-bold font-mono text-amber-300 mr-2">
                             {language === 'zh' ? '【底线铁律】' : '[SOVEREIGN RULE]'}
                           </span>
                           {pillar.keyTakeaway[language]}
@@ -544,9 +550,10 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                     </div>
 
                     {/* Bottom Action Footer */}
-                    <div className="pt-4 mt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2.5">
-                      <span className="text-[11px] font-mono text-stone-400 flex items-center space-x-1">
-                        <span>{language === 'zh' ? '点击可直接联动切换至对应模块' : 'Direct tab integration'}</span>
+                    <div className="pt-4 mt-3 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-[11px] font-mono text-stone-400 flex items-center space-x-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>{language === 'zh' ? '系统已准备就绪 · 点击直接进入专项推演' : 'Ready · Direct integration'}</span>
                       </span>
 
                       <button
@@ -554,7 +561,7 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
                           e.stopPropagation();
                           setActiveTab(pillar.actionTargetTab);
                         }}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold text-stone-950 flex items-center space-x-1.5 shadow-lg transition-all active:scale-95 cursor-pointer bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-amber-500/20`}
+                        className="px-5 py-2.5 rounded-xl text-xs font-bold text-stone-950 flex items-center space-x-2 shadow-[0_4px_20px_rgba(245,158,11,0.35)] transition-all active:scale-95 cursor-pointer bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 hover:shadow-[0_6px_25px_rgba(245,158,11,0.5)]"
                       >
                         <span>{pillar.actionLabel[language]}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -568,18 +575,18 @@ export const HorizontalAccordion: React.FC<HorizontalAccordionProps> = ({
         </div>
 
         {/* Bottom Helper Indicator */}
-        <div className="mt-3 flex items-center justify-between text-xs text-stone-400 px-1 font-mono">
+        <div className="mt-3.5 flex items-center justify-between text-xs text-stone-400/90 px-1 font-mono">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 inline-block animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
             <span>
               {language === 'fr'
                 ? 'Astuce : Cliquez sur un volet pour le déployer et synchroniser les autres'
                 : language === 'zh'
-                ? '交互提示：点击任一窄条即平滑展开变宽，其余同步压缩收窄；详细指标延迟淡入'
+                ? '微交互提示：轻触任一维度平滑展开，其余维度自适应收窄；指标有序延迟淡入'
                 : 'Interaction cue: Tap any narrow strip to expand smoothly; content materializes with delayed fade-in'}
             </span>
           </div>
-          <span className="text-[11px] text-amber-400/80">
+          <span className="text-[11px] text-amber-300/80">
             {isAllEqual ? (language === 'zh' ? '当前：全等宽状态' : 'Equalized') : (language === 'zh' ? '当前：焦点展开状态' : 'Expanded Mode')}
           </span>
         </div>

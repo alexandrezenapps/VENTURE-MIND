@@ -29,6 +29,7 @@ import {
   StakeholderCategory,
 } from '../../types/capTable';
 import { CapTableWhatIfScenarioGenerator } from './CapTableWhatIfScenarioGenerator';
+import { exportCapTableReportPDF } from '../../utils/pdfExport';
 
 const STAKEHOLDER_COLORS: Record<StakeholderCategory, string> = {
   founders: '#F59E0B', // Amber
@@ -396,6 +397,28 @@ Generated on Venture Mind Executive Academy.`;
     setTimeout(() => setCopiedSummary(false), 2200);
   };
 
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [exportedPDF, setExportedPDF] = useState(false);
+
+  const handleExportCapTablePDF = () => {
+    if (!currentResult) return;
+    setIsExportingPDF(true);
+    try {
+      exportCapTableReportPDF({
+        rounds,
+        currentResult,
+        simulationResults,
+        language,
+      });
+      setExportedPDF(true);
+      setTimeout(() => setExportedPDF(false), 2500);
+    } catch (err) {
+      console.error('Cap table PDF export failed:', err);
+    } finally {
+      setIsExportingPDF(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Title & Preset Controls */}
@@ -454,10 +477,34 @@ Generated on Venture Mind Executive Academy.`;
           </button>
           <button
             onClick={copySummaryToClipboard}
-            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40 hover:bg-amber-500/30 flex items-center space-x-1.5 transition-all cursor-pointer"
+            className="px-3 py-1.5 rounded-xl text-xs font-medium bg-surface-muted/80 dark:bg-stone-800/80 text-text-secondary dark:text-stone-300 border border-border-main dark:border-stone-700 hover:border-stone-500 flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="Copy cap table summary to clipboard"
           >
             {copiedSummary ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Download className="w-3.5 h-3.5" />}
-            <span>{copiedSummary ? (language === 'zh' ? '已复制！' : 'Copied!') : (language === 'zh' ? '导出概要' : 'Export')}</span>
+            <span>{copiedSummary ? (language === 'zh' ? '已复制！' : 'Copied!') : (language === 'zh' ? '复制摘要' : 'Copy Text')}</span>
+          </button>
+
+          {/* Executive PDF Report Export */}
+          <button
+            onClick={handleExportCapTablePDF}
+            disabled={isExportingPDF}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500/20 to-amber-600/30 text-amber-800 dark:text-amber-300 border border-amber-400/50 hover:from-amber-500/30 hover:to-amber-600/40 flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50"
+            title="Export structured executive Cap Table & Dilution PDF report"
+          >
+            {exportedPDF ? (
+              <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+            ) : (
+              <Download className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            )}
+            <span>
+              {exportedPDF
+                ? language === 'zh'
+                  ? 'PDF研报已生成！'
+                  : 'PDF Ready!'
+                : language === 'zh'
+                ? '导出专业PDF研报'
+                : 'Export PDF Report'}
+            </span>
           </button>
         </div>
       </div>
@@ -904,8 +951,18 @@ Generated on Venture Mind Executive Academy.`;
                 <span className="text-xs font-mono text-amber-400">({currentResult.roundName})</span>
               </h3>
             </div>
-            <div className="text-xs font-mono text-stone-400">
-              {language === 'zh' ? '每股面值基于本轮计算' : 'Calculated on Fully Diluted Basis'}
+            <div className="flex items-center space-x-3 text-xs font-mono">
+              <span className="text-stone-400 hidden sm:inline">
+                {language === 'zh' ? '每股面值基于本轮计算' : 'Fully Diluted Basis'}
+              </span>
+              <button
+                onClick={handleExportCapTablePDF}
+                disabled={isExportingPDF}
+                className="px-2.5 py-1 rounded-lg text-[11px] font-bold border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 flex items-center space-x-1.5 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Download className="w-3 h-3" />
+                <span>{language === 'zh' ? '导出此轮PDF' : 'Export Round PDF'}</span>
+              </button>
             </div>
           </div>
 

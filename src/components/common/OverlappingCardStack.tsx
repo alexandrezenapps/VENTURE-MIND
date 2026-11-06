@@ -224,11 +224,11 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
       />
 
       {/* Header Bar with Interactive Expand / Retract Switch */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 relative z-10 border-b border-border-main/60 dark:border-stone-800/80 pb-4">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10 border-b border-amber-400/25 pb-5">
+        <div className="space-y-1.5">
+          <div className="flex items-center space-x-2.5">
             <span
-              className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${accentClasses.badge}`}
+              className={`text-xs sm:text-sm font-mono uppercase tracking-wider px-3 py-1 rounded-full border font-bold ${accentClasses.badge}`}
             >
               {domainLabel
                 ? domainLabel[language]
@@ -238,13 +238,13 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                 ? '重叠式卡片组件 · 1/3覆盖'
                 : 'Overlapping Stack Deck'}
             </span>
-            <span className="text-xs text-text-secondary dark:text-stone-400 font-mono">
+            <span className="text-sm sm:text-base text-stone-200 font-mono font-medium">
               • {cards.length}{' '}
               {language === 'fr' ? 'cartes' : language === 'zh' ? '张卡片' : 'cards'}
             </span>
             {!isExpanded && remainingCount > 0 && (
               <span
-                className={`text-[11px] font-bold font-mono px-2 py-0.5 rounded-md ${accentClasses.counter} shadow-xs animate-pulse`}
+                className={`text-xs sm:text-sm font-bold font-mono px-2.5 py-1 rounded-md ${accentClasses.counter} shadow-md animate-pulse`}
               >
                 +{remainingCount}{' '}
                 {language === 'fr' ? 'restants' : language === 'zh' ? '剩余' : 'more'}
@@ -253,27 +253,27 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
           </div>
 
           {title && (
-            <h3 className="text-lg sm:text-xl font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
-              <Layers className="w-5 h-5 text-amber-500" />
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif-luxury text-white flex items-center space-x-3 drop-shadow-sm">
+              <Layers className="w-6 h-6 text-amber-400 shrink-0" />
               <span>{title[language]}</span>
             </h3>
           )}
 
           {subtitle && (
-            <p className="text-xs text-text-secondary dark:text-stone-400 max-w-xl">
+            <p className="text-sm sm:text-base text-stone-200 max-w-xl font-medium">
               {subtitle[language]}
             </p>
           )}
         </div>
 
         {/* Action Toggle Button */}
-        <div className="flex items-center space-x-2 self-start sm:self-center">
+        <div className="flex items-center space-x-2.5 self-start sm:self-center">
           <button
             onClick={toggleExpand}
-            className={`px-3.5 py-2 rounded-xl text-xs font-medium border transition-all flex items-center space-x-2 cursor-pointer active:scale-95 shadow-md ${
+            className={`px-4 py-2.5 rounded-xl text-sm sm:text-base font-serif-luxury font-bold border transition-all flex items-center space-x-2 cursor-pointer active:scale-95 shadow-lg ${
               isExpanded
-                ? 'bg-amber-500 text-stone-950 font-bold border-amber-400 shadow-amber-950/20'
-                : 'glass-panel border-sophisticated text-text-primary dark:text-stone-200 hover:border-amber-400/50'
+                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-amber-950/30'
+                : 'bg-black/60 border-amber-400/40 text-stone-100 hover:border-amber-400 hover:text-amber-300'
             }`}
             title={
               isExpanded
@@ -287,7 +287,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
           >
             {isExpanded ? (
               <>
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp className="w-5 h-5" />
                 <span>
                   {language === 'fr'
                     ? 'Replier le paquet'
@@ -298,7 +298,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-5 h-5" />
                 <span>
                   {language === 'fr'
                     ? 'Déployer les cartes'
@@ -323,10 +323,10 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
         {!isExpanded ? (
           <div className="relative py-4 px-2 sm:px-6">
             {/* Visual Guide Hint Pill */}
-            <div className="flex items-center justify-between text-[11px] text-text-secondary dark:text-stone-400 font-mono mb-3">
-              <span className="flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400 inline-block animate-ping" />
-                <span>
+            <div className="flex items-center justify-between text-xs sm:text-sm text-stone-200 font-mono mb-3.5">
+              <span className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block animate-ping" />
+                <span className="font-medium">
                   {language === 'fr'
                     ? 'Vue empilée (recouvrement 1/3) • Cliquez pour déployer'
                     : language === 'zh'
@@ -335,7 +335,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                 </span>
               </span>
               {remainingCount > 0 && (
-                <span className="text-amber-500 dark:text-amber-400 font-bold">
+                <span className="text-amber-300 font-bold">
                   {language === 'fr'
                     ? `Affichage des 3 premières cartes (+${remainingCount} masquées)`
                     : language === 'zh'
@@ -347,7 +347,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
 
             {/* Overlapping Deck Container */}
             <div
-              className={`relative flex items-center justify-start min-h-[220px] sm:min-h-[240px] overflow-visible pb-4 pt-2 ${
+              className={`relative flex items-center justify-start min-h-[240px] sm:min-h-[260px] overflow-visible pb-4 pt-2 ${
                 direction === 'horizontal' ? 'flex-row' : 'flex-col justify-center'
               }`}
             >
@@ -355,21 +355,11 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                 const IconComponent =
                   (card.iconName && ICON_MAP[card.iconName]) || Sparkles;
 
-                // Rotations and 1/3 offsets for the top 3 cards:
-                // Card 0: 0px left, slight -2deg tilt
-                // Card 1: 33% offset, 0deg tilt, z-index lower
-                // Card 2: 66% offset, +2.5deg tilt, z-index lowest of the 3
                 const angles = [-2.5, 0.5, 3];
                 const angle = angles[index] || 0;
 
-                // Exact 1/3 overlap calculation:
-                // Card width is 260px on mobile, 310px on desktop.
-                // 1/3 overlap means each subsequent card shifts by (1 - 0.33) * width = ~67% width
-                // OR shifts by 33% width so 67% overlaps.
-                // To clearly show 3 overlapping cards covering ~1/3 each:
-                // Horizontal shift: index * 140px on desktop, index * 105px on mobile.
-                const horizontalShiftPx = index * 135;
-                const verticalShiftPx = index * 24;
+                const horizontalShiftPx = index * 145;
+                const verticalShiftPx = index * 26;
 
                 const zIndex = 30 - index * 5;
 
@@ -388,48 +378,48 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                     }}
                     onMouseEnter={() => setHoveredCardId(card.id)}
                     onMouseLeave={() => setHoveredCardId(null)}
-                    className={`absolute left-0 top-0 w-[240px] sm:w-[290px] md:w-[320px] rounded-2xl p-4 sm:p-5 border transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer ${
+                    className={`absolute left-0 top-0 w-[250px] sm:w-[305px] md:w-[335px] rounded-2xl p-5 border transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer ${
                       index === 0
-                        ? 'bg-gradient-to-br from-[#1E223D] via-[#26203D] to-[#1B1930] dark:from-[#171B33] dark:via-[#221C38] dark:to-[#18162B] border-2 border-amber-400/65 text-stone-100 shadow-[0_20px_42px_-6px_rgba(0,0,0,0.65),0_0_28px_rgba(251,191,36,0.22),inset_0_1px_1px_rgba(255,255,255,0.22)]'
+                        ? 'bg-gradient-to-br from-[#1E223D] via-[#26203D] to-[#1B1930] border-2 border-amber-400/75 text-stone-100 shadow-[0_20px_42px_-6px_rgba(0,0,0,0.7),0_0_28px_rgba(251,191,36,0.3)]'
                         : index === 1
-                        ? 'bg-gradient-to-br from-[#182635] via-[#1B273D] to-[#151D2A] dark:from-[#13202E] dark:via-[#182337] dark:to-[#111A26] border border-teal-400/50 text-stone-200 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.55),0_0_22px_rgba(45,212,191,0.18),inset_0_1px_1px_rgba(255,255,255,0.15)]'
-                        : 'bg-gradient-to-br from-[#251D37] via-[#241E3D] to-[#1B182C] dark:from-[#1F1730] dark:via-[#201934] dark:to-[#171426] border border-purple-400/45 text-stone-300 shadow-[0_14px_30px_-6px_rgba(0,0,0,0.5),0_0_18px_rgba(168,85,247,0.15),inset_0_1px_1px_rgba(255,255,255,0.12)]'
+                        ? 'bg-gradient-to-br from-[#182635] via-[#1B273D] to-[#151D2A] border border-teal-400/60 text-stone-100 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.6),0_0_22px_rgba(45,212,191,0.25)]'
+                        : 'bg-gradient-to-br from-[#251D37] via-[#241E3D] to-[#1B182C] border border-purple-400/55 text-stone-100 shadow-[0_14px_30px_-6px_rgba(0,0,0,0.55),0_0_18px_rgba(168,85,247,0.2)]'
                     } group-hover:hover:scale-105 group-hover:hover:-translate-y-2`}
                   >
                     {/* Top Layer Index & Accent Tag */}
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="flex items-center space-x-1.5">
-                        <span className="w-5 h-5 rounded-lg bg-surface-muted/90 dark:bg-stone-800 flex items-center justify-center font-mono text-[10px] text-text-secondary dark:text-stone-300 font-bold border border-border-main dark:border-stone-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="w-6 h-6 rounded-lg bg-black/60 flex items-center justify-center font-mono text-xs text-amber-200 font-bold border border-amber-400/30">
                           0{index + 1}
                         </span>
                         {card.categoryLabel && (
-                          <span className="text-[10px] font-mono text-amber-400/90 tracking-wide uppercase">
+                          <span className="text-xs font-mono text-amber-300 tracking-wider uppercase font-bold">
                             {card.categoryLabel[language]}
                           </span>
                         )}
                       </div>
 
-                      <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
-                        <IconComponent className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
+                        <IconComponent className="w-4 h-4" />
                       </div>
                     </div>
 
                     {/* Card Title (名称) */}
-                    <h4 className="text-sm sm:text-base font-bold font-heading line-clamp-1 text-stone-100 group-hover:text-amber-400 transition-colors">
+                    <h4 className="text-base sm:text-lg md:text-xl font-bold font-serif-luxury line-clamp-1 text-white group-hover:text-amber-300 transition-colors">
                       {card.title[language]}
                     </h4>
 
                     {/* Subtitle preview */}
                     {card.subtitle && (
-                      <p className="text-[11px] text-stone-400 line-clamp-2 mt-1 leading-snug">
+                      <p className="text-xs sm:text-sm text-stone-200 line-clamp-2 mt-1.5 leading-snug font-medium">
                         {card.subtitle[language]}
                       </p>
                     )}
 
                     {/* Progress bar or metric if available */}
                     {typeof card.progress === 'number' && (
-                      <div className="mt-3 pt-2 border-t border-white/5 space-y-1">
-                        <div className="flex justify-between text-[10px] font-mono text-stone-400">
+                      <div className="mt-3.5 pt-2.5 border-t border-white/10 space-y-1.5">
+                        <div className="flex justify-between text-xs font-mono text-stone-200 font-medium">
                           <span>
                             {language === 'fr'
                               ? 'Maîtrise'
@@ -439,7 +429,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                           </span>
                           <span className="font-bold text-emerald-400">{card.progress}%</span>
                         </div>
-                        <div className="w-full bg-stone-800 h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-stone-900 h-2 rounded-full overflow-hidden border border-stone-800">
                           <div
                             className={accentClasses.progress + ' h-full rounded-full'}
                             style={{ width: `${card.progress}%` }}
@@ -457,27 +447,27 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                   style={{
                     transform:
                       direction === 'horizontal'
-                        ? `translateX(${3 * 135 + 20}px) translateY(8px)`
-                        : `translateY(${3 * 24 + 16}px)`,
+                        ? `translateX(${3 * 145 + 20}px) translateY(8px)`
+                        : `translateY(${3 * 26 + 16}px)`,
                     zIndex: 10,
                   }}
-                  className="absolute left-0 top-0 flex flex-col items-center justify-center w-28 sm:w-36 h-[170px] sm:h-[190px] rounded-2xl border-2 border-dashed border-amber-400/60 bg-gradient-to-br from-amber-500/22 via-[#221C3A]/85 to-[#121424]/90 backdrop-blur-md shadow-[0_0_24px_rgba(245,158,11,0.24)] text-center p-3 cursor-pointer hover:border-amber-300 hover:scale-105 transition-all duration-300"
+                  className="absolute left-0 top-0 flex flex-col items-center justify-center w-32 sm:w-40 h-[190px] sm:h-[210px] rounded-2xl border-2 border-dashed border-amber-400/70 bg-gradient-to-br from-amber-500/25 via-[#221C3A]/90 to-[#121424]/95 backdrop-blur-md shadow-[0_0_24px_rgba(245,158,11,0.3)] text-center p-3.5 cursor-pointer hover:border-amber-300 hover:scale-105 transition-all duration-300"
                   onClick={toggleExpand}
                 >
-                  <div className="w-10 h-10 rounded-full bg-amber-500/25 border border-amber-400/50 flex items-center justify-center text-amber-300 mb-2 shadow-[0_0_12px_rgba(251,191,36,0.3)]">
-                    <Layers className="w-5 h-5 animate-bounce" />
+                  <div className="w-11 h-11 rounded-full bg-amber-500/30 border border-amber-400/60 flex items-center justify-center text-amber-300 mb-2 shadow-[0_0_12px_rgba(251,191,36,0.4)]">
+                    <Layers className="w-6 h-6 animate-bounce" />
                   </div>
-                  <div className="text-xl sm:text-2xl font-black font-mono text-amber-300 tracking-tight drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 tracking-tight drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
                     +{remainingCount}
                   </div>
-                  <div className="text-[10px] font-mono text-stone-300 uppercase tracking-wider mt-0.5">
+                  <div className="text-xs font-mono text-stone-100 uppercase tracking-wider mt-1 font-bold">
                     {language === 'fr'
                       ? 'Restants'
                       : language === 'zh'
                       ? '更多卡片'
                       : 'Remaining'}
                   </div>
-                  <span className="text-[9px] text-amber-400/80 mt-1 underline">
+                  <span className="text-xs text-amber-300 mt-1 underline font-semibold">
                     {language === 'fr' ? 'Déplier' : language === 'zh' ? '点击展开' : 'Tap to expand'}
                   </span>
                 </div>
@@ -486,11 +476,11 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
           </div>
         ) : (
           /* EXPANDED STATE (SEQUENTIALLY UNFOLDED CARDS, DISPLAYING NAME & DETAILS) */
-          <div className="space-y-4 pt-2">
+          <div className="space-y-5 pt-2">
             {/* Expanded Header Banner */}
-            <div className="flex items-center justify-between text-xs text-text-secondary dark:text-stone-400 font-mono pb-2 border-b border-border-main/40 dark:border-stone-800">
-              <span className="flex items-center space-x-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-between text-sm sm:text-base font-mono pb-3 border-b border-amber-400/20">
+              <span className="flex items-center space-x-2 text-emerald-400 font-bold">
+                <CheckCircle2 className="w-4 h-4" />
                 <span>
                   {language === 'fr'
                     ? `Toutes les ${cards.length} cartes sont déployées avec leurs dénominations`
@@ -501,7 +491,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
               </span>
               <button
                 onClick={toggleExpand}
-                className="text-[11px] text-amber-500 hover:text-amber-400 underline cursor-pointer"
+                className="text-xs sm:text-sm text-amber-400 hover:text-amber-300 underline cursor-pointer font-bold"
               >
                 {language === 'fr'
                   ? 'Replier en paquet 1/3'
@@ -512,13 +502,12 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
             </div>
 
             {/* Grid of Expanded Cards with Staggered Fade & Slide In Animations */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {cards.map((card, index) => {
                 const IconComponent =
                   (card.iconName && ICON_MAP[card.iconName]) || Sparkles;
                 const isSelected = selectedCardId === card.id;
 
-                // Staggered sequential animation delay
                 const delayMs = index * 55;
 
                 return (
@@ -529,44 +518,44 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                       animationDelay: `${delayMs}ms`,
                       transitionDelay: `${delayMs}ms`,
                     }}
-                    className={`rounded-2xl p-5 border transition-all duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer group shadow-xl ${
+                    className={`rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer group shadow-xl ${
                       isSelected
-                        ? 'bg-gradient-to-br from-amber-500/25 via-[#231E3D] to-[#15192C] border-2 border-amber-400 ring-2 ring-amber-400/50 shadow-[0_16px_40px_-4px_rgba(245,158,11,0.25)] scale-[1.01]'
-                        : 'bg-surface-main dark:bg-gradient-to-br dark:from-[#15192B] dark:via-[#191D33] dark:to-[#121524] border-border-main dark:border-amber-400/20 hover:border-amber-400/60 hover:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.45),0_0_24px_rgba(229,184,66,0.18)] hover:-translate-y-1'
+                        ? 'bg-gradient-to-br from-amber-500/30 via-[#231E3D] to-[#15192C] border-2 border-amber-400 ring-2 ring-amber-400/50 shadow-[0_16px_40px_-4px_rgba(245,158,11,0.35)] scale-[1.01]'
+                        : 'bg-gradient-to-br from-[#15192B] via-[#191D33] to-[#121524] border-amber-400/30 hover:border-amber-400/80 hover:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.5),0_0_24px_rgba(229,184,66,0.25)] hover:-translate-y-1'
                     }`}
                   >
                     {/* Top Row: Index Badge, Category Label, Status */}
                     <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <span className="w-6 h-6 rounded-lg bg-surface-muted dark:bg-stone-800 flex items-center justify-center font-mono text-xs text-text-secondary dark:text-stone-300 font-bold border border-border-main dark:border-stone-700">
+                      <div className="flex items-center justify-between mb-3.5">
+                        <div className="flex items-center space-x-2.5">
+                          <span className="w-7 h-7 rounded-lg bg-black/60 flex items-center justify-center font-mono text-xs sm:text-sm text-amber-200 font-bold border border-amber-400/30">
                             0{index + 1}
                           </span>
                           {card.categoryLabel && (
-                            <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-border-main/50 dark:border-stone-700">
+                            <span className="text-xs font-mono tracking-wider uppercase px-2.5 py-0.5 rounded-md bg-stone-800 text-stone-200 border border-stone-700 font-bold">
                               {card.categoryLabel[language]}
                             </span>
                           )}
                         </div>
 
                         {card.badge && (
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                          <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40">
                             {card.badge[language]}
                           </span>
                         )}
                       </div>
 
                       {/* Explicit Name / Title (显示名称) */}
-                      <div className="flex items-start space-x-3 mb-2">
-                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-center text-amber-500 shrink-0 group-hover:scale-110 transition-transform">
-                          <IconComponent className="w-4 h-4" />
+                      <div className="flex items-start space-x-3 mb-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-110 transition-transform shadow-md">
+                          <IconComponent className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="text-base font-bold font-heading text-text-primary dark:text-stone-100 group-hover:text-amber-500 transition-colors">
+                          <h4 className="text-lg sm:text-xl md:text-2xl font-bold font-serif-luxury text-white group-hover:text-amber-300 transition-colors">
                             {card.title[language]}
                           </h4>
                           {card.subtitle && (
-                            <p className="text-xs text-text-secondary dark:text-stone-400 mt-0.5">
+                            <p className="text-sm sm:text-base text-stone-200 mt-1 font-medium">
                               {card.subtitle[language]}
                             </p>
                           )}
@@ -575,18 +564,18 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
 
                       {/* Detailed Description */}
                       {card.description && (
-                        <p className="text-xs text-text-secondary dark:text-stone-400 leading-relaxed mt-2.5 bg-surface-muted/60 dark:bg-stone-950/40 p-3 rounded-xl border border-border-main/40 dark:border-stone-800/60">
+                        <p className="text-sm sm:text-base text-stone-100 leading-relaxed mt-3 bg-black/50 p-3.5 rounded-xl border border-amber-400/25 font-medium">
                           {card.description[language]}
                         </p>
                       )}
 
                       {/* Tags */}
                       {card.tags && card.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mt-3">
+                        <div className="flex flex-wrap gap-2 mt-3.5">
                           {card.tags.map((tag, tIdx) => (
                             <span
                               key={tIdx}
-                              className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-surface-muted dark:bg-stone-800/70 text-text-secondary dark:text-stone-300 border border-border-main/50 dark:border-stone-700/60"
+                              className="text-xs sm:text-sm font-mono px-2.5 py-0.5 rounded-md bg-stone-800/90 text-amber-200 border border-amber-400/25 font-medium"
                             >
                               #{tag}
                             </span>
@@ -596,16 +585,16 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
 
                       {/* Metrics Key-Values */}
                       {card.metrics && card.metrics.length > 0 && (
-                        <div className="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-border-main/40 dark:border-stone-800/80 text-xs font-mono">
+                        <div className="grid grid-cols-2 gap-2.5 mt-3.5 pt-3 border-t border-amber-400/20 text-xs sm:text-sm font-mono">
                           {card.metrics.map((m, mIdx) => (
                             <div
                               key={mIdx}
-                              className="bg-surface-muted/50 dark:bg-stone-800/40 p-2 rounded-lg"
+                              className="bg-black/50 p-2.5 rounded-xl border border-stone-800"
                             >
-                              <div className="text-[10px] text-text-secondary dark:text-stone-400">
+                              <div className="text-xs text-stone-300 font-medium">
                                 {m.label[language]}
                               </div>
-                              <div className="font-bold text-amber-500 dark:text-amber-400">
+                              <div className="font-bold text-base sm:text-lg text-amber-300">
                                 {m.value}
                               </div>
                             </div>
@@ -615,23 +604,23 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                     </div>
 
                     {/* Bottom Action Footer */}
-                    <div className="mt-4 pt-3 border-t border-border-main/50 dark:border-stone-800/80 flex items-center justify-between">
+                    <div className="mt-5 pt-3.5 border-t border-amber-400/20 flex items-center justify-between">
                       {/* Progress Bar */}
                       {typeof card.progress === 'number' && (
-                        <div className="flex-1 mr-3">
-                          <div className="flex justify-between text-[10px] font-mono mb-1">
-                            <span className="text-text-secondary dark:text-stone-400">
+                        <div className="flex-1 mr-4">
+                          <div className="flex justify-between text-xs font-mono mb-1.5">
+                            <span className="text-stone-200 font-medium">
                               {language === 'fr'
                                 ? 'Progression'
                                 : language === 'zh'
                                 ? '研习进度'
                                 : 'Mastery'}
                             </span>
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className="font-bold text-emerald-400">
                               {card.progress}%
                             </span>
                           </div>
-                          <div className="w-full bg-stone-200 dark:bg-stone-800 h-1.5 rounded-full overflow-hidden">
+                          <div className="w-full bg-stone-900 h-2 rounded-full overflow-hidden border border-stone-800">
                             <div
                               className="bg-emerald-500 h-full rounded-full transition-all"
                               style={{ width: `${card.progress}%` }}
@@ -646,7 +635,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                           playTactileAudio('card');
                           if (onCardAction) onCardAction(card);
                         }}
-                        className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 hover:text-stone-950 text-amber-500 dark:text-amber-400 font-medium text-xs border border-amber-400/30 transition-all flex items-center space-x-1 cursor-pointer shrink-0"
+                        className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold font-serif-luxury text-xs sm:text-sm shadow-md transition-all flex items-center space-x-1.5 cursor-pointer shrink-0 active:scale-95"
                       >
                         <span>
                           {card.actionText
@@ -657,7 +646,7 @@ export const OverlappingCardStack: React.FC<OverlappingCardStackProps> = ({
                             ? '研习详情'
                             : 'Explore'}
                         </span>
-                        <ArrowRight className="w-3 h-3" />
+                        <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

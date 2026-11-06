@@ -9,8 +9,11 @@ import {
   Scale,
   Sparkles,
   BookOpen,
+  Download,
+  FileText,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { exportTermSheetAuditPDF } from '../../utils/pdfExport';
 
 interface AuditItem {
   clause: string;
@@ -26,6 +29,25 @@ export const TermSheetAnalyzerView: React.FC = () => {
 
   const [selectedPreset, setSelectedPreset] = useState<'aggressive' | 'clean'>('aggressive');
   const [customText, setCustomText] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
+  const [exported, setExported] = useState(false);
+
+  const handleExportPDF = () => {
+    setIsExporting(true);
+    try {
+      exportTermSheetAuditPDF({
+        presetName: selectedPreset === 'aggressive' ? 'Predatory_Down_Market' : 'NVCA_Clean_Series_A',
+        findings,
+        language,
+      });
+      setExported(true);
+      setTimeout(() => setExported(false), 2500);
+    } catch (e) {
+      console.error('Term sheet PDF export failed:', e);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const aggressiveFindings: AuditItem[] = [
     {
@@ -121,27 +143,61 @@ export const TermSheetAnalyzerView: React.FC = () => {
         </p>
       </div>
 
-      {/* Preset Selector */}
-      <div className="flex items-center space-x-3 text-xs font-mono">
+      {/* Preset Selector & Action Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setSelectedPreset('aggressive')}
+            className={`px-4 py-2 rounded-xl border transition-all cursor-pointer ${
+              selectedPreset === 'aggressive'
+                ? 'bg-rose-500/10 border-rose-500 text-rose-700 dark:text-rose-400 font-bold'
+                : 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800 text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            ⚠️ Predator Down-Market Term Sheet (4 Red Flags)
+          </button>
+          <button
+            onClick={() => setSelectedPreset('clean')}
+            className={`px-4 py-2 rounded-xl border transition-all cursor-pointer ${
+              selectedPreset === 'clean'
+                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-700 dark:text-emerald-400 font-bold'
+                : 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800 text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            ✅ NVCA Gold Standard Series A (Clean)
+          </button>
+        </div>
+
+        {/* Executive PDF Report Export */}
         <button
-          onClick={() => setSelectedPreset('aggressive')}
-          className={`px-4 py-2 rounded-xl border transition-all ${
-            selectedPreset === 'aggressive'
-              ? 'bg-rose-500/10 border-rose-500 text-rose-700 dark:text-rose-400 font-bold'
-              : 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800 text-text-secondary hover:text-text-primary'
-          }`}
+          onClick={handleExportPDF}
+          disabled={isExporting}
+          className="px-4 py-2 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 to-amber-600/20 hover:from-amber-500/25 hover:to-amber-600/30 text-amber-800 dark:text-amber-300 font-bold flex items-center space-x-2 shadow-xs transition-all cursor-pointer hover:shadow-md hover:border-amber-400 active:scale-[0.98] disabled:opacity-50"
+          title="Export structured executive PDF report using jsPDF"
         >
-          ⚠️ Predator Down-Market Term Sheet (4 Red Flags)
-        </button>
-        <button
-          onClick={() => setSelectedPreset('clean')}
-          className={`px-4 py-2 rounded-xl border transition-all ${
-            selectedPreset === 'clean'
-              ? 'bg-emerald-500/10 border-emerald-500 text-emerald-700 dark:text-emerald-400 font-bold'
-              : 'bg-surface-main dark:bg-stone-900 border-border-main dark:border-stone-800 text-text-secondary hover:text-text-primary'
-          }`}
-        >
-          ✅ NVCA Gold Standard Series A (Clean)
+          {exported ? (
+            <>
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span>
+                {language === 'zh'
+                  ? 'PDF研报已生成！'
+                  : language === 'fr'
+                  ? 'Rapport PDF Téléchargé !'
+                  : 'PDF Report Downloaded!'}
+              </span>
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>
+                {language === 'zh'
+                  ? '导出专业PDF研报'
+                  : language === 'fr'
+                  ? 'Exporter Audit PDF'
+                  : 'Export Legal Audit PDF'}
+              </span>
+            </>
+          )}
         </button>
       </div>
 

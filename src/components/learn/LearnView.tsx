@@ -304,77 +304,77 @@ export const LearnView: React.FC = () => {
             <div
               key={term.id}
               onClick={() => setSelectedTermId(term.id)}
-              className={`p-5 sm:p-6 rounded-3xl glass-panel glass-panel-hover border-sophisticated cursor-pointer flex flex-col justify-between group transition-all duration-300 relative overflow-hidden ${
+              className={`p-6 sm:p-7 rounded-3xl cursor-pointer flex flex-col justify-between group transition-all duration-300 relative overflow-hidden bg-gradient-to-b from-[#161A2E]/95 via-[#0F1325]/95 to-[#090C1A]/98 border border-white/15 hover:border-amber-400/60 shadow-[0_12px_36px_rgba(0,0,0,0.7)] hover:shadow-[0_16px_44px_rgba(217,119,6,0.22)] ${
                 isCompleted
-                  ? 'border-emerald-500/50 dark:border-emerald-400/40 bg-gradient-to-br from-emerald-500/10 via-surface-main/60 to-transparent'
+                  ? 'border-emerald-500/50 bg-gradient-to-br from-emerald-950/40 via-[#0E1624]/95 to-[#080D18]'
                   : isSaved
-                  ? 'border-amber-400/50 dark:border-amber-400/40 bg-gradient-to-br from-amber-500/10 via-surface-main/60 to-transparent'
+                  ? 'border-amber-400/60 bg-gradient-to-br from-amber-950/40 via-[#161324]/95 to-[#0D0B18]'
                   : ''
               }`}
             >
               {/* Subtle top-right golden accent light */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-400/10 to-transparent rounded-bl-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-amber-400/15 to-transparent rounded-bl-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
 
               <div>
                 {/* Micro Header */}
-                <div className="flex items-center justify-between mb-2.5">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[10px] font-mono text-text-secondary dark:text-stone-400">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-xs font-mono font-bold text-amber-300">
                       #{term.id}
                     </span>
-                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-surface-muted/90 dark:bg-stone-800/90 text-stone-600 dark:text-stone-300 border border-border-main/50 dark:border-stone-700/50">
+                    <span className="text-xs font-mono uppercase px-2.5 py-0.5 rounded-full bg-white/[0.08] text-stone-200 border border-white/15 font-semibold">
                       {term.category}
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => speak(`${term.canonical}. ${term.shortDef[language]}`, language)}
-                      className="p-1.5 rounded-xl text-text-secondary hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+                      className="p-2 rounded-xl text-stone-300 hover:text-amber-300 hover:bg-white/10 transition-colors"
                       title="Pronounce"
                     >
-                      <Volume2 className="w-3.5 h-3.5" />
+                      <Volume2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => toggleSaveTerm(term.id)}
-                      className="p-1.5 rounded-xl text-text-secondary hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+                      className="p-2 rounded-xl text-stone-300 hover:text-amber-300 hover:bg-white/10 transition-colors"
                       title="Bookmark"
                     >
-                      <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}`} />
+                      <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-amber-400 text-amber-400' : ''}`} />
                     </button>
                   </div>
                 </div>
 
                 {/* Canonical & Translation */}
-                <h3 className="font-heading font-bold text-base sm:text-lg text-text-primary dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">
+                <h3 className="font-serif-luxury font-bold text-lg sm:text-xl md:text-2xl text-white group-hover:text-amber-200 transition-colors tracking-tight leading-snug">
                   {term.canonical}
                 </h3>
-                <p className="text-xs text-text-secondary dark:text-stone-400 font-mono mt-0.5 mb-2.5">
+                <p className="text-sm sm:text-base text-amber-300 font-mono font-semibold mt-1 mb-3">
                   {language === 'fr' ? term.fr : term.zh}
                 </p>
 
                 {/* Short definition */}
-                <p className="text-xs text-stone-600 dark:text-stone-300 line-clamp-3 leading-relaxed">
+                <p className="text-sm sm:text-base text-stone-100 leading-relaxed font-medium line-clamp-3">
                   {term.shortDef[language]}
                 </p>
               </div>
 
               {/* Card Footer */}
-              <div className="mt-5 pt-3.5 border-t border-border-main/60 dark:border-stone-800/80 flex items-center justify-between text-xs">
+              <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between text-xs sm:text-sm">
                 {isCompleted ? (
-                  <span className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-medium">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span className="flex items-center space-x-1.5 text-emerald-300 font-mono font-bold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>{language === 'fr' ? 'Validé' : language === 'zh' ? '已掌握' : 'Mastered'}</span>
                   </span>
                 ) : (
-                  <span className="text-[11px] font-mono text-text-secondary dark:text-stone-400">
+                  <span className="text-xs sm:text-sm font-mono font-bold text-amber-200">
                     +{75} XP
                   </span>
                 )}
 
-                <div className="flex items-center space-x-1 text-amber-600 dark:text-amber-400 font-semibold group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center space-x-1.5 text-amber-300 font-bold group-hover:translate-x-1.5 transition-transform">
                   <span>{language === 'fr' ? 'Leçon' : language === 'zh' ? '精讲' : 'Deep Lesson'}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4 text-amber-400" />
                 </div>
               </div>
             </div>

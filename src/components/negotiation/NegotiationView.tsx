@@ -463,17 +463,17 @@ export const NegotiationView: React.FC = () => {
           </div>
 
           {/* Transcript Feed */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3.5 text-xs">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-sm sm:text-base">
             {messages.map((m, idx) => (
               <div
                 key={idx}
                 className={`flex flex-col ${m.sender === 'founder' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`p-4 rounded-2xl max-w-[85%] leading-relaxed shadow-sm ${
+                  className={`p-4 sm:p-5 rounded-2xl max-w-[88%] leading-relaxed shadow-lg ${
                     m.sender === 'founder'
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-xs'
-                      : 'bg-surface-muted dark:bg-[#14192a] text-stone-900 dark:text-stone-100 rounded-tl-xs border border-border-main dark:border-stone-700/80'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-tr-xs font-serif-luxury text-sm sm:text-base md:text-lg font-medium'
+                      : 'bg-[#151930] text-stone-100 rounded-tl-xs border border-amber-400/35 font-serif-luxury text-sm sm:text-base md:text-lg font-medium shadow-[0_8px_24px_rgba(0,0,0,0.5)]'
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{m.text}</p>
@@ -483,7 +483,7 @@ export const NegotiationView: React.FC = () => {
           </div>
 
           {/* Calibrated Tactic Quick-Triggers (Tailored per Persona) */}
-          <div className="p-3 border-t border-border-main dark:border-stone-800 bg-surface-muted/30 dark:bg-[#0f1322] flex space-x-2 overflow-x-auto text-[11px] no-scrollbar">
+          <div className="p-3 border-t border-amber-400/20 bg-[#0F1322] flex space-x-2.5 overflow-x-auto text-xs sm:text-sm no-scrollbar">
             {activePersona.id === 'marcus_vance' && (
               <>
                 <button
@@ -496,7 +496,7 @@ export const NegotiationView: React.FC = () => {
                         : 'How will our future Series B lead price the stock with a non-standard participating preference overhang?'
                     )
                   }
-                  className="px-3 py-1.5 rounded-xl bg-surface-main dark:bg-[#171d33] border border-border-main dark:border-stone-700 hover:border-emerald-500 whitespace-nowrap text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-[#171d33] border border-amber-400/30 hover:border-amber-400 whitespace-nowrap text-amber-200 hover:text-white font-medium transition-all cursor-pointer shadow-sm"
                 >
                   🎯 Calibrated "How" Question (Clean Preference)
                 </button>
@@ -704,30 +704,30 @@ export const NegotiationView: React.FC = () => {
                   ? `向 ${activePersona.name} 发送校准型提问或谈判反驳意见...`
                   : `Type calibrated counter-offer or question to ${activePersona.name}...`
               }
-              className="flex-1 px-4 py-2.5 rounded-2xl bg-surface-muted dark:bg-[#14192a] border border-border-main dark:border-stone-700 text-xs text-text-primary dark:text-stone-100 focus:outline-emerald-500"
+              className="flex-1 px-4 py-3 rounded-2xl bg-black/60 border border-amber-400/35 text-sm sm:text-base text-white focus:outline-none focus:border-amber-400 placeholder:text-stone-400"
             />
             <button
               onClick={() => handleSendCounter()}
               disabled={dealSigned || !counterInput.trim()}
-              className="p-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white shadow-md transition-all cursor-pointer"
+              className="p-3 rounded-2xl bg-amber-400 hover:bg-amber-300 disabled:opacity-40 text-stone-950 font-bold shadow-md transition-all cursor-pointer"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5 text-stone-950" />
             </button>
           </div>
         </div>
 
         {/* Live Deal Term Sheet Controls (5 cols) */}
-        <div className="lg:col-span-5 p-6 rounded-3xl bg-surface-main dark:bg-[#0d111c] border border-border-main dark:border-stone-800 shadow-xl space-y-5 text-xs">
-          <div className="flex items-center justify-between border-b border-border-main dark:border-stone-800 pb-3">
+        <div className="lg:col-span-5 p-6 rounded-3xl bg-gradient-to-br from-[#12162A] to-[#0A0D18] border border-amber-400/30 shadow-xl space-y-5 text-xs sm:text-sm text-stone-100">
+          <div className="flex items-center justify-between border-b border-amber-400/25 pb-3.5">
             <div>
-              <span className="text-[10px] font-mono uppercase text-amber-500 font-bold block">
+              <span className="text-xs font-mono uppercase text-amber-400 font-bold block">
                 Term Sheet Dials
               </span>
-              <h3 className="font-bold text-sm text-text-primary dark:text-white">
+              <h3 className="font-bold text-base sm:text-lg font-serif-luxury text-white">
                 Live Proposed Terms
               </h3>
             </div>
-            <span className="font-mono text-emerald-500 font-bold text-sm">
+            <span className="font-mono text-amber-300 font-bold text-base">
               Pre: {formatMoney(valuation)}
             </span>
           </div>

@@ -414,48 +414,48 @@ export const FacingTheGame: React.FC<{
           </div>
 
           {/* Adversary Arena Stage */}
-          <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#121626] via-[#161a32] to-[#1e172e] border border-amber-400/25 shadow-xl flex flex-col md:flex-row items-center gap-5">
+          <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#12162B]/95 via-[#161B35]/95 to-[#1E1732]/98 border border-amber-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col md:flex-row items-center gap-6">
             {/* Imposing Partner Portrait */}
-            <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/35 shadow-lg group">
+            <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/40 shadow-xl group">
               <img
                 src={ADVERSARY_IMAGE}
                 alt="Venture Capital Lead Partner"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top filter contrast-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <span className="absolute bottom-1.5 left-2 text-[10px] font-mono text-amber-300 font-bold tracking-tight">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <span className="absolute bottom-2 left-2.5 text-xs font-mono text-amber-200 font-bold tracking-tight">
                 Alexander Vance
               </span>
             </div>
 
             {/* Adversary Dialogue Bubble */}
-            <div className="space-y-3 flex-1 text-white">
+            <div className="space-y-4 flex-1 text-white">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-stone-400">
+                <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-stone-200 font-semibold">
                   {language === 'fr' ? 'Posture de l’Investisseur' : language === 'zh' ? '对手施压招数' : 'Adversary Move'} :{' '}
-                  <strong className="text-amber-300">{currentEncounter.adversaryTactic[language]}</strong>
+                  <strong className="text-amber-300 font-bold ml-1">{currentEncounter.adversaryTactic[language]}</strong>
                 </span>
                 <button
                   onClick={playAdversaryVoice}
-                  className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-amber-300 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 transition-colors cursor-pointer"
                   title="Listen to dialogue"
                 >
-                  <Volume2 className="w-3.5 h-3.5" />
+                  <Volume2 className="w-4 h-4" />
                 </button>
               </div>
 
-              <blockquote className="text-xs sm:text-sm font-serif-luxury italic leading-relaxed text-stone-100 bg-black/30 p-3.5 rounded-2xl border border-white/10">
-                {currentEncounter.adversaryDialogue[language]}
+              <blockquote className="text-base sm:text-lg md:text-xl font-serif-luxury font-medium leading-relaxed text-amber-50 bg-[#080B18]/85 p-5 sm:p-6 rounded-2xl border border-amber-400/30 shadow-inner">
+                "{currentEncounter.adversaryDialogue[language]}"
               </blockquote>
 
               {/* Psychological X-Ray Button (潜台词探测) */}
               <div className="pt-1 flex items-center justify-between">
                 <button
                   onClick={() => setShowXRay((prev) => !prev)}
-                  className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline flex items-center space-x-1 cursor-pointer"
+                  className="text-xs sm:text-sm font-mono font-semibold text-amber-300 hover:text-amber-200 underline flex items-center space-x-1.5 cursor-pointer"
                 >
-                  <Eye className="w-3.5 h-3.5" />
+                  <Eye className="w-4 h-4 text-amber-400" />
                   <span>
                     {showXRay
                       ? language === 'fr'
@@ -473,7 +473,7 @@ export const FacingTheGame: React.FC<{
               </div>
 
               {showXRay && (
-                <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs text-purple-200 leading-relaxed animate-fadeIn">
+                <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-400/40 text-sm sm:text-base font-medium text-purple-100 leading-relaxed shadow-lg animate-fadeIn">
                   {currentEncounter.hiddenPsychology[language]}
                 </div>
               )}
@@ -481,8 +481,8 @@ export const FacingTheGame: React.FC<{
           </div>
 
           {/* Player Strategic Choices (Shuffled Unpredictably) */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-text-secondary dark:text-stone-400 font-semibold flex items-center justify-between">
+          <div className="space-y-4">
+            <h3 className="text-sm sm:text-base font-mono uppercase tracking-wider text-stone-200 font-bold flex items-center justify-between">
               <span>
                 {language === 'fr'
                   ? 'Choisissez votre posture de négociation :'
@@ -490,7 +490,7 @@ export const FacingTheGame: React.FC<{
                   ? '面对博弈，亮出你的破局手牌：'
                   : 'Select your strategic stance:'}
               </span>
-              <span className="text-[10px] text-stone-400 font-normal">
+              <span className="text-xs text-amber-300/80 font-normal">
                 {language === 'fr' ? 'Ordre des options aléatoire' : language === 'zh' ? '选项位置随机混编' : 'Randomized order'}
               </span>
             </h3>
@@ -501,41 +501,41 @@ export const FacingTheGame: React.FC<{
                 <div
                   key={opt.id}
                   onClick={() => handleSelectOption(opt.id)}
-                  className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${
+                  className={`p-5 sm:p-6 rounded-2xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-amber-400 bg-amber-500/10 dark:bg-amber-950/30 shadow-md ring-1 ring-amber-400/50'
-                      : 'border-border-main dark:border-stone-800 hover:border-amber-400/40 bg-surface-main dark:bg-[#121526]/80'
+                      ? 'border-amber-400 bg-gradient-to-b from-amber-500/25 via-[#1D1728]/95 to-[#120E1C] shadow-[0_12px_36px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/60'
+                      : 'border-white/15 dark:border-white/10 hover:border-amber-400/60 bg-gradient-to-b from-[#161A2E]/90 via-[#0F1325]/95 to-[#090C1A]/98 hover:shadow-[0_8px_24px_rgba(217,119,6,0.18)]'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-4">
                     <div
-                      className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 font-bold text-xs ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-500 text-white'
+                          ? 'border-amber-400 bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-md'
                           : 'border-stone-400 text-transparent'
                       }`}
                     >
                       ✓
                     </div>
 
-                    <div className="space-y-2 flex-1">
-                      <p className="text-xs sm:text-sm font-medium leading-relaxed text-text-primary dark:text-stone-100">
+                    <div className="space-y-3 flex-1">
+                      <p className="text-base sm:text-lg md:text-xl font-serif-luxury font-semibold leading-relaxed text-white">
                         {opt.label[language]}
                       </p>
 
                       {/* Submitted Feedback Box */}
                       {hasSubmitted && isSelected && (
-                        <div className="mt-3 pt-3 border-t border-border-main dark:border-stone-800 space-y-2 animate-fadeIn">
+                        <div className="mt-4 pt-4 border-t border-white/15 space-y-3 animate-fadeIn">
                           <div
-                            className={`p-3 rounded-xl text-xs leading-relaxed ${
+                            className={`p-4 sm:p-5 rounded-2xl text-sm sm:text-base leading-relaxed font-medium shadow-md ${
                               opt.type === 'mastery'
-                                ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30'
+                                ? 'bg-emerald-950/60 text-emerald-100 border border-emerald-400/50'
                                 : opt.type === 'confrontation'
-                                ? 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border border-rose-500/30'
-                                : 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30'
+                                ? 'bg-rose-950/60 text-rose-100 border border-rose-400/50'
+                                : 'bg-amber-950/60 text-amber-100 border border-amber-400/50'
                             }`}
                           >
-                            <span className="font-bold block mb-1">
+                            <span className="font-bold text-base block mb-1.5 font-serif-luxury">
                               {opt.type === 'mastery'
                                 ? language === 'fr'
                                   ? '🌟 Coup de Maître (Sérénité & Clarté)'
@@ -557,8 +557,8 @@ export const FacingTheGame: React.FC<{
                             {opt.feedback[language]}
                           </div>
 
-                          <div className="p-3 rounded-xl bg-surface-muted dark:bg-stone-900 border border-border-main dark:border-stone-800 text-[11px] font-mono text-stone-600 dark:text-stone-300">
-                            <span className="font-bold text-amber-500 block mb-0.5">
+                          <div className="p-4 rounded-2xl bg-[#090C18]/90 border border-amber-400/30 text-xs sm:text-sm font-mono text-stone-200">
+                            <span className="font-bold text-amber-300 block mb-1">
                               {language === 'fr' ? 'Loi de Maîtrise :' : language === 'zh' ? '博弈心法复盘：' : 'Mindful Deal Law:'}
                             </span>
                             {opt.mindfulRule[language]}

@@ -171,27 +171,27 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
   }, [completedCount, categoryStats, progress.completedLessons]);
 
   return (
-    <div className="rounded-3xl glass-panel border-sophisticated p-5 sm:p-6 shadow-2xl relative overflow-hidden transition-all duration-300">
+    <div className="rounded-3xl bg-gradient-to-br from-[#0F1326] via-[#14182E] to-[#0A0D1A] border border-amber-400/35 p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 text-stone-100">
       {/* Background ambient glow */}
-      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-gradient-to-br from-amber-500/10 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 bg-gradient-to-br from-amber-500/15 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
 
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-400/30">
+        <div className="space-y-1.5">
+          <div className="flex items-center space-x-2.5">
+            <span className="px-3 py-1 rounded-full text-xs sm:text-sm font-mono uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40">
               {language === 'fr'
                 ? 'Tableau de Bord Pédagogique'
                 : language === 'zh'
                 ? '创投研习成就看板'
                 : 'Curriculum Mastery Dashboard'}
             </span>
-            <span className="text-xs text-stone-400 font-mono">
+            <span className="text-sm sm:text-base text-stone-200 font-mono font-medium">
               Level {progress.level} • {progress.levelName[language]}
             </span>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold font-heading text-text-primary dark:text-stone-100 flex items-center space-x-2">
-            <Trophy className="w-5 h-5 text-amber-400" />
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif-luxury text-white flex items-center space-x-3 drop-shadow-sm">
+            <Trophy className="w-6 h-6 text-amber-400 shrink-0" />
             <span>
               {language === 'fr'
                 ? 'Progression du Cursus & Jalons Exécutifs'
@@ -204,80 +204,80 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
 
         {/* Global Progress Pill & Expand Toggle */}
         <div className="flex items-center space-x-3 self-start sm:self-center">
-          <div className="px-3.5 py-2 rounded-2xl bg-surface-muted/80 dark:bg-stone-900 border border-border-main dark:border-stone-800 text-right">
-            <div className="text-[10px] uppercase font-mono text-stone-400">
+          <div className="px-4 py-2.5 rounded-2xl bg-black/60 border border-amber-400/30 text-right shadow-md">
+            <div className="text-xs uppercase font-mono text-stone-300 font-medium">
               {language === 'zh' ? '总研习完成度' : 'Overall Completion'}
             </div>
-            <div className="text-sm font-bold font-mono text-emerald-400 flex items-center justify-end space-x-1.5">
+            <div className="text-base sm:text-lg md:text-xl font-bold font-mono text-amber-300 flex items-center justify-end space-x-2">
               <span>{completedCount} / {totalTerms}</span>
-              <span className="text-xs text-amber-400">({overallPercentage}%)</span>
+              <span className="text-sm sm:text-base text-emerald-400 font-bold">({overallPercentage}%)</span>
             </div>
           </div>
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-xl bg-surface-muted/60 dark:bg-stone-800 hover:bg-stone-700/60 text-stone-300 transition-colors cursor-pointer"
+            className="p-2.5 rounded-xl bg-stone-800/80 hover:bg-stone-700 text-stone-200 border border-amber-400/20 transition-colors cursor-pointer"
             title={isExpanded ? 'Collapse Dashboard' : 'Expand Dashboard'}
           >
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? <ChevronUp className="w-5 h-5 text-amber-300" /> : <ChevronDown className="w-5 h-5 text-amber-300" />}
           </button>
         </div>
       </div>
 
       {/* Main Master Visual Progress Bar */}
-      <div className="mt-5 space-y-2 relative z-10">
-        <div className="flex justify-between items-center text-xs font-mono">
-          <span className="text-stone-300 font-medium">
+      <div className="mt-6 space-y-2.5 relative z-10">
+        <div className="flex justify-between items-center text-sm sm:text-base font-serif-luxury font-medium">
+          <span className="text-stone-100">
             {language === 'fr'
               ? 'Parcours des 100 Termes & Clauses Clés'
               : language === 'zh'
               ? '100条风投契约与治理全图谱里程碑'
               : '100 Canonical Clauses & Mechanics Roadmap'}
           </span>
-          <span className="text-amber-400 font-bold">
+          <span className="text-amber-300 font-mono font-bold text-sm sm:text-base">
             {totalTerms - completedCount}{' '}
             {language === 'zh' ? '条待研习' : 'Remaining'}
           </span>
         </div>
 
         {/* High-visibility multi-stage progress track */}
-        <div className="relative w-full h-3.5 bg-stone-950/80 rounded-full border border-stone-800 overflow-hidden shadow-inner">
+        <div className="relative w-full h-4 bg-stone-950 rounded-full border border-amber-400/30 overflow-hidden shadow-inner">
           <div
             className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-indigo-500 transition-all duration-700 shadow-md relative"
             style={{ width: `${Math.max(2, overallPercentage)}%` }}
           >
             {/* Shimmer sweep animation */}
-            <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            <div className="absolute inset-0 bg-white/25 animate-pulse" />
           </div>
         </div>
 
         {/* Milestone Steps Markers */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2.5">
           {milestones.map((m) => {
             const isCurrent = completedCount < m.required && (m.required === 25 || completedCount >= m.required - 25);
             return (
               <div
                 key={m.id}
-                className={`p-2.5 rounded-2xl border transition-all text-xs ${
+                className={`p-3.5 rounded-2xl border transition-all text-xs sm:text-sm ${
                   m.isUnlocked
-                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                    ? 'bg-gradient-to-b from-[#152B24] to-[#0D1B16] border-emerald-400/50 text-emerald-300 shadow-lg'
                     : isCurrent
-                    ? 'bg-amber-500/10 border-amber-500/50 text-amber-300 shadow-md'
-                    : 'bg-stone-900/40 border-stone-800/80 text-stone-500'
+                    ? 'bg-gradient-to-b from-[#2E2413] to-[#1A140B] border-amber-400/60 text-amber-300 shadow-xl'
+                    : 'bg-black/40 border-stone-800 text-stone-400'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-base">{m.icon}</span>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-stone-800/70">
+                  <span className="text-xl">{m.icon}</span>
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-black/60 text-amber-200 border border-amber-400/20">
                     {m.range}
                   </span>
                 </div>
-                <div className="font-bold truncate mt-1 text-text-primary dark:text-stone-200">
+                <div className="font-bold truncate mt-2 text-sm sm:text-base font-serif-luxury text-white">
                   {m.title[language]}
                 </div>
-                <div className="flex items-center justify-between text-[10px] font-mono mt-1 text-stone-400">
+                <div className="flex items-center justify-between text-xs sm:text-sm font-mono mt-1.5 text-stone-200 font-medium">
                   <span>{m.isUnlocked ? (language === 'zh' ? '已达成' : 'Unlocked') : isCurrent ? (language === 'zh' ? '进行中' : 'In Progress') : (language === 'zh' ? '未解锁' : 'Locked')}</span>
-                  <span>{Math.min(completedCount, m.required)}/{m.required}</span>
+                  <span className="text-amber-300 font-bold">{Math.min(completedCount, m.required)}/{m.required}</span>
                 </div>
               </div>
             );
@@ -287,19 +287,19 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
 
       {/* Expandable Tabs: Category Progress & Unlocked VC Badges */}
       {isExpanded && (
-        <div className="mt-5 pt-5 border-t border-border-main/50 dark:border-stone-800/80 space-y-4 relative z-10">
+        <div className="mt-6 pt-6 border-t border-amber-400/20 space-y-5 relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             {/* View Switcher: Categories vs Badges */}
-            <div className="flex items-center space-x-1.5 p-1 rounded-2xl bg-surface-muted/90 dark:bg-stone-900 border border-border-main dark:border-stone-800 text-xs">
+            <div className="flex items-center space-x-2 p-1.5 rounded-2xl bg-black/60 border border-amber-400/30 text-xs sm:text-sm">
               <button
                 onClick={() => setActiveTab('categories')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl font-bold font-serif-luxury transition-all flex items-center space-x-2 cursor-pointer ${
                   activeTab === 'categories'
                     ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-stone-400 hover:text-stone-200'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
-                <BookOpen className="w-3.5 h-3.5" />
+                <BookOpen className="w-4 h-4" />
                 <span>
                   {language === 'fr'
                     ? 'Progression par Thématique (9 Domaines)'
@@ -311,13 +311,13 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
 
               <button
                 onClick={() => setActiveTab('achievements')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl font-bold font-serif-luxury transition-all flex items-center space-x-2 cursor-pointer ${
                   activeTab === 'achievements'
-                    ? 'bg-amber-500 text-stone-950 shadow-md'
-                    : 'text-stone-400 hover:text-stone-200'
+                    ? 'bg-amber-400 text-stone-950 shadow-md font-bold'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
-                <Award className="w-3.5 h-3.5" />
+                <Award className="w-4 h-4" />
                 <span>
                   {language === 'fr'
                     ? 'Trophées & Badges VC'
@@ -332,49 +332,49 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
             {nextLesson && (
               <button
                 onClick={() => onLaunchTerm?.(nextLesson.id)}
-                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-emerald-500/20 hover:from-amber-500/30 hover:to-emerald-500/30 border border-amber-400/40 text-amber-300 text-xs font-bold flex items-center space-x-1.5 transition-all self-start sm:self-auto cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold text-xs sm:text-sm font-serif-luxury flex items-center space-x-2 transition-all self-start sm:self-auto cursor-pointer shadow-lg"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <Sparkles className="w-4 h-4" />
                 <span>
                   {language === 'zh'
                     ? `研习下一讲：${nextLesson.zh}`
                     : `Continue: ${nextLesson.canonical}`}
                 </span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Tab 1: 9 Category Progress Grid */}
           {activeTab === 'categories' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {categoryStats.map((cat) => {
                 const IconComponent = cat.icon;
                 return (
                   <div
                     key={cat.id}
                     onClick={() => onSelectCategory?.(cat.id)}
-                    className="p-3 rounded-2xl bg-surface-muted/50 dark:bg-stone-900/50 border border-border-main/70 dark:border-stone-800/80 hover:border-amber-400/50 hover:bg-amber-500/5 transition-all cursor-pointer group"
+                    className="p-4 rounded-2xl bg-[#12162A]/90 border border-amber-400/25 hover:border-amber-400/60 hover:bg-[#181D35] transition-all cursor-pointer group shadow-md"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="flex items-center space-x-2.5">
                         <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center"
-                          style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
+                          className="w-8 h-8 rounded-xl flex items-center justify-center"
+                          style={{ backgroundColor: `${cat.color}25`, color: cat.color }}
                         >
                           <IconComponent className="w-4 h-4" />
                         </div>
-                        <div className="font-bold text-xs text-text-primary dark:text-stone-200 group-hover:text-amber-400 transition-colors">
+                        <div className="font-bold text-sm sm:text-base font-serif-luxury text-white group-hover:text-amber-300 transition-colors">
                           {cat.label[language]}
                         </div>
                       </div>
-                      <span className="text-[11px] font-mono font-bold" style={{ color: cat.color }}>
+                      <span className="text-sm sm:text-base font-mono font-bold" style={{ color: cat.color }}>
                         {cat.percentage}%
                       </span>
                     </div>
 
                     {/* Progress Mini Bar */}
-                    <div className="w-full bg-stone-950 h-1.5 rounded-full overflow-hidden mb-1.5">
+                    <div className="w-full bg-stone-950 h-2 rounded-full overflow-hidden mb-2 border border-stone-800">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -384,9 +384,9 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
                       />
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono text-stone-400">
+                    <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-stone-200">
                       <span>{cat.done} / {cat.total} {language === 'zh' ? '条目完成' : 'mastered'}</span>
-                      <span className="text-stone-500 group-hover:text-stone-300 transition-colors">
+                      <span className="text-amber-300 font-bold group-hover:translate-x-1 transition-transform">
                         {language === 'zh' ? '点击筛选 →' : 'Filter →'}
                       </span>
                     </div>
@@ -398,44 +398,44 @@ export const CurriculumAchievementDashboard: React.FC<CurriculumAchievementDashb
 
           {/* Tab 2: Achievements & Trophy Shelf */}
           {activeTab === 'achievements' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {achievements.map((ach) => {
                 const IconComp = ach.icon;
                 return (
                   <div
                     key={ach.id}
-                    className={`p-3.5 rounded-2xl border transition-all ${
+                    className={`p-4 sm:p-5 rounded-2xl border transition-all ${
                       ach.unlocked
-                        ? 'bg-amber-500/10 border-amber-500/40 shadow-sm'
-                        : 'bg-surface-muted/40 dark:bg-stone-900/30 border-border-main/60 dark:border-stone-800/60 opacity-60'
+                        ? 'bg-gradient-to-br from-[#1C1A35] via-[#241E3A] to-[#141226] border-2 border-amber-400/60 shadow-[0_10px_30px_rgba(245,158,11,0.22)]'
+                        : 'bg-gradient-to-br from-[#121528]/95 to-[#0A0D18]/95 border border-amber-400/20 opacity-90'
                     }`}
                   >
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-start space-x-3.5">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
                           ach.unlocked
-                            ? 'bg-amber-400 text-stone-950 font-bold'
-                            : 'bg-stone-800 text-stone-500'
+                            ? 'bg-amber-400 text-stone-950 font-bold shadow-[0_0_16px_rgba(251,191,36,0.5)]'
+                            : 'bg-stone-800 text-stone-400 border border-stone-700'
                         }`}
                       >
-                        {ach.unlocked ? <IconComp className="w-5 h-5" /> : <Lock className="w-4 h-4" />}
+                        {ach.unlocked ? <IconComp className="w-6 h-6 text-stone-950" /> : <Lock className="w-5 h-5" />}
                       </div>
-                      <div className="space-y-0.5 flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-bold text-xs text-text-primary dark:text-stone-100 truncate">
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="font-bold text-base sm:text-lg font-serif-luxury text-white truncate">
                             {ach.name[language]}
                           </h4>
                           <span
-                            className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                            className={`text-xs sm:text-sm font-mono font-bold px-2 py-0.5 rounded-md ${
                               ach.unlocked
-                                ? 'bg-emerald-500/20 text-emerald-400'
-                                : 'bg-stone-800 text-stone-400'
+                                ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
+                                : 'bg-stone-800 text-stone-300 border border-stone-700'
                             }`}
                           >
                             {ach.progressText}
                           </span>
                         </div>
-                        <p className="text-[11px] text-text-secondary dark:text-stone-400 leading-snug">
+                        <p className="text-sm sm:text-base text-stone-100 leading-relaxed font-medium">
                           {ach.desc[language]}
                         </p>
                       </div>

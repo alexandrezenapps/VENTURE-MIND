@@ -21,6 +21,7 @@ import { ProfileView } from './components/profile/ProfileView';
 import { MindfulnessSanctuaryView } from './components/mindfulness/MindfulnessSanctuaryView';
 import { ArtisticOpeningPortal } from './components/opening/ArtisticOpeningPortal';
 import { OverlappingStackShowcase } from './components/common/OverlappingStackShowcase';
+import { PullDownSummaryPanel } from './components/common/PullDownSummaryPanel';
 
 const MainLayout: React.FC = () => {
   const {
@@ -50,6 +51,9 @@ const MainLayout: React.FC = () => {
       <div className="flex-1 lg:pl-64 flex flex-col min-h-screen w-full relative">
         {/* Sticky Mobile/Desktop Top Bar */}
         <TopBar onOpenSidebar={() => setIsSidebarOpen(true)} />
+
+        {/* Pull-Down Expandable Top Summary Panel (可下拉展开的顶部摘要: 默认一行胶囊，跟手展开，内容下移变暗) */}
+        <PullDownSummaryPanel />
 
         {/* View Container with mobile bottom safe space and fluid font scaling */}
         <main className="flex-1 content-container-responsive py-3.5 sm:py-6 max-w-full overflow-x-hidden fluid-body">
